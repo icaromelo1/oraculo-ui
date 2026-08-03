@@ -80,21 +80,21 @@ export const CAPACIDADES: Capacidade[] = [
 export const FERRAMENTAS_RESOLVIDA: Ferramenta[] = [
   {
     id: 't1',
-    nome: 'busca_documentos',
+    nome: 'buscar_conhecimento',
     argumento: '"reprocessamento lote nfe idempotência"',
     status: 'concluida',
     metrica: '7 trechos · 412 ms',
   },
   {
     id: 't2',
-    nome: 'ler_codigo',
+    nome: 'ler_arquivo',
     argumento: 'dsg-fiscal-ingestao/src/lote/LoteWorker.java:88-140',
     status: 'concluida',
     metrica: '53 linhas · 96 ms',
   },
   {
     id: 't3',
-    nome: 'consulta_sql',
+    nome: 'consultar_banco',
     argumento: 'fiscal_prod · somente-leitura',
     status: 'concluida',
     metrica: '2,1 s',
@@ -123,7 +123,7 @@ export const FERRAMENTAS_RESOLVIDA: Ferramenta[] = [
   },
   {
     id: 't4',
-    nome: 'conhecimento_curado',
+    nome: 'ler_documento',
     argumento: 'nota de t.aguiar · "lote preso em RETRY"',
     status: 'concluida',
     metrica: '1 nota · 88 ms',
@@ -133,14 +133,14 @@ export const FERRAMENTAS_RESOLVIDA: Ferramenta[] = [
 export const FERRAMENTAS_STREAMING: Ferramenta[] = [
   {
     id: 's1',
-    nome: 'busca_documentos',
+    nome: 'buscar_conhecimento',
     argumento: '"dlq nfe drenar procedimento"',
     status: 'concluida',
     metrica: '4 trechos · 380 ms',
   },
   {
     id: 's2',
-    nome: 'ler_codigo',
+    nome: 'ler_arquivo',
     argumento: 'dsg-barramento/scripts/drain_dlq.sh',
     status: 'concluida',
     metrica: '31 linhas · 74 ms',
@@ -150,21 +150,21 @@ export const FERRAMENTAS_STREAMING: Ferramenta[] = [
 export const FERRAMENTAS_EXECUTANDO: Ferramenta[] = [
   {
     id: 'e1',
-    nome: 'busca_documentos',
+    nome: 'buscar_conhecimento',
     argumento: '"dlq nfe drenar procedimento"',
     status: 'concluida',
     metrica: '4 trechos · 380 ms',
   },
   {
     id: 'e2',
-    nome: 'conhecimento_curado',
+    nome: 'ler_documento',
     argumento: 'runbook "drenagem de DLQ fiscal"',
     status: 'concluida',
     metrica: '1 nota · 92 ms',
   },
   {
     id: 'e3',
-    nome: 'ler_codigo',
+    nome: 'ler_arquivo',
     argumento: 'dsg-barramento/scripts/drain_dlq.sh',
     status: 'executando',
     metrica: 'em execução · 1,2 s',
@@ -173,7 +173,7 @@ export const FERRAMENTAS_EXECUTANDO: Ferramenta[] = [
   },
   {
     id: 'e4',
-    nome: 'consulta_sql',
+    nome: 'consultar_banco',
     argumento: 'na fila · exigirá aprovação',
     status: 'na_fila',
     metrica: '',

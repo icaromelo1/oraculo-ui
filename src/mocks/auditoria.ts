@@ -27,11 +27,11 @@ export const REGISTROS: RegistroAuditoria[] = [
     duracao: '3,8 s',
     modelo: '32b',
     trilha: [
-      '14:22:38 busca_documentos "reprocessamento lote nfe idempotência" → 7 trechos · 412 ms',
-      '14:22:39 ler_codigo dsg-fiscal-ingestao/…/LoteWorker.java:88-140 · 96 ms',
+      '14:22:38 buscar_conhecimento "reprocessamento lote nfe idempotência" → 7 trechos · 412 ms',
+      '14:22:39 ler_arquivo dsg-fiscal-ingestao/…/LoteWorker.java:88-140 · 96 ms',
       '14:22:39 aprovação solicitada a t.aguiar · concedida em 6 s',
-      '14:22:45 consulta_sql fiscal_prod · select · 3 linhas · 2,1 s',
-      '14:22:47 conhecimento_curado nota t.aguiar · 88 ms',
+      '14:22:45 consultar_banco fiscal_prod · select · 3 linhas · 2,1 s',
+      '14:22:47 ler_documento nota t.aguiar · 88 ms',
     ],
     sqlExecutado: [
       'select l.id, l.status, l.tentativas, max(e.criado_em)',

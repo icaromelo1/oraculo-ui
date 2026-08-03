@@ -162,23 +162,23 @@ function classeValor(campo: string, valor: string) {
   &__nome {
     @include mono(11.5px, 500);
 
-    &--busca_documentos {
+    &--buscar_conhecimento {
       color: var(--blue);
     }
 
-    &--ler_codigo {
+    &--ler_arquivo {
       color: var(--green);
     }
 
-    &--consulta_sql {
+    &--consultar_banco {
       color: var(--gold);
     }
 
-    &--conhecimento_curado {
+    &--ler_documento {
       color: var(--gray);
     }
 
-    &--comando_shell {
+    &--estado_servicos {
       color: var(--warn);
     }
   }

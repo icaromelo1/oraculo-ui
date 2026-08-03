@@ -10,7 +10,7 @@
     <div class="cartao">
       <div class="cartao__topo">
         <span class="cartao__selo">ação bloqueada</span>
-        <span class="cartao__alvo">consulta_sql · rh_prod.plantao</span>
+        <span class="cartao__alvo">consultar_banco · rh_prod.plantao</span>
         <div class="cartao__espacador" />
         <span class="cartao__estado">não executada</span>
       </div>

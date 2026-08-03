@@ -7,9 +7,9 @@ export type TipoFonte = 'curado' | 'doc' | 'codigo' | 'banco' | 'inferencia';
 export type StatusCapacidade = 'permitida' | 'aprovacao' | 'desligada' | 'negada';
 
 export type NomeFerramenta =
-  'busca_documentos' | 'ler_codigo' | 'consulta_sql' | 'conhecimento_curado' | 'comando_shell';
+  'buscar_conhecimento' | 'ler_arquivo' | 'consultar_banco' | 'ler_documento' | 'estado_servicos';
 
-export type StatusFerramenta = 'concluida' | 'executando' | 'na_fila' | 'bloqueada';
+export type StatusFerramenta = 'concluida' | 'executando' | 'na_fila' | 'bloqueada' | 'erro';
 
 export type EstadoResposta =
   | 'resolvida'
@@ -126,4 +126,9 @@ export interface EstadoModelo {
   local: boolean;
   contexto: string;
   repositorios: number;
+}
+
+export interface Escopo {
+  repositorios: string[];
+  alvos: string[];
 }

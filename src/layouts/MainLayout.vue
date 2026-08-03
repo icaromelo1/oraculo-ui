@@ -21,7 +21,7 @@
         </RouterLink>
       </nav>
 
-      <DemoEstados v-if="ehDesenvolvimento && naTelaDeChat" />
+      <DemoEstados v-if="mostrarDemo && naTelaDeChat" />
 
       <div class="espacador" />
 
@@ -44,7 +44,7 @@ import { useSessaoStore } from '@/stores/sessao';
 const sessao = useSessaoStore();
 const route = useRoute();
 
-const ehDesenvolvimento = import.meta.env.DEV;
+const mostrarDemo = import.meta.env.DEV || window.location.href.includes('demo');
 const naTelaDeChat = computed(() => route.name === 'chat');
 
 const navegacao = [

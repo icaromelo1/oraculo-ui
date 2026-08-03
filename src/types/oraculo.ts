@@ -7,7 +7,12 @@ export type TipoFonte = 'curado' | 'doc' | 'codigo' | 'banco' | 'inferencia';
 export type StatusCapacidade = 'permitida' | 'aprovacao' | 'desligada' | 'negada';
 
 export type NomeFerramenta =
-  'buscar_conhecimento' | 'ler_arquivo' | 'consultar_banco' | 'ler_documento' | 'estado_servicos';
+  | 'buscar_conhecimento'
+  | 'buscar_codigo'
+  | 'ler_arquivo'
+  | 'consultar_banco'
+  | 'ler_documento'
+  | 'estado_servicos';
 
 export type StatusFerramenta = 'concluida' | 'executando' | 'na_fila' | 'bloqueada' | 'erro';
 

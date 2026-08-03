@@ -166,6 +166,7 @@ function classeValor(campo: string, valor: string) {
       color: var(--blue);
     }
 
+    &--buscar_codigo,
     &--ler_arquivo {
       color: var(--green);
     }

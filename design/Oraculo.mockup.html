@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root, [data-theme="dark"] {
+  --bg:#0a0c0e; --panel:#0f1317; --panel2:#141a1f; --panel3:#1a2127;
+  --line:#212a31; --line2:#2d3842;
+  --txt:#dbe3ea; --txt2:#95a1ad; --txt3:#66727e;
+  --acc:#3fb6a8; --acc-b:#0f2b2a; --acc-l:#1e4f4b;
+  --gold:#d5a12b; --gold-b:#2a2110; --gold-l:#54421a;
+  --blue:#4d9bf0; --blue-b:#0f1f31; --blue-l:#1e3d5c;
+  --green:#4dbd80; --green-b:#0f2419; --green-l:#1e4630;
+  --gray:#8b96a1; --gray-b:#191f24; --gray-l:#2c353d;
+  --warn:#e0872d; --warn-b:#2a1c0d; --warn-l:#5a3b16;
+  --err:#e0574f; --err-b:#2a1211; --err-l:#5a2422;
+  --sel:#16202a;
+}
+[data-theme="light"] {
+  --bg:#f1f3f5; --panel:#ffffff; --panel2:#f6f7f9; --panel3:#eceff2;
+  --line:#dde2e7; --line2:#c6ced6;
+  --txt:#101820; --txt2:#57626d; --txt3:#7f8b96;
+  --acc:#0f7a70; --acc-b:#e2f4f2; --acc-l:#a9d9d4;
+  --gold:#8a6410; --gold-b:#faf1dc; --gold-l:#e0cb98;
+  --blue:#1a5fa8; --blue-b:#e6f0fb; --blue-l:#b3cdea;
+  --green:#1c7a4c; --green-b:#e5f5ec; --green-l:#aedbc3;
+  --gray:#5d6873; --gray-b:#eef0f2; --gray-l:#ccd3d9;
+  --warn:#9a5a09; --warn-b:#fcf0e0; --warn-l:#e6c799;
+  --err:#a52f28; --err-b:#fdeceb; --err-l:#eebcb8;
+  --sel:#e8eef4;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:#0a0c0e; font-family:'IBM Plex Sans',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+a { color:var(--acc); text-decoration:none; }
+a:hover { color:var(--acc); text-decoration:underline; }
+input, button, select { font-family:inherit; }
+::-webkit-scrollbar { width:9px; height:9px; }
+::-webkit-scrollbar-thumb { background:var(--line2); border-radius:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+@keyframes ocaret { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+@keyframes ospin { to { transform:rotate(360deg) } }
+@keyframes opulse { 0%,100%{opacity:.35} 50%{opacity:1} }
+@keyframes obar { 0%{transform:translateX(-100%)} 100%{transform:translateX(300%)} }
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" style="height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--txt);font-size:13px;line-height:1.5;overflow:hidden">
+
+  <div style="display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;min-height:42px;padding:6px 12px;background:var(--panel);border-bottom:1px solid var(--line);flex:none;z-index:40">
+    <div style="display:flex;align-items:center;gap:8px;padding-right:12px;border-right:1px solid var(--line)">
+      <div style="width:15px;height:15px;border:1.5px solid var(--acc);border-radius:2px;position:relative"><div style="position:absolute;inset:3px;background:var(--acc);border-radius:1px"></div></div>
+      <span style="font:600 12px/1 'JetBrains Mono',monospace;letter-spacing:.06em;color:var(--txt)">ORÁCULO</span>
+      <span style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)">mockup v0.4</span>
+    </div>
+    <div style="display:flex;gap:2px">
+      <button onClick="{{ nav.login }}" style="background:{{ tb.login }};color:{{ tc.login }};border:1px solid {{ tl.login }};border-radius:3px;padding:4px 9px;font:500 11px/1 'JetBrains Mono',monospace;cursor:pointer;letter-spacing:.03em">login</button>
+      <button onClick="{{ nav.chat }}" style="background:{{ tb.chat }};color:{{ tc.chat }};border:1px solid {{ tl.chat }};border-radius:3px;padding:4px 9px;font:500 11px/1 'JetBrains Mono',monospace;cursor:pointer;letter-spacing:.03em">chat</button>
+      <button onClick="{{ nav.audit }}" style="background:{{ tb.audit }};color:{{ tc.audit }};border:1px solid {{ tl.audit }};border-radius:3px;padding:4px 9px;font:500 11px/1 'JetBrains Mono',monospace;cursor:pointer;letter-spacing:.03em">auditoria</button>
+      <button onClick="{{ nav.perfis }}" style="background:{{ tb.perfis }};color:{{ tc.perfis }};border:1px solid {{ tl.perfis }};border-radius:3px;padding:4px 9px;font:500 11px/1 'JetBrains Mono',monospace;cursor:pointer;letter-spacing:.03em">perfis</button>
+      <button onClick="{{ nav.mobile }}" style="background:{{ tb.mobile }};color:{{ tc.mobile }};border:1px solid {{ tl.mobile }};border-radius:3px;padding:4px 9px;font:500 11px/1 'JetBrains Mono',monospace;cursor:pointer;letter-spacing:.03em">celular</button>
+    </div>
+    <sc-if value="{{ isChat }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-left:2px;padding-left:12px;border-left:1px solid var(--line)">
+        <span style="font:500 10px/1 'JetBrains Mono',monospace;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase">estado</span>
+        <button onClick="{{ st.resolvida }}" style="background:{{ sb.resolvida }};color:{{ sc2.resolvida }};border:1px solid {{ sl.resolvida }};border-radius:3px;padding:3px 7px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap">resposta completa</button>
+        <button onClick="{{ st.streaming }}" style="background:{{ sb.streaming }};color:{{ sc2.streaming }};border:1px solid {{ sl.streaming }};border-radius:3px;padding:3px 7px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap">streaming</button>
+        <button onClick="{{ st.tool }}" style="background:{{ sb.tool }};color:{{ sc2.tool }};border:1px solid {{ sl.tool }};border-radius:3px;padding:3px 7px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap">executando</button>
+        <button onClick="{{ st.aprovacao }}" style="background:{{ sb.aprovacao }};color:{{ sc2.aprovacao }};border:1px solid {{ sl.aprovacao }};border-radius:3px;padding:3px 7px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap">aprovação</button>
+        <button onClick="{{ st.vazio }}" style="background:{{ sb.vazio }};color:{{ sc2.vazio }};border:1px solid {{ sl.vazio }};border-radius:3px;padding:3px 7px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap">sem resultado</button>
+        <button onClick="{{ st.oculto }}" style="background:{{ sb.oculto }};color:{{ sc2.oculto }};border:1px solid {{ sl.oculto }};border-radius:3px;padding:3px 7px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap">trecho oculto</button>
+        <button onClick="{{ st.bloqueado }}" style="background:{{ sb.bloqueado }};color:{{ sc2.bloqueado }};border:1px solid {{ sl.bloqueado }};border-radius:3px;padding:3px 7px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap">bloqueado</button>
+        <button onClick="{{ st.erro }}" style="background:{{ sb.erro }};color:{{ sc2.erro }};border:1px solid {{ sl.erro }};border-radius:3px;padding:3px 7px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap">modelo indisponível</button>
+      </div>
+    </sc-if>
+    <div style="flex:1"></div>
+    <button onClick="{{ toggleTheme }}" style="background:var(--panel2);color:var(--txt2);border:1px solid var(--line);border-radius:3px;padding:4px 9px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;flex:none;white-space:nowrap" style-hover="border-color:var(--line2);color:var(--txt)">tema: {{ theme }}</button>
+  </div>
+
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:24px">
+      <div style="display:grid;grid-template-columns:minmax(0,360px) minmax(0,340px);gap:0;border:1px solid var(--line);border-radius:5px;overflow:hidden;background:var(--panel)">
+        <div style="padding:32px 30px;border-right:1px solid var(--line)">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+            <div style="width:17px;height:17px;border:1.5px solid var(--acc);border-radius:2px;position:relative"><div style="position:absolute;inset:3.5px;background:var(--acc);border-radius:1px"></div></div>
+            <span style="font:600 15px/1 'JetBrains Mono',monospace;letter-spacing:.05em">ORÁCULO</span>
+          </div>
+          <p style="margin:0 0 26px;color:var(--txt3);font:400 12px/1.5 'JetBrains Mono',monospace">assistente técnico · infraestrutura DSG</p>
+          <label style="display:block;font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt2);margin-bottom:6px">usuário</label>
+          <input value="r.mendes" style="width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:3px;padding:8px 10px;color:var(--txt);font:400 13px/1.2 'JetBrains Mono',monospace;margin-bottom:16px;outline:none" style-focus="border-color:var(--acc)" />
+          <label style="display:block;font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt2);margin-bottom:6px">senha</label>
+          <input type="password" value="0123456789" style="width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:3px;padding:8px 10px;color:var(--txt);font:400 13px/1.2 'JetBrains Mono',monospace;margin-bottom:8px;outline:none" style-focus="border-color:var(--acc)" />
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+            <label style="display:flex;align-items:center;gap:6px;color:var(--txt2);font-size:12px;cursor:pointer"><input type="checkbox" checked="{{ true }}" style="accent-color:var(--acc);margin:0" />manter sessão neste terminal</label>
+            <a href="#" style="font-size:12px;color:var(--txt3)">esqueci a senha</a>
+          </div>
+          <button onClick="{{ nav.chat }}" style="width:100%;background:var(--acc);color:#04100f;border:none;border-radius:3px;padding:10px;font:600 12px/1 'JetBrains Mono',monospace;letter-spacing:.06em;cursor:pointer" style-hover="filter:brightness(1.1)">ENTRAR</button>
+          <p style="margin:14px 0 0;color:var(--txt3);font-size:11.5px;text-wrap:pretty">Autenticação pelo diretório interno. Sessões expiram em 12&nbsp;h de inatividade e ficam registradas na auditoria.</p>
+        </div>
+        <div style="padding:32px 26px;background:var(--panel2)">
+          <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:14px">estado da instalação</div>
+          <div style="display:flex;flex-direction:column;gap:1px;border:1px solid var(--line);border-radius:4px;overflow:hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--panel)"><span style="font:400 12px/1 'JetBrains Mono',monospace;color:var(--txt2)">api-oraculo</span><span style="display:flex;align-items:center;gap:6px;font:400 11px/1 'JetBrains Mono',monospace;color:var(--green)"><i style="width:6px;height:6px;border-radius:50%;background:var(--green)"></i>online · 38 ms</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--panel)"><span style="font:400 12px/1 'JetBrains Mono',monospace;color:var(--txt2)">modelo local</span><span style="display:flex;align-items:center;gap:6px;font:400 11px/1 'JetBrains Mono',monospace;color:var(--green)"><i style="width:6px;height:6px;border-radius:50%;background:var(--green)"></i>oraculo-32b</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--panel)"><span style="font:400 12px/1 'JetBrains Mono',monospace;color:var(--txt2)">índice de conhecimento</span><span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt3)">há 11 min</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--panel)"><span style="font:400 12px/1 'JetBrains Mono',monospace;color:var(--txt2)">repositórios indexados</span><span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt3)">41 / 41</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--panel)"><span style="font:400 12px/1 'JetBrains Mono',monospace;color:var(--txt2)">execução de shell</span><span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt3)">desligada</span></div>
+          </div>
+          <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line);color:var(--txt3);font:400 11px/1.6 'JetBrains Mono',monospace">
+            <div>build 2026.08.02-1a7c39f</div>
+            <div>base: pgvector 0.7 · 1.2 M trechos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isChat }}" hint-placeholder-val="{{ true }}">
+    <div style="display:grid;grid-template-columns:{{ chatCols }};flex:1;min-height:0;position:relative">
+
+      <sc-if value="{{ showLeft }}" hint-placeholder-val="{{ true }}">
+      <aside style="border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow:hidden">
+        <div style="padding:10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
+          <button style="display:flex;align-items:center;justify-content:space-between;background:var(--panel2);border:1px solid var(--line2);border-radius:3px;padding:7px 9px;color:var(--txt);font:500 12px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="border-color:var(--acc);color:var(--acc)"><span>+ nova conversa</span><span style="color:var(--txt3);font-size:10px">⌘K</span></button>
+          <input placeholder="filtrar conversas…" style="background:var(--bg);border:1px solid var(--line);border-radius:3px;padding:6px 8px;color:var(--txt);font:400 12px/1.2 'JetBrains Mono',monospace;outline:none" style-focus="border-color:var(--line2)" />
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:8px 6px">
+          <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);padding:6px 8px">hoje</div>
+          <div style="padding:8px 9px;border-radius:3px;background:var(--sel);border-left:2px solid var(--acc);margin-bottom:2px;cursor:pointer">
+            <div style="color:var(--txt);font-size:12.5px;margin-bottom:3px">Reprocessamento de lotes na ingestão de NF-e</div>
+            <div style="display:flex;gap:8px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span>14:22</span><span>6 fontes</span><span>4 ferramentas</span></div>
+          </div>
+          <div style="padding:8px 9px;border-radius:3px;margin-bottom:2px;cursor:pointer" style-hover="background:var(--panel2)">
+            <div style="color:var(--txt2);font-size:12.5px;margin-bottom:3px">Diferença entre fila retry e fila dlq no barramento</div>
+            <div style="display:flex;gap:8px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span>11:07</span><span>3 fontes</span></div>
+          </div>
+          <div style="padding:8px 9px;border-radius:3px;margin-bottom:2px;cursor:pointer" style-hover="background:var(--panel2)">
+            <div style="color:var(--txt2);font-size:12.5px;margin-bottom:3px">Quem mantém o serviço de autenticação legado?</div>
+            <div style="display:flex;gap:8px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span>09:48</span><span>2 fontes</span></div>
+          </div>
+          <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);padding:12px 8px 6px">ontem</div>
+          <div style="padding:8px 9px;border-radius:3px;margin-bottom:2px;cursor:pointer" style-hover="background:var(--panel2)">
+            <div style="color:var(--txt2);font-size:12.5px;margin-bottom:3px">Migração 0142 travou em produção — rollback</div>
+            <div style="display:flex;gap:8px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span>18:31</span><span>9 fontes</span><span style="color:var(--warn)">1 aprovação</span></div>
+          </div>
+          <div style="padding:8px 9px;border-radius:3px;margin-bottom:2px;cursor:pointer" style-hover="background:var(--panel2)">
+            <div style="color:var(--txt2);font-size:12.5px;margin-bottom:3px">Como o cache de tabelas de domínio invalida?</div>
+            <div style="display:flex;gap:8px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span>16:02</span><span>5 fontes</span></div>
+          </div>
+          <div style="padding:8px 9px;border-radius:3px;margin-bottom:2px;cursor:pointer" style-hover="background:var(--panel2)">
+            <div style="color:var(--txt2);font-size:12.5px;margin-bottom:3px">Contratos de integração com a folha CAST</div>
+            <div style="display:flex;gap:8px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span>10:55</span><span>4 fontes</span><span style="color:var(--err)">1 bloqueio</span></div>
+          </div>
+          <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);padding:12px 8px 6px">7 dias</div>
+          <div style="padding:8px 9px;border-radius:3px;margin-bottom:2px;cursor:pointer" style-hover="background:var(--panel2)">
+            <div style="color:var(--txt2);font-size:12.5px;margin-bottom:3px">Padrão de log estruturado adotado pelo time</div>
+            <div style="display:flex;gap:8px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span>29 jul</span><span>7 fontes</span></div>
+          </div>
+          <div style="padding:8px 9px;border-radius:3px;cursor:pointer" style-hover="background:var(--panel2)">
+            <div style="color:var(--txt2);font-size:12.5px;margin-bottom:3px">Timeout do gateway em picos de emissão</div>
+            <div style="display:flex;gap:8px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span>28 jul</span><span>11 fontes</span></div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--line);padding:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <span style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3)">capacidades</span>
+            <span style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)">perfil: suporte n2</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:7px;font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)"><i style="width:5px;height:5px;border-radius:50%;background:var(--green);flex:none"></i>busca documental</div>
+            <div style="display:flex;align-items:center;gap:7px;font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)"><i style="width:5px;height:5px;border-radius:50%;background:var(--green);flex:none"></i>conhecimento curado</div>
+            <div style="display:flex;align-items:center;gap:7px;font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)"><i style="width:5px;height:5px;border-radius:50%;background:var(--green);flex:none"></i>leitura de código · 41 repos</div>
+            <div style="display:flex;align-items:center;gap:7px;font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)"><i style="width:5px;height:5px;border-radius:50%;background:var(--warn);flex:none"></i>sql somente-leitura <span style="color:var(--warn);font-size:10.5px">requer aprovação</span></div>
+            <div style="display:flex;align-items:center;gap:7px;font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><i style="width:5px;height:5px;border-radius:50%;border:1px solid var(--txt3);flex:none"></i>comando de shell <span style="font-size:10.5px">desligada aqui</span></div>
+            <div style="display:flex;align-items:center;gap:7px;font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span style="color:var(--err);font-size:11px;width:5px;flex:none;text-align:center">×</span>dados de pessoal <span style="font-size:10.5px;color:var(--err)">negado ao perfil</span></div>
+          </div>
+        </div>
+      </aside>
+      </sc-if>
+
+      <main style="display:flex;flex-direction:column;overflow:hidden;background:var(--bg)">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 12px;height:40px;min-height:40px;border-bottom:1px solid var(--line);background:var(--panel);overflow-x:auto;overflow-y:hidden;white-space:nowrap">
+          <sc-if value="{{ hideLeft }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ toggleLeft }}" style="background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--txt2);padding:4px 8px;font:400 12px/1 'JetBrains Mono',monospace;cursor:pointer;flex:none" style-hover="color:var(--txt);border-color:var(--line2)">☰ conversas</button>
+          </sc-if>
+          <div style="display:flex;align-items:center;gap:0;border:1px solid var(--line2);border-radius:3px;overflow:hidden;flex:none">
+            <button style="background:var(--panel2);color:var(--txt3);border:none;padding:5px 9px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer">Pessoal</button>
+            <button style="background:var(--acc-b);color:var(--acc);border:none;border-left:1px solid var(--line2);border-right:1px solid var(--line2);padding:5px 9px;font:500 11px/1 'JetBrains Mono',monospace;cursor:pointer">DSG</button>
+            <button style="background:var(--panel2);color:var(--txt3);border:none;padding:5px 9px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer">CAST</button>
+          </div>
+          <span style="color:var(--line2);flex:none">|</span>
+          <div style="display:flex;align-items:center;gap:6px;font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt2);flex:none;white-space:nowrap">
+            <i style="width:6px;height:6px;border-radius:50%;background:var(--green);flex:none"></i>
+            <span style="color:var(--txt)">oraculo-32b</span><span style="color:var(--txt3)">local · ctx 32k · 41 repos</span>
+          </div>
+          <div style="flex:1 0 12px"></div>
+          <span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt3);flex:0 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Reprocessamento de lotes na ingestão de NF-e</span>
+          <sc-if value="{{ showRightBtn }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ toggleRight }}" style="background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--txt2);padding:4px 8px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer;flex:none;white-space:nowrap" style-hover="color:var(--txt);border-color:var(--line2)">{{ rightBtnLabel }}</button>
+          </sc-if>
+        </div>
+
+        <div style="flex:1;overflow-y:auto;padding:20px 24px 8px">
+          <div style="max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:22px">
+
+            <div>
+              <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px">r.mendes · 14:22</div>
+              <div style="background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:10px 12px;font-size:14px;color:var(--txt)">Por que o serviço de ingestão de NF-e está reprocessando os mesmos lotes desde ontem à noite?</div>
+            </div>
+
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--acc)">oráculo</span>
+                <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">oraculo-32b · 4 ferramentas · 3,8 s · 6 fontes</span>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px">
+                <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel)">
+                  <div style="display:flex;align-items:center;gap:8px;padding:6px 9px;cursor:pointer">
+                    <span style="color:var(--txt3);font-size:10px">▸</span>
+                    <span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--blue)">busca_documentos</span>
+                    <span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">"reprocessamento lote nfe idempotência"</span>
+                    <div style="flex:1"></div>
+                    <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">7 trechos · 412 ms</span>
+                  </div>
+                </div>
+                <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel)">
+                  <div style="display:flex;align-items:center;gap:8px;padding:6px 9px;cursor:pointer">
+                    <span style="color:var(--txt3);font-size:10px">▸</span>
+                    <span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--green)">ler_codigo</span>
+                    <span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">dsg-fiscal-ingestao/src/lote/LoteWorker.java:88-140</span>
+                    <div style="flex:1"></div>
+                    <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">53 linhas · 96 ms</span>
+                  </div>
+                </div>
+                <div style="border:1px solid var(--warn-l);border-radius:3px;background:var(--panel)">
+                  <div style="display:flex;align-items:center;gap:8px;padding:6px 9px;cursor:pointer;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--txt3);font-size:10px">▾</span>
+                    <span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--gold)">consulta_sql</span>
+                    <span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">fiscal_prod · somente-leitura</span>
+                    <div style="flex:1"></div>
+                    <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--warn)">aprovado por t.aguiar</span>
+                    <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">2,1 s</span>
+                  </div>
+                  <pre style="margin:0;padding:9px 11px;background:var(--bg);font:400 11.5px/1.65 'JetBrains Mono',monospace;color:var(--txt2);overflow-x:auto;border-bottom:1px solid var(--line);white-space:pre-wrap"><div><span style="color:var(--blue)">select</span> l.id, l.status, l.tentativas, <span style="color:var(--blue)">max</span>(e.criado_em) <span style="color:var(--blue)">as</span> ultima</div><div><span style="color:var(--blue)">from</span> lote l <span style="color:var(--blue)">join</span> lote_evento e <span style="color:var(--blue)">on</span> e.lote_id = l.id</div><div><span style="color:var(--blue)">where</span> l.status <span style="color:var(--blue)">in</span> (<span style="color:var(--green)">'RETRY'</span>,<span style="color:var(--green)">'ERRO'</span>) <span style="color:var(--blue)">and</span> l.criado_em &gt; now() - <span style="color:var(--green)">interval '36 hours'</span></div><div><span style="color:var(--blue)">group by</span> <span style="color:var(--gold)">1</span>,<span style="color:var(--gold)">2</span>,<span style="color:var(--gold)">3</span> <span style="color:var(--blue)">order by</span> l.tentativas <span style="color:var(--blue)">desc</span> <span style="color:var(--blue)">limit</span> <span style="color:var(--gold)">5</span>;</div></pre>
+                  <div style="padding:0;overflow-x:auto">
+                    <table style="width:100%;border-collapse:collapse;font:400 11.5px/1 'JetBrains Mono',monospace">
+                      <thead><tr style="background:var(--panel2)"><th style="text-align:left;padding:5px 11px;color:var(--txt3);font-weight:500;border-bottom:1px solid var(--line)">id</th><th style="text-align:left;padding:5px 11px;color:var(--txt3);font-weight:500;border-bottom:1px solid var(--line)">status</th><th style="text-align:right;padding:5px 11px;color:var(--txt3);font-weight:500;border-bottom:1px solid var(--line)">tentativas</th><th style="text-align:left;padding:5px 11px;color:var(--txt3);font-weight:500;border-bottom:1px solid var(--line)">ultima</th></tr></thead>
+                      <tbody>
+                        <tr><td style="padding:5px 11px;color:var(--txt2)">884213</td><td style="padding:5px 11px;color:var(--warn)">RETRY</td><td style="padding:5px 11px;text-align:right;color:var(--txt)">147</td><td style="padding:5px 11px;color:var(--txt3)">2026-08-03 14:19:58</td></tr>
+                        <tr><td style="padding:5px 11px;color:var(--txt2)">884198</td><td style="padding:5px 11px;color:var(--warn)">RETRY</td><td style="padding:5px 11px;text-align:right;color:var(--txt)">146</td><td style="padding:5px 11px;color:var(--txt3)">2026-08-03 14:19:51</td></tr>
+                        <tr><td style="padding:5px 11px;color:var(--txt2)">884176</td><td style="padding:5px 11px;color:var(--err)">ERRO</td><td style="padding:5px 11px;text-align:right;color:var(--txt)">12</td><td style="padding:5px 11px;color:var(--txt3)">2026-08-03 03:41:02</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div style="padding:5px 11px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3);background:var(--panel2)">3 linhas · plano: index scan lote_status_idx · sem escrita</div>
+                </div>
+                <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel)">
+                  <div style="display:flex;align-items:center;gap:8px;padding:6px 9px;cursor:pointer">
+                    <span style="color:var(--txt3);font-size:10px">▸</span>
+                    <span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--gray)">conhecimento_curado</span>
+                    <span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">nota de t.aguiar · "lote preso em RETRY"</span>
+                    <div style="flex:1"></div>
+                    <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">1 nota · 88 ms</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="font-size:14px;color:var(--txt);max-width:76ch;text-wrap:pretty">
+                <p style="margin:0 0 11px">Os lotes não estão falhando por erro de negócio: eles estão sendo <b style="font-weight:600">reenfileirados indefinidamente</b> porque o contador de tentativas nunca é gravado quando o worker morre por timeout de conexão.</p>
+                <p style="margin:0 0 11px">O <code style="font:400 12.5px/1 'JetBrains Mono',monospace;background:var(--panel2);border:1px solid var(--line);border-radius:2px;padding:1px 4px">LoteWorker</code> incrementa <code style="font:400 12.5px/1 'JetBrains Mono',monospace;background:var(--panel2);border:1px solid var(--line);border-radius:2px;padding:1px 4px">tentativas</code> dentro da mesma transação que o processamento, então o rollback desfaz o incremento junto <button onClick="{{ cites.c1 }}" style="display:inline-flex;align-items:center;gap:4px;padding:1px 5px;border-radius:3px;font:500 11px/1.4 'JetBrains Mono',monospace;border:1px solid var(--green-l);color:var(--green);background:var(--green-b);cursor:pointer;vertical-align:baseline" style-hover="filter:brightness(1.35)">código · LoteWorker.java:112</button>. O limite de 5 tentativas do barramento, por isso, nunca é atingido <button onClick="{{ cites.c2 }}" style="display:inline-flex;align-items:center;gap:4px;padding:1px 5px;border-radius:3px;font:500 11px/1.4 'JetBrains Mono',monospace;border:1px solid var(--blue-l);color:var(--blue);background:var(--blue-b);cursor:pointer;vertical-align:baseline" style-hover="filter:brightness(1.35)">doc · Barramento §4.2</button>.</p>
+                <p style="margin:0 0 11px">O lote 884213 já acumulou 147 execuções reais contra 0 tentativas registradas <button onClick="{{ cites.c3 }}" style="display:inline-flex;align-items:center;gap:4px;padding:1px 5px;border-radius:3px;font:500 11px/1.4 'JetBrains Mono',monospace;border:1px solid var(--gold-l);color:var(--gold);background:var(--gold-b);cursor:pointer;vertical-align:baseline" style-hover="filter:brightness(1.35)">banco · fiscal_prod.lote</button>. O padrão bate com o caso que a Tereza documentou em maio: o gatilho é sempre uma queda de conexão com a SEFAZ acima de 30 s <button onClick="{{ cites.c4 }}" style="display:inline-flex;align-items:center;gap:4px;padding:1px 5px;border-radius:3px;font:500 11px/1.4 'JetBrains Mono',monospace;border:1px solid var(--gray-l);color:var(--gray);background:var(--gray-b);cursor:pointer;vertical-align:baseline" style-hover="filter:brightness(1.35)">nota · t.aguiar</button>.</p>
+                <p style="margin:0 0 6px;color:var(--txt2)">Contenção sugerida, na ordem em que a Tereza aplicou:</p>
+                <ol style="margin:0 0 11px;padding-left:20px;color:var(--txt);display:flex;flex-direction:column;gap:4px">
+                  <li>pausar o consumidor <code style="font:400 12.5px/1 'JetBrains Mono',monospace;background:var(--panel2);border:1px solid var(--line);border-radius:2px;padding:1px 4px">nfe.lote.retry</code>;</li>
+                  <li>mover os 3 lotes presos para a DLQ manualmente;</li>
+                  <li>subir o incremento de tentativas para uma transação própria (commit antes do processamento).</li>
+                </ol>
+                <p style="margin:0;padding:8px 10px;border:1px dashed var(--gray-l);border-radius:3px;color:var(--txt2);font-size:13px">A causa da queda de conexão com a SEFAZ não está em nenhuma fonte consultada — isto é <b style="font-weight:600;color:var(--gray)">inferência</b> por correlação de horário entre os eventos de lote e os erros de socket no log do gateway.</p>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:12px;margin-top:12px;padding-top:9px;border-top:1px solid var(--line);font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">
+                <span>2 890 tok · 3,8 s</span>
+                <span>fontes: 2 código · 2 doc · 1 banco · 1 curado</span>
+                <div style="flex:1"></div>
+                <button style="background:none;border:none;color:var(--txt3);cursor:pointer;font:inherit" style-hover="color:var(--txt)">copiar</button>
+                <button style="background:none;border:none;color:var(--txt3);cursor:pointer;font:inherit" style-hover="color:var(--txt)">exportar trilha</button>
+                <button style="background:none;border:none;color:var(--txt3);cursor:pointer;font:inherit" style-hover="color:var(--txt)">refazer sem cache</button>
+              </div>
+            </div>
+
+            <sc-if value="{{ hasFollowUp }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px">r.mendes · 14:26</div>
+                <div style="background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:10px 12px;font-size:14px;color:var(--txt)">{{ followUpText }}</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isStreaming }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--acc)">oráculo</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)"><i style="width:5px;height:5px;border-radius:50%;background:var(--acc);animation:opulse 1.1s infinite"></i>gerando · 2 ferramentas concluídas · 41 tok/s</span>
+                  <button style="background:none;border:1px solid var(--line);border-radius:3px;color:var(--txt3);padding:2px 6px;font:400 10.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--err);border-color:var(--err-l)">interromper ⎋</button>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px">
+                  <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel);display:flex;align-items:center;gap:8px;padding:6px 9px"><span style="color:var(--txt3);font-size:10px">▸</span><span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--blue)">busca_documentos</span><span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">"dlq nfe drenar procedimento"</span><div style="flex:1"></div><span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">4 trechos · 380 ms</span></div>
+                  <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel);display:flex;align-items:center;gap:8px;padding:6px 9px"><span style="color:var(--txt3);font-size:10px">▸</span><span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--green)">ler_codigo</span><span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">dsg-barramento/scripts/drain_dlq.sh</span><div style="flex:1"></div><span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">31 linhas · 74 ms</span></div>
+                </div>
+                <div style="font-size:14px;color:var(--txt);max-width:76ch;text-wrap:pretty">
+                  <p style="margin:0">Drenar a DLQ é seguro desde que nenhum consumidor esteja ativo na fila de origem. O procedimento homologado tem três etapas: confirmar que <code style="font:400 12.5px/1 'JetBrains Mono',monospace;background:var(--panel2);border:1px solid var(--line);border-radius:2px;padding:1px 4px">nfe.lote.retry</code> está pausado <button onClick="{{ cites.c2 }}" style="display:inline-flex;align-items:center;gap:4px;padding:1px 5px;border-radius:3px;font:500 11px/1.4 'JetBrains Mono',monospace;border:1px solid var(--blue-l);color:var(--blue);background:var(--blue-b);cursor:pointer;vertical-align:baseline">doc · Barramento §4.2</button>, exportar as mensagens para o bucket de quarentena e<span style="display:inline-block;width:7px;height:15px;background:var(--acc);vertical-align:-3px;margin-left:2px;animation:ocaret 1s step-end infinite"></span></p>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isTool }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--acc)">oráculo</span>
+                  <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">reunindo evidências · etapa 3 de 4</span>
+                  <button style="background:none;border:1px solid var(--line);border-radius:3px;color:var(--txt3);padding:2px 6px;font:400 10.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--err);border-color:var(--err-l)">interromper ⎋</button>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel);display:flex;align-items:center;gap:8px;padding:6px 9px"><span style="color:var(--green);font-size:11px">✓</span><span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--blue)">busca_documentos</span><span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">"dlq nfe drenar procedimento"</span><div style="flex:1"></div><span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">4 trechos · 380 ms</span></div>
+                  <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel);display:flex;align-items:center;gap:8px;padding:6px 9px"><span style="color:var(--green);font-size:11px">✓</span><span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--gray)">conhecimento_curado</span><span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">runbook "drenagem de DLQ fiscal"</span><div style="flex:1"></div><span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">1 nota · 92 ms</span></div>
+                  <div style="border:1px solid var(--acc-l);border-radius:3px;background:var(--panel);overflow:hidden">
+                    <div style="display:flex;align-items:center;gap:8px;padding:6px 9px;border-bottom:1px solid var(--line)">
+                      <i style="width:10px;height:10px;border:1.5px solid var(--acc);border-top-color:transparent;border-radius:50%;animation:ospin .7s linear infinite;flex:none"></i>
+                      <span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--green)">ler_codigo</span>
+                      <span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">dsg-barramento/scripts/drain_dlq.sh</span>
+                      <div style="flex:1"></div>
+                      <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--acc)">em execução · 1,2 s</span>
+                    </div>
+                    <div style="height:2px;background:var(--panel3);overflow:hidden"><div style="width:33%;height:100%;background:var(--acc);animation:obar 1.4s ease-in-out infinite"></div></div>
+                    <div style="padding:6px 9px;font:400 11px/1.7 'JetBrains Mono',monospace;color:var(--txt3)">resolvendo repositório dsg-barramento @ main (1a7c39f) → abrindo scripts/drain_dlq.sh</div>
+                  </div>
+                  <div style="border:1px dashed var(--line);border-radius:3px;display:flex;align-items:center;gap:8px;padding:6px 9px;opacity:.55"><span style="color:var(--txt3);font-size:10px">·</span><span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">consulta_sql</span><span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">na fila · exigirá aprovação</span></div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isAprovacao }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--acc)">oráculo</span>
+                  <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">pausado · aguardando você</span>
+                </div>
+                <div style="font-size:14px;color:var(--txt);max-width:76ch;margin-bottom:12px">Para confirmar se o consumidor já está pausado eu preciso ler o estado da fila no barramento de produção. Essa é uma ação sensível: revise o comando literal antes de liberar.</div>
+                <div style="border:1px solid var(--warn-l);border-radius:4px;background:var(--panel);overflow:hidden">
+                  <div style="display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--warn-b);border-bottom:1px solid var(--warn-l)">
+                    <span style="font:600 10.5px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)">aprovação necessária</span>
+                    <span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt2)">shell · alvo bus-prod-02</span>
+                    <div style="flex:1"></div>
+                    <span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt3)">expira em 04:38</span>
+                  </div>
+                  <div style="padding:11px">
+                    <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px">comando literal</div>
+                    <pre style="margin:0 0 11px;padding:9px 11px;background:var(--bg);border:1px solid var(--line);border-radius:3px;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:var(--txt);overflow-x:auto;white-space:pre-wrap"><div>ssh ops@bus-prod-02 \</div><div>  <span style="color:var(--txt2)">'rabbitmqctl list_consumers -p fiscal | grep nfe.lote.retry'</span></div></pre>
+                    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-bottom:12px">
+                      <div style="background:var(--panel2);padding:7px 10px"><div style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3);margin-bottom:3px">quem executa</div><div style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">oráculo como ops (leitura)</div></div>
+                      <div style="background:var(--panel2);padding:7px 10px"><div style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3);margin-bottom:3px">efeito colateral</div><div style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">nenhum · comando de leitura</div></div>
+                      <div style="background:var(--panel2);padding:7px 10px"><div style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3);margin-bottom:3px">política</div><div style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">shell-prod · aprovação por sessão</div></div>
+                      <div style="background:var(--panel2);padding:7px 10px"><div style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3);margin-bottom:3px">registro</div><div style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">vai para a auditoria com seu usuário</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                      <button style="background:var(--warn);color:#1a1004;border:none;border-radius:3px;padding:7px 12px;font:600 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="filter:brightness(1.1)">aprovar e executar</button>
+                      <button style="background:var(--panel2);color:var(--txt);border:1px solid var(--line2);border-radius:3px;padding:7px 12px;font:500 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="border-color:var(--txt3)">recusar</button>
+                      <button style="background:none;color:var(--txt2);border:1px solid var(--line);border-radius:3px;padding:7px 12px;font:400 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt)">editar comando</button>
+                      <label style="display:flex;align-items:center;gap:6px;color:var(--txt3);font:400 11.5px/1 'JetBrains Mono',monospace;cursor:pointer;margin-left:auto"><input type="checkbox" style="accent-color:var(--warn);margin:0" />liberar comandos de leitura nesta sessão</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isVazio }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--acc)">oráculo</span>
+                  <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">3 ferramentas · 1,9 s · 0 fontes relevantes</span>
+                </div>
+                <div style="font-size:14px;color:var(--txt);max-width:76ch;margin-bottom:12px;text-wrap:pretty">Não encontrei nada sobre isso na base. <span style="color:var(--txt2)">Prefiro dizer isso a inferir um procedimento de produção.</span></div>
+                <div style="border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden">
+                  <div style="padding:7px 11px;background:var(--panel2);border-bottom:1px solid var(--line);font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3)">onde eu procurei</div>
+                  <div style="display:flex;flex-direction:column">
+                    <div style="display:flex;align-items:center;gap:8px;padding:7px 11px;border-bottom:1px solid var(--line);font:400 11.5px/1 'JetBrains Mono',monospace"><span style="color:var(--blue);width:150px">documentação</span><span style="color:var(--txt2);flex:1">"rotina de expurgo lote fiscal 2019"</span><span style="color:var(--txt3)">0 de 4 210 docs</span></div>
+                    <div style="display:flex;align-items:center;gap:8px;padding:7px 11px;border-bottom:1px solid var(--line);font:400 11.5px/1 'JetBrains Mono',monospace"><span style="color:var(--gray);width:150px">conhecimento curado</span><span style="color:var(--txt2);flex:1">tags: expurgo, fiscal, retenção</span><span style="color:var(--txt3)">0 de 318 notas</span></div>
+                    <div style="display:flex;align-items:center;gap:8px;padding:7px 11px;border-bottom:1px solid var(--line);font:400 11.5px/1 'JetBrains Mono',monospace"><span style="color:var(--green);width:150px">código</span><span style="color:var(--txt2);flex:1">grep "expurgo|purge" em 41 repos</span><span style="color:var(--txt3)">2 falsos positivos</span></div>
+                    <div style="display:flex;align-items:center;gap:8px;padding:7px 11px;font:400 11.5px/1 'JetBrains Mono',monospace"><span style="color:var(--txt3);width:150px">banco</span><span style="color:var(--txt2);flex:1">não consultado — sem tabela candidata</span><span style="color:var(--txt3)">—</span></div>
+                  </div>
+                  <div style="padding:10px 11px;border-top:1px solid var(--line);background:var(--panel2)">
+                    <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);margin-bottom:7px">caminhos possíveis</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--txt2)">
+                      <div>O tema mais próximo indexado é <a href="#">retenção de lotes por competência</a> — 3 documentos, autoria da equipe fiscal.</div>
+                      <div>Quem mexeu em expurgo por último, pelo histórico de commits: <span style="font:400 12px/1 'JetBrains Mono',monospace;color:var(--txt)">t.aguiar</span>, <span style="font:400 12px/1 'JetBrains Mono',monospace;color:var(--txt)">l.freitas</span>.</div>
+                    </div>
+                    <div style="display:flex;gap:7px;margin-top:10px">
+                      <button style="background:var(--panel);color:var(--txt);border:1px solid var(--line2);border-radius:3px;padding:6px 10px;font:500 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="border-color:var(--acc);color:var(--acc)">abrir pedido de curadoria</button>
+                      <button style="background:none;color:var(--txt2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;font:400 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt)">buscar só em código</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isOculto }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--acc)">oráculo</span>
+                  <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">2 ferramentas · 1,4 s · 3 fontes</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;padding:2px 7px;border-radius:3px;border:1px solid var(--gold-l);background:var(--gold-b);color:var(--gold);font:500 10.5px/1 'JetBrains Mono',monospace">1 trecho ocultado</span>
+                </div>
+                <div style="font-size:14px;color:var(--txt);max-width:76ch;text-wrap:pretty">
+                  <p style="margin:0 0 11px">A conexão do worker com a SEFAZ é montada a partir do segredo <code style="font:400 12.5px/1 'JetBrains Mono',monospace;background:var(--panel2);border:1px solid var(--line);border-radius:2px;padding:1px 4px">fiscal/sefaz-mtls</code> no Vault, lido no boot do serviço <button onClick="{{ cites.c1 }}" style="display:inline-flex;align-items:center;gap:4px;padding:1px 5px;border-radius:3px;font:500 11px/1.4 'JetBrains Mono',monospace;border:1px solid var(--green-l);color:var(--green);background:var(--green-b);cursor:pointer;vertical-align:baseline">código · SefazClient.java:41</button>.</p>
+                  <p style="margin:0 0 11px">O certificado em uso vence em 12/09/2026 e a senha do keystore está no bloco abaixo do arquivo de configuração:</p>
+                  <div style="border:1px solid var(--gold-l);border-radius:3px;background:var(--panel);overflow:hidden;margin-bottom:11px">
+                    <pre style="margin:0;padding:9px 11px;font:400 12px/1.7 'JetBrains Mono',monospace;color:var(--txt2);background:var(--bg);white-space:pre-wrap"><div>sefaz.keystore.path=/etc/dsg/sefaz/keystore.p12</div><div>sefaz.keystore.pass=<span style="background:var(--gold-b);border:1px solid var(--gold-l);border-radius:2px;color:var(--gold);padding:0 5px;letter-spacing:.16em">████████████</span></div><div>sefaz.timeout.ms=30000</div></pre>
+                    <div style="display:flex;align-items:center;gap:8px;padding:6px 11px;background:var(--gold-b);border-top:1px solid var(--gold-l);font:400 11px/1.4 'JetBrains Mono',monospace;color:var(--gold);flex-wrap:wrap">
+                      <span>1 valor ocultado pela política <b style="font-weight:600">mascarar-credenciais</b> (LGPD/SEC-04)</span>
+                      <div style="flex:1"></div>
+                      <button style="background:none;border:1px solid var(--gold-l);border-radius:3px;color:var(--gold);padding:3px 8px;font:inherit;cursor:pointer" style-hover="filter:brightness(1.25)">solicitar liberação</button>
+                    </div>
+                  </div>
+                  <p style="margin:0">O timeout de 30 s configurado aqui é exatamente o limite que aparece nas quedas de conexão <button onClick="{{ cites.c3 }}" style="display:inline-flex;align-items:center;gap:4px;padding:1px 5px;border-radius:3px;font:500 11px/1.4 'JetBrains Mono',monospace;border:1px solid var(--gold-l);color:var(--gold);background:var(--gold-b);cursor:pointer;vertical-align:baseline">banco · fiscal_prod.lote</button> — provavelmente é aí que os lotes começam a reprocessar.</p>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isBloqueado }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--acc)">oráculo</span>
+                  <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">1 ferramenta bloqueada · 0,3 s</span>
+                </div>
+                <div style="font-size:14px;color:var(--txt);max-width:76ch;margin-bottom:12px">Consigo responder a parte técnica, mas a pergunta pede o contato do responsável de plantão — isso vem de um dado que seu perfil não alcança.</div>
+                <div style="border:1px solid var(--err-l);border-radius:4px;background:var(--panel);overflow:hidden;margin-bottom:14px">
+                  <div style="display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--err-b);border-bottom:1px solid var(--err-l)">
+                    <span style="font:600 10.5px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--err)">ação bloqueada</span>
+                    <span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt2)">consulta_sql · rh_prod.plantao</span>
+                    <div style="flex:1"></div>
+                    <span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt3)">não executada</span>
+                  </div>
+                  <div style="padding:11px;display:flex;flex-direction:column;gap:9px">
+                    <div style="font:400 11.5px/1.6 'JetBrains Mono',monospace;color:var(--txt2)">capacidade <b style="color:var(--txt);font-weight:600">dados de pessoal</b> está <b style="color:var(--err);font-weight:600">negada</b> para o perfil <b style="color:var(--txt);font-weight:600">suporte n2</b> nesta instalação (DSG).</div>
+                    <div style="display:flex;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;flex-wrap:wrap">
+                      <div style="background:var(--panel2);padding:7px 10px;flex:1;min-width:150px"><div style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3);margin-bottom:3px">regra</div><div style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">perfil.suporte_n2 → deny(dados_pessoal)</div></div>
+                      <div style="background:var(--panel2);padding:7px 10px;flex:1;min-width:150px"><div style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3);margin-bottom:3px">quem libera</div><div style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt2)">admin da instalação · t.aguiar</div></div>
+                    </div>
+                    <div style="display:flex;gap:7px">
+                      <button style="background:var(--panel2);color:var(--txt);border:1px solid var(--line2);border-radius:3px;padding:6px 10px;font:500 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="border-color:var(--acc);color:var(--acc)">solicitar acesso</button>
+                      <button style="background:none;color:var(--txt2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;font:400 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt)">ver política do perfil</button>
+                    </div>
+                  </div>
+                </div>
+                <div style="font-size:14px;color:var(--txt);max-width:76ch;text-wrap:pretty">O que eu <b style="font-weight:600">posso</b> dizer: a escala de plantão do barramento é publicada no calendário da equipe de plataforma e o canal de acionamento é <code style="font:400 12.5px/1 'JetBrains Mono',monospace;background:var(--panel2);border:1px solid var(--line);border-radius:2px;padding:1px 4px">#plantao-plataforma</code> <button onClick="{{ cites.c2 }}" style="display:inline-flex;align-items:center;gap:4px;padding:1px 5px;border-radius:3px;font:500 11px/1.4 'JetBrains Mono',monospace;border:1px solid var(--blue-l);color:var(--blue);background:var(--blue-b);cursor:pointer;vertical-align:baseline">doc · Plantão §1</button>.</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isErro }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--acc)">oráculo</span>
+                  <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--err)">interrompido em 68 % da resposta</span>
+                </div>
+                <div style="border:1px solid var(--err-l);border-radius:4px;background:var(--panel);overflow:hidden">
+                  <div style="display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--err-b);border-bottom:1px solid var(--err-l)">
+                    <span style="font:600 10.5px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--err)">modelo indisponível</span>
+                    <span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt2)">oraculo-32b · gpu-02</span>
+                    <div style="flex:1"></div>
+                    <span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt3)">14:31:07</span>
+                  </div>
+                  <pre style="margin:0;padding:9px 11px;background:var(--bg);border-bottom:1px solid var(--line);font:400 11.5px/1.65 'JetBrains Mono',monospace;color:var(--txt2);overflow-x:auto">POST /v1/chat/completions → 503 upstream_unavailable
+trace 9f2c-41ab · cuda oom após 2 480 tok · tentativa 2 de 2</pre>
+                  <div style="padding:11px;display:flex;flex-direction:column;gap:10px">
+                    <div style="font-size:13px;color:var(--txt2);text-wrap:pretty">As 4 ferramentas já executaram e as evidências estão preservadas — só a redação da resposta caiu. Retomar não vai repetir a consulta ao banco.</div>
+                    <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+                      <button style="background:var(--acc);color:#04100f;border:none;border-radius:3px;padding:7px 12px;font:600 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="filter:brightness(1.1)">retomar do ponto</button>
+                      <button style="background:var(--panel2);color:var(--txt);border:1px solid var(--line2);border-radius:3px;padding:7px 12px;font:500 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="border-color:var(--txt3)">usar oraculo-8b (gpu-01)</button>
+                      <button style="background:none;color:var(--txt2);border:1px solid var(--line);border-radius:3px;padding:7px 12px;font:400 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt)">ver evidências coletadas</button>
+                      <span style="font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt3);margin-left:auto">fila do gpu-02: 3 sessões</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="height:4px"></div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--line);background:var(--panel);padding:10px 24px 12px">
+          <div style="max-width:820px;margin:0 auto">
+            <div style="border:1px solid var(--line2);border-radius:4px;background:var(--bg)">
+              <textarea rows="2" placeholder="pergunte sobre documentação, código, banco ou estado dos serviços…" style="width:100%;background:none;border:none;resize:none;outline:none;color:var(--txt);font:400 13.5px/1.5 'IBM Plex Sans',sans-serif;padding:10px 12px 4px"></textarea>
+              <div style="display:flex;align-items:center;gap:8px;padding:5px 9px 7px;flex-wrap:wrap">
+                <button style="display:flex;align-items:center;gap:5px;background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--txt2);padding:4px 8px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="border-color:var(--line2);color:var(--txt)">escopo: 41 repos + fiscal_prod ▾</button>
+                <button style="display:flex;align-items:center;gap:5px;background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--txt2);padding:4px 8px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="border-color:var(--line2);color:var(--txt)">ferramentas: 4 de 6 ▾</button>
+                <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">shell desligada nesta instalação</span>
+                <div style="flex:1"></div>
+                <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">⏎ envia · ⇧⏎ nova linha</span>
+                <button style="background:var(--acc);color:#04100f;border:none;border-radius:3px;padding:6px 13px;font:600 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="filter:brightness(1.1)">enviar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <sc-if value="{{ dimRight }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ toggleRight }}" style="position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:15"></div>
+      </sc-if>
+      <sc-if value="{{ rightOpen }}" hint-placeholder-val="{{ true }}">
+        <aside style="border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow:hidden;position:{{ asidePos }};top:0;right:0;bottom:0;width:{{ asideW }};max-width:100%;z-index:20;box-shadow:{{ asideShadow }}">
+          <div style="display:flex;align-items:center;gap:8px;height:40px;padding:0 11px;border-bottom:1px solid var(--line)">
+            <span style="font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt2)">{{ panelTitle }}</span>
+            <div style="flex:1"></div>
+            <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ clearSel }}" style="background:none;border:1px solid var(--line);border-radius:3px;color:var(--txt3);padding:3px 7px;font:400 10.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt)">← todas as fontes</button>
+            </sc-if>
+            <button onClick="{{ toggleRight }}" style="background:none;border:none;color:var(--txt3);font-size:14px;cursor:pointer;line-height:1">×</button>
+          </div>
+
+          <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;overflow-y:auto">
+              <div style="padding:11px;border-bottom:1px solid var(--line)">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap">
+                  <span style="padding:2px 6px;border-radius:3px;font:500 10px/1.4 'JetBrains Mono',monospace;border:1px solid {{ sel.line }};color:{{ sel.color }};background:{{ sel.bg }}">{{ sel.kind }}</span>
+                  <span style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">autoridade {{ sel.rank }} de 4</span>
+                </div>
+                <div style="font:500 12.5px/1.4 'JetBrains Mono',monospace;color:var(--txt);word-break:break-all;margin-bottom:5px">{{ sel.path }}</div>
+                <div style="font:400 11px/1.6 'JetBrains Mono',monospace;color:var(--txt3)">{{ sel.meta }}</div>
+              </div>
+              <div style="padding:11px;border-bottom:1px solid var(--line)">
+                <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:7px">trecho exato</div>
+                <div style="border:1px solid var(--line);border-radius:3px;background:var(--bg);overflow-x:auto">
+                  <sc-for list="{{ sel.lines }}" as="ln" hint-placeholder-count="6">
+                    <div style="display:flex;gap:0;background:{{ ln.bg }}">
+                      <span style="width:38px;flex:none;text-align:right;padding:1px 8px 1px 0;font:400 11px/1.7 'JetBrains Mono',monospace;color:var(--txt3);user-select:none">{{ ln.n }}</span>
+                      <span style="padding:1px 9px 1px 0;font:400 11.5px/1.7 'JetBrains Mono',monospace;color:{{ ln.color }};white-space:pre">{{ ln.t }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="padding:11px;display:flex;flex-direction:column;gap:7px">
+                <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3)">como isso entrou na resposta</div>
+                <div style="font-size:12.5px;color:var(--txt2);text-wrap:pretty">{{ sel.why }}</div>
+                <div style="display:flex;gap:6px;margin-top:3px">
+                  <button style="background:var(--panel2);color:var(--txt2);border:1px solid var(--line);border-radius:3px;padding:5px 9px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt);border-color:var(--line2)">{{ sel.action }}</button>
+                  <button style="background:none;color:var(--txt3);border:1px solid var(--line);border-radius:3px;padding:5px 9px;font:400 11px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt)">copiar referência</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ noSel }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;overflow-y:auto">
+              <div style="padding:10px 11px;border-bottom:1px solid var(--line)">
+                <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:7px">níveis de autoridade</div>
+                <div style="display:flex;flex-direction:column;gap:4px;font:400 11px/1.4 'JetBrains Mono',monospace">
+                  <div style="display:flex;align-items:center;gap:7px"><span style="width:16px;text-align:center;color:var(--gray)">1</span><i style="width:8px;height:8px;border-radius:2px;background:var(--gray)"></i><span style="color:var(--txt2)">conhecimento curado</span></div>
+                  <div style="display:flex;align-items:center;gap:7px"><span style="width:16px;text-align:center;color:var(--blue)">2</span><i style="width:8px;height:8px;border-radius:2px;background:var(--blue)"></i><span style="color:var(--txt2)">documentação oficial</span></div>
+                  <div style="display:flex;align-items:center;gap:7px"><span style="width:16px;text-align:center;color:var(--green)">3</span><i style="width:8px;height:8px;border-radius:2px;background:var(--green)"></i><span style="color:var(--txt2)">código / banco</span></div>
+                  <div style="display:flex;align-items:center;gap:7px"><span style="width:16px;text-align:center;color:var(--txt3)">4</span><i style="width:8px;height:8px;border-radius:2px;border:1px dashed var(--gray-l)"></i><span style="color:var(--txt3)">inferência do modelo</span></div>
+                </div>
+              </div>
+              <div style="padding:10px 11px 4px;font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3)">fontes desta resposta · 6</div>
+              <div style="padding:0 8px 10px;display:flex;flex-direction:column;gap:4px">
+                <button onClick="{{ cites.c4 }}" style="text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--gray);border-radius:3px;padding:8px 9px;cursor:pointer" style-hover="border-color:var(--line2)">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font:500 10px/1 'JetBrains Mono',monospace;color:var(--gray);text-transform:uppercase;letter-spacing:.06em">curado</span><span style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)">maio/2026</span></div>
+                  <div style="font-size:12.5px;color:var(--txt);margin-bottom:2px">Lote preso em RETRY após queda da SEFAZ</div>
+                  <div style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">nota de t.aguiar · revisada 2×</div>
+                </button>
+                <button onClick="{{ cites.c2 }}" style="text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--blue);border-radius:3px;padding:8px 9px;cursor:pointer" style-hover="border-color:var(--line2)">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font:500 10px/1 'JetBrains Mono',monospace;color:var(--blue);text-transform:uppercase;letter-spacing:.06em">doc</span><span style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)">v3.1 · §4.2</span></div>
+                  <div style="font-size:12.5px;color:var(--txt);margin-bottom:2px">Barramento de mensagens — política de retry</div>
+                  <div style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">confluence/plataforma/barramento</div>
+                </button>
+                <button style="text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--blue);border-radius:3px;padding:8px 9px;cursor:pointer" style-hover="border-color:var(--line2)">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font:500 10px/1 'JetBrains Mono',monospace;color:var(--blue);text-transform:uppercase;letter-spacing:.06em">doc</span><span style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)">§2</span></div>
+                  <div style="font-size:12.5px;color:var(--txt);margin-bottom:2px">Runbook — ingestão de NF-e</div>
+                  <div style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">confluence/fiscal/runbooks</div>
+                </button>
+                <button onClick="{{ cites.c1 }}" style="text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--green);border-radius:3px;padding:8px 9px;cursor:pointer" style-hover="border-color:var(--line2)">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font:500 10px/1 'JetBrains Mono',monospace;color:var(--green);text-transform:uppercase;letter-spacing:.06em">código</span><span style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)">main · 1a7c39f</span></div>
+                  <div style="font:400 12px/1.4 'JetBrains Mono',monospace;color:var(--txt);margin-bottom:2px;word-break:break-all">LoteWorker.java:88-140</div>
+                  <div style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">dsg-fiscal-ingestao</div>
+                </button>
+                <button style="text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--green);border-radius:3px;padding:8px 9px;cursor:pointer" style-hover="border-color:var(--line2)">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font:500 10px/1 'JetBrains Mono',monospace;color:var(--green);text-transform:uppercase;letter-spacing:.06em">código</span><span style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)">main</span></div>
+                  <div style="font:400 12px/1.4 'JetBrains Mono',monospace;color:var(--txt);margin-bottom:2px;word-break:break-all">RetryPolicy.java:22-37</div>
+                  <div style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">dsg-barramento</div>
+                </button>
+                <button onClick="{{ cites.c3 }}" style="text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:3px;padding:8px 9px;cursor:pointer" style-hover="border-color:var(--line2)">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font:500 10px/1 'JetBrains Mono',monospace;color:var(--gold);text-transform:uppercase;letter-spacing:.06em">banco</span><span style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)">14:22:41</span></div>
+                  <div style="font:400 12px/1.4 'JetBrains Mono',monospace;color:var(--txt);margin-bottom:2px">fiscal_prod.lote · 3 linhas</div>
+                  <div style="font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">select somente-leitura · aprovado</div>
+                </button>
+              </div>
+              <div style="padding:10px 11px;border-top:1px solid var(--line)">
+                <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:7px">cobertura</div>
+                <div style="display:flex;flex-direction:column;gap:6px;font:400 11px/1.4 'JetBrains Mono',monospace;color:var(--txt2)">
+                  <div style="display:flex;justify-content:space-between"><span>afirmações citadas</span><span style="color:var(--txt)">7 de 8</span></div>
+                  <div style="height:4px;background:var(--panel3);border-radius:2px;overflow:hidden"><div style="width:87%;height:100%;background:var(--acc)"></div></div>
+                  <div style="display:flex;justify-content:space-between"><span>sem fonte (inferência)</span><span style="color:var(--gray)">1</span></div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </aside>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isAudit }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;min-height:0;overflow-y:auto;padding:18px 20px">
+      <div style="max-width:1400px;margin:0 auto">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px">
+          <h1 style="margin:0;font:600 16px/1 'IBM Plex Sans',sans-serif">Auditoria</h1>
+          <span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">instalação DSG · retenção 180 dias · exportação assinada</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-bottom:14px">
+          <div style="background:var(--panel);padding:11px 13px"><div style="font:400 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px">consultas · 24 h</div><div style="font:600 20px/1 'JetBrains Mono',monospace;color:var(--txt)">1 284</div></div>
+          <div style="background:var(--panel);padding:11px 13px"><div style="font:400 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px">ferramentas executadas</div><div style="font:600 20px/1 'JetBrains Mono',monospace;color:var(--txt)">3 907</div></div>
+          <div style="background:var(--panel);padding:11px 13px"><div style="font:400 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px">bloqueios por permissão</div><div style="font:600 20px/1 'JetBrains Mono',monospace;color:var(--err)">31</div></div>
+          <div style="background:var(--panel);padding:11px 13px"><div style="font:400 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px">aprovações pendentes</div><div style="font:600 20px/1 'JetBrains Mono',monospace;color:var(--warn)">2</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap">
+          <input placeholder="buscar por usuário, pergunta, tabela, comando…" style="flex:1;min-width:240px;background:var(--panel);border:1px solid var(--line2);border-radius:3px;padding:6px 9px;color:var(--txt);font:400 12px/1.2 'JetBrains Mono',monospace;outline:none" style-focus="border-color:var(--acc)" />
+          <button style="background:var(--panel);border:1px solid var(--line);border-radius:3px;color:var(--txt2);padding:6px 9px;font:400 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt);border-color:var(--line2)">instalação: DSG ▾</button>
+          <button style="background:var(--panel);border:1px solid var(--line);border-radius:3px;color:var(--txt2);padding:6px 9px;font:400 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt);border-color:var(--line2)">ferramenta: todas ▾</button>
+          <button style="background:var(--err-b);border:1px solid var(--err-l);border-radius:3px;color:var(--err);padding:6px 9px;font:500 11.5px/1 'JetBrains Mono',monospace;cursor:pointer">resultado: bloqueado ×</button>
+          <button style="background:var(--panel);border:1px solid var(--line);border-radius:3px;color:var(--txt2);padding:6px 9px;font:400 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="color:var(--txt);border-color:var(--line2)">03 ago · 00:00–14:40 ▾</button>
+          <div style="flex:1"></div>
+          <button style="background:var(--panel);border:1px solid var(--line2);border-radius:3px;color:var(--txt);padding:6px 9px;font:500 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="border-color:var(--acc);color:var(--acc)">exportar csv</button>
+        </div>
+        <div style="border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--panel)">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font:400 11.5px/1.4 'JetBrains Mono',monospace">
+              <thead>
+                <tr style="background:var(--panel2)">
+                  <th style="text-align:left;padding:7px 10px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line);white-space:nowrap">hora</th>
+                  <th style="text-align:left;padding:7px 10px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line)">usuário · perfil</th>
+                  <th style="text-align:left;padding:7px 10px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line)">inst.</th>
+                  <th style="text-align:left;padding:7px 10px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line);min-width:280px">pergunta</th>
+                  <th style="text-align:left;padding:7px 10px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line)">ferramentas</th>
+                  <th style="text-align:right;padding:7px 10px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line)">fontes</th>
+                  <th style="text-align:left;padding:7px 10px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line)">resultado</th>
+                  <th style="text-align:right;padding:7px 10px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line)">dur.</th>
+                  <th style="text-align:left;padding:7px 10px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line)">modelo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--line);background:var(--sel)">
+                  <td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">14:22:38</td>
+                  <td style="padding:7px 10px;color:var(--txt)">r.mendes <span style="color:var(--txt3)">suporte n2</span></td>
+                  <td style="padding:7px 10px;color:var(--txt2)">DSG</td>
+                  <td style="padding:7px 10px;color:var(--txt2)">Por que a ingestão de NF-e reprocessa os mesmos lotes…</td>
+                  <td style="padding:7px 10px"><span style="color:var(--blue)">doc</span> <span style="color:var(--green)">cod</span> <span style="color:var(--gold)">sql</span> <span style="color:var(--gray)">cur</span></td>
+                  <td style="padding:7px 10px;text-align:right;color:var(--txt)">6</td>
+                  <td style="padding:7px 10px;color:var(--warn)">aprovado · sql</td>
+                  <td style="padding:7px 10px;text-align:right;color:var(--txt2)">3,8 s</td>
+                  <td style="padding:7px 10px;color:var(--txt3)">32b</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--line);background:var(--sel)">
+                  <td colspan="9" style="padding:0 10px 10px">
+                    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+                      <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel)">
+                        <div style="padding:6px 9px;border-bottom:1px solid var(--line);font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3)">trilha de execução</div>
+                        <div style="padding:7px 9px;display:flex;flex-direction:column;gap:5px;font:400 11px/1.5 'JetBrains Mono',monospace;color:var(--txt2)">
+                          <div>14:22:38 <span style="color:var(--blue)">busca_documentos</span> "reprocessamento lote nfe idempotência" → 7 trechos · 412 ms</div>
+                          <div>14:22:39 <span style="color:var(--green)">ler_codigo</span> dsg-fiscal-ingestao/…/LoteWorker.java:88-140 · 96 ms</div>
+                          <div>14:22:39 <span style="color:var(--warn)">aprovação</span> solicitada a t.aguiar · concedida em 6 s</div>
+                          <div>14:22:45 <span style="color:var(--gold)">consulta_sql</span> fiscal_prod · select · 3 linhas · 2,1 s</div>
+                          <div>14:22:47 <span style="color:var(--gray)">conhecimento_curado</span> nota t.aguiar · 88 ms</div>
+                        </div>
+                      </div>
+                      <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel)">
+                        <div style="padding:6px 9px;border-bottom:1px solid var(--line);font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3)">sql literal executado</div>
+                        <pre style="margin:0;padding:7px 9px;font:400 11px/1.6 'JetBrains Mono',monospace;color:var(--txt2);overflow-x:auto">select l.id, l.status, l.tentativas, max(e.criado_em)
+from lote l join lote_evento e on e.lote_id = l.id
+where l.status in ('RETRY','ERRO') and l.criado_em > now() - interval '36 hours'
+group by 1,2,3 order by l.tentativas desc limit 5;</pre>
+                        <div style="padding:6px 9px;border-top:1px solid var(--line);font:400 10.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">conexão oraculo_ro · sem escrita · 0 linhas mascaradas</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">14:19:02</td><td style="padding:7px 10px;color:var(--txt)">l.freitas <span style="color:var(--txt3)">desenvolvedor</span></td><td style="padding:7px 10px;color:var(--txt2)">DSG</td><td style="padding:7px 10px;color:var(--txt2)">Onde fica a senha do keystore da SEFAZ?</td><td style="padding:7px 10px"><span style="color:var(--green)">cod</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt)">2</td><td style="padding:7px 10px;color:var(--gold)">1 trecho ocultado</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">1,4 s</td><td style="padding:7px 10px;color:var(--txt3)">32b</td></tr>
+                <tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">14:11:47</td><td style="padding:7px 10px;color:var(--txt)">c.barros <span style="color:var(--txt3)">suporte n1</span></td><td style="padding:7px 10px;color:var(--txt2)">CAST</td><td style="padding:7px 10px;color:var(--txt2)">Quem está de plantão no barramento hoje?</td><td style="padding:7px 10px"><span style="color:var(--err)">sql✕</span> <span style="color:var(--blue)">doc</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt)">1</td><td style="padding:7px 10px;color:var(--err)">bloqueado · dados_pessoal</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">0,3 s</td><td style="padding:7px 10px;color:var(--txt3)">32b</td></tr>
+                <tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">14:04:15</td><td style="padding:7px 10px;color:var(--txt)">t.aguiar <span style="color:var(--txt3)">admin</span></td><td style="padding:7px 10px;color:var(--txt2)">DSG</td><td style="padding:7px 10px;color:var(--txt2)">Estado dos consumidores da fila nfe.lote.retry</td><td style="padding:7px 10px"><span style="color:var(--warn)">sh</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt)">1</td><td style="padding:7px 10px;color:var(--green)">ok</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">2,6 s</td><td style="padding:7px 10px;color:var(--txt3)">32b</td></tr>
+                <tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">13:58:30</td><td style="padding:7px 10px;color:var(--txt)">r.mendes <span style="color:var(--txt3)">suporte n2</span></td><td style="padding:7px 10px;color:var(--txt2)">DSG</td><td style="padding:7px 10px;color:var(--txt2)">Rotina de expurgo de lote fiscal de 2019</td><td style="padding:7px 10px"><span style="color:var(--blue)">doc</span> <span style="color:var(--gray)">cur</span> <span style="color:var(--green)">cod</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt3)">0</td><td style="padding:7px 10px;color:var(--txt2)">sem resultado</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">1,9 s</td><td style="padding:7px 10px;color:var(--txt3)">32b</td></tr>
+                <tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">13:47:09</td><td style="padding:7px 10px;color:var(--txt)">m.tanaka <span style="color:var(--txt3)">desenvolvedor</span></td><td style="padding:7px 10px;color:var(--txt2)">Pessoal</td><td style="padding:7px 10px;color:var(--txt2)">Diferença entre fila retry e dlq no barramento</td><td style="padding:7px 10px"><span style="color:var(--blue)">doc</span> <span style="color:var(--green)">cod</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt)">3</td><td style="padding:7px 10px;color:var(--green)">ok</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">2,2 s</td><td style="padding:7px 10px;color:var(--txt3)">8b</td></tr>
+                <tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">13:31:52</td><td style="padding:7px 10px;color:var(--txt)">c.barros <span style="color:var(--txt3)">suporte n1</span></td><td style="padding:7px 10px;color:var(--txt2)">CAST</td><td style="padding:7px 10px;color:var(--txt2)">Rodar reprocessamento do lote 884213</td><td style="padding:7px 10px"><span style="color:var(--err)">sh✕</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt3)">0</td><td style="padding:7px 10px;color:var(--err)">bloqueado · shell desligada</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">0,1 s</td><td style="padding:7px 10px;color:var(--txt3)">32b</td></tr>
+                <tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">13:20:41</td><td style="padding:7px 10px;color:var(--txt)">l.freitas <span style="color:var(--txt3)">desenvolvedor</span></td><td style="padding:7px 10px;color:var(--txt2)">DSG</td><td style="padding:7px 10px;color:var(--txt2)">Cache de tabelas de domínio — como invalida?</td><td style="padding:7px 10px"><span style="color:var(--green)">cod</span> <span style="color:var(--blue)">doc</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt)">5</td><td style="padding:7px 10px;color:var(--green)">ok</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">3,1 s</td><td style="padding:7px 10px;color:var(--txt3)">32b</td></tr>
+                <tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">12:58:03</td><td style="padding:7px 10px;color:var(--txt)">s.oliveira <span style="color:var(--txt3)">leitor</span></td><td style="padding:7px 10px;color:var(--txt2)">DSG</td><td style="padding:7px 10px;color:var(--txt2)">Qual o SLA de emissão acordado com o fiscal?</td><td style="padding:7px 10px"><span style="color:var(--blue)">doc</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt)">2</td><td style="padding:7px 10px;color:var(--green)">ok</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">1,1 s</td><td style="padding:7px 10px;color:var(--txt3)">8b</td></tr>
+                <tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">12:44:19</td><td style="padding:7px 10px;color:var(--txt)">t.aguiar <span style="color:var(--txt3)">admin</span></td><td style="padding:7px 10px;color:var(--txt2)">DSG</td><td style="padding:7px 10px;color:var(--txt2)">Migração 0142 travada — como fazer rollback</td><td style="padding:7px 10px"><span style="color:var(--blue)">doc</span> <span style="color:var(--gold)">sql</span> <span style="color:var(--warn)">sh</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt)">9</td><td style="padding:7px 10px;color:var(--warn)">aprovado · shell</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">6,4 s</td><td style="padding:7px 10px;color:var(--txt3)">32b</td></tr>
+                <tr><td style="padding:7px 10px;color:var(--txt2);white-space:nowrap">12:30:55</td><td style="padding:7px 10px;color:var(--txt)">m.tanaka <span style="color:var(--txt3)">desenvolvedor</span></td><td style="padding:7px 10px;color:var(--txt2)">Pessoal</td><td style="padding:7px 10px;color:var(--txt2)">Padrão de log estruturado adotado pelo time</td><td style="padding:7px 10px"><span style="color:var(--gray)">cur</span> <span style="color:var(--green)">cod</span></td><td style="padding:7px 10px;text-align:right;color:var(--txt)">7</td><td style="padding:7px 10px;color:var(--err)">erro do modelo</td><td style="padding:7px 10px;text-align:right;color:var(--txt2)">—</td><td style="padding:7px 10px;color:var(--txt3)">32b</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-top:1px solid var(--line);background:var(--panel2);font:400 11px/1 'JetBrains Mono',monospace;color:var(--txt3)">
+            <span>11 de 1 284 registros</span><div style="flex:1"></div><button style="background:none;border:1px solid var(--line);border-radius:3px;color:var(--txt3);padding:3px 8px;font:inherit;cursor:pointer">← anteriores</button><button style="background:none;border:1px solid var(--line);border-radius:3px;color:var(--txt2);padding:3px 8px;font:inherit;cursor:pointer">próximos →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isPerfis }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;min-height:0;overflow-y:auto;padding:18px 20px">
+      <div style="max-width:1250px;margin:0 auto">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:4px">
+          <h1 style="margin:0;font:600 16px/1 'IBM Plex Sans',sans-serif">Perfis e capacidades</h1>
+          <span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:var(--txt3)">instalação DSG · 5 perfis · 7 capacidades</span>
+        </div>
+        <p style="margin:0 0 14px;color:var(--txt2);font-size:12.5px;max-width:80ch;text-wrap:pretty">Uma capacidade desligada na instalação não pode ser concedida a nenhum perfil — a coluna aparece inteira em cinza. Mudanças valem para novas sessões e ficam na auditoria.</p>
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px;padding:8px 11px;border:1px solid var(--line);border-radius:4px;background:var(--panel);font:400 11.5px/1 'JetBrains Mono',monospace">
+          <span style="display:flex;align-items:center;gap:6px;color:var(--txt2)"><span style="color:var(--green)">✓</span>permitido</span>
+          <span style="display:flex;align-items:center;gap:6px;color:var(--txt2)"><span style="color:var(--warn)">⚠</span>requer aprovação humana</span>
+          <span style="display:flex;align-items:center;gap:6px;color:var(--txt2)"><span style="color:var(--err)">✕</span>negado ao perfil</span>
+          <span style="display:flex;align-items:center;gap:6px;color:var(--txt3)"><span>○</span>desligada nesta instalação</span>
+          <div style="flex:1"></div>
+          <button style="background:var(--panel2);border:1px solid var(--line2);border-radius:3px;color:var(--txt);padding:5px 10px;font:500 11.5px/1 'JetBrains Mono',monospace;cursor:pointer" style-hover="border-color:var(--acc);color:var(--acc)">salvar alterações</button>
+        </div>
+        <div style="border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--panel)">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font:400 11.5px/1.4 'JetBrains Mono',monospace">
+              <thead>
+                <tr style="background:var(--panel2)">
+                  <th style="text-align:left;padding:8px 11px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line);border-right:1px solid var(--line);min-width:190px">perfil</th>
+                  <th style="padding:8px 9px;font-weight:500;color:var(--blue);border-bottom:1px solid var(--line);min-width:96px">busca doc</th>
+                  <th style="padding:8px 9px;font-weight:500;color:var(--gray);border-bottom:1px solid var(--line);min-width:96px">curado</th>
+                  <th style="padding:8px 9px;font-weight:500;color:var(--green);border-bottom:1px solid var(--line);min-width:96px">código</th>
+                  <th style="padding:8px 9px;font-weight:500;color:var(--gold);border-bottom:1px solid var(--line);min-width:110px">sql leitura</th>
+                  <th style="padding:8px 9px;font-weight:500;color:var(--txt3);border-bottom:1px solid var(--line);min-width:96px">shell</th>
+                  <th style="padding:8px 9px;font-weight:500;color:var(--txt2);border-bottom:1px solid var(--line);min-width:110px">estado serviços</th>
+                  <th style="padding:8px 9px;font-weight:500;color:var(--err);border-bottom:1px solid var(--line);min-width:110px">dados pessoais</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--line)">
+                  <td style="padding:9px 11px;border-right:1px solid var(--line)"><div style="color:var(--txt);font-weight:500">desenvolvedor</div><div style="color:var(--txt3);font-size:10.5px">18 usuários</div></td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--txt3);background:var(--panel2)">○</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--line)">
+                  <td style="padding:9px 11px;border-right:1px solid var(--line)"><div style="color:var(--txt);font-weight:500">suporte n1</div><div style="color:var(--txt3);font-size:10.5px">24 usuários</div></td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                  <td style="padding:9px;text-align:center;color:var(--txt3);background:var(--panel2)">○</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--line);background:var(--sel)">
+                  <td style="padding:9px 11px;border-right:1px solid var(--line)"><div style="color:var(--txt);font-weight:500">suporte n2</div><div style="color:var(--txt3);font-size:10.5px">9 usuários · seu perfil</div></td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--warn)">⚠</td>
+                  <td style="padding:9px;text-align:center;color:var(--txt3);background:var(--panel2)">○</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--line)">
+                  <td style="padding:9px 11px;border-right:1px solid var(--line)"><div style="color:var(--txt);font-weight:500">admin da instalação</div><div style="color:var(--txt3);font-size:10.5px">3 usuários</div></td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--txt3);background:var(--panel2)">○</td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--warn)">⚠</td>
+                </tr>
+                <tr>
+                  <td style="padding:9px 11px;border-right:1px solid var(--line)"><div style="color:var(--txt);font-weight:500">leitor</div><div style="color:var(--txt3);font-size:10.5px">31 usuários</div></td>
+                  <td style="padding:9px;text-align:center;color:var(--green)">✓</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                  <td style="padding:9px;text-align:center;color:var(--txt3);background:var(--panel2)">○</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                  <td style="padding:9px;text-align:center;color:var(--err)">✕</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:12px">
+          <div style="border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden">
+            <div style="padding:8px 11px;border-bottom:1px solid var(--line);background:var(--panel2);display:flex;align-items:center;gap:8px">
+              <span style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3)">capacidade selecionada</span>
+              <span style="font:500 11.5px/1 'JetBrains Mono',monospace;color:var(--gold)">sql leitura · suporte n2</span>
+            </div>
+            <div style="padding:11px;display:flex;flex-direction:column;gap:9px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--txt2);cursor:pointer"><input type="radio" name="cap" style="accent-color:var(--acc);margin:0" />permitir sem aprovação</label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--txt);cursor:pointer"><input type="radio" name="cap" checked="{{ true }}" style="accent-color:var(--warn);margin:0" />exigir aprovação humana por consulta</label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--txt2);cursor:pointer"><input type="radio" name="cap" style="accent-color:var(--err);margin:0" />negar ao perfil</label>
+              </div>
+              <div style="border-top:1px solid var(--line);padding-top:9px;display:flex;flex-direction:column;gap:6px;font:400 11.5px/1.5 'JetBrains Mono',monospace;color:var(--txt2)">
+                <div>bancos alcançáveis: <span style="color:var(--txt)">fiscal_prod, fiscal_hml, dominio_prod</span></div>
+                <div>conexão: <span style="color:var(--txt)">oraculo_ro</span> · apenas select · timeout 15 s</div>
+                <div>colunas mascaradas: <span style="color:var(--gold)">cpf, email, telefone, senha*</span></div>
+                <div>aprovadores: <span style="color:var(--txt)">t.aguiar, p.duarte</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden">
+            <div style="padding:8px 11px;border-bottom:1px solid var(--line);background:var(--panel2);font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3)">capacidades da instalação DSG</div>
+            <div style="display:flex;flex-direction:column">
+              <div style="display:flex;align-items:center;gap:9px;padding:8px 11px;border-bottom:1px solid var(--line);font:400 11.5px/1 'JetBrains Mono',monospace"><span style="color:var(--txt);flex:1">comando de shell</span><span style="color:var(--txt3)">desligada no servidor</span><button style="background:var(--panel2);border:1px solid var(--line2);border-radius:3px;color:var(--txt2);padding:3px 8px;font:inherit;cursor:pointer" style-hover="color:var(--txt)">ligar</button></div>
+              <div style="display:flex;align-items:center;gap:9px;padding:8px 11px;border-bottom:1px solid var(--line);font:400 11.5px/1 'JetBrains Mono',monospace"><span style="color:var(--txt);flex:1">dados pessoais (rh_prod)</span><span style="color:var(--green)">ligada</span><button style="background:none;border:1px solid var(--line);border-radius:3px;color:var(--txt3);padding:3px 8px;font:inherit;cursor:pointer" style-hover="color:var(--txt)">desligar</button></div>
+              <div style="display:flex;align-items:center;gap:9px;padding:8px 11px;border-bottom:1px solid var(--line);font:400 11.5px/1 'JetBrains Mono',monospace"><span style="color:var(--txt);flex:1">indexação de código (41 repos)</span><span style="color:var(--green)">ligada</span><button style="background:none;border:1px solid var(--line);border-radius:3px;color:var(--txt3);padding:3px 8px;font:inherit;cursor:pointer" style-hover="color:var(--txt)">desligar</button></div>
+              <div style="display:flex;align-items:center;gap:9px;padding:8px 11px;font:400 11.5px/1 'JetBrains Mono',monospace"><span style="color:var(--txt);flex:1">modelo externo (fallback)</span><span style="color:var(--txt3)">desligada por política</span><span style="color:var(--txt3);opacity:.6">bloqueado</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;min-height:0;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;gap:20px;padding:24px;background:var(--panel2)">
+      <div style="width:390px;flex:none;height:780px;border:1px solid var(--line2);border-radius:14px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--panel)">
+          <button style="background:none;border:none;color:var(--txt2);font-size:15px;cursor:pointer;padding:0">☰</button>
+          <div style="flex:1;min-width:0">
+            <div style="font:500 12px/1.2 'JetBrains Mono',monospace;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Reprocessamento de lotes NF-e</div>
+            <div style="display:flex;align-items:center;gap:5px;font:400 10px/1.3 'JetBrains Mono',monospace;color:var(--txt3)"><i style="width:5px;height:5px;border-radius:50%;background:var(--green)"></i>DSG · oraculo-32b</div>
+          </div>
+          <button style="background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--txt2);padding:4px 7px;font:400 10.5px/1 'JetBrains Mono',monospace;cursor:pointer">6 fontes</button>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:14px">
+          <div>
+            <div style="font:500 9.5px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);margin-bottom:5px">você · 14:22</div>
+            <div style="background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:9px 10px;font-size:13.5px">Por que a ingestão de NF-e está reprocessando os mesmos lotes?</div>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="font:600 9.5px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)">oráculo</span><span style="font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)">4 ferramentas · 3,8 s</span></div>
+            <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:10px">
+              <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel);display:flex;align-items:center;gap:6px;padding:5px 8px;font:400 10.5px/1 'JetBrains Mono',monospace"><span style="color:var(--txt3);font-size:9px">▸</span><span style="color:var(--blue)">busca_documentos</span><div style="flex:1"></div><span style="color:var(--txt3)">412 ms</span></div>
+              <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel);display:flex;align-items:center;gap:6px;padding:5px 8px;font:400 10.5px/1 'JetBrains Mono',monospace"><span style="color:var(--txt3);font-size:9px">▸</span><span style="color:var(--green)">ler_codigo</span><div style="flex:1"></div><span style="color:var(--txt3)">96 ms</span></div>
+              <div style="border:1px solid var(--warn-l);border-radius:3px;background:var(--panel);display:flex;align-items:center;gap:6px;padding:5px 8px;font:400 10.5px/1 'JetBrains Mono',monospace"><span style="color:var(--txt3);font-size:9px">▸</span><span style="color:var(--gold)">consulta_sql</span><span style="color:var(--warn)">aprovada</span><div style="flex:1"></div><span style="color:var(--txt3)">2,1 s</span></div>
+              <div style="border:1px solid var(--line);border-radius:3px;background:var(--panel);display:flex;align-items:center;gap:6px;padding:5px 8px;font:400 10.5px/1 'JetBrains Mono',monospace"><span style="color:var(--txt3);font-size:9px">▸</span><span style="color:var(--gray)">conhecimento_curado</span><div style="flex:1"></div><span style="color:var(--txt3)">88 ms</span></div>
+            </div>
+            <div style="font-size:13.5px;color:var(--txt);text-wrap:pretty">
+              <p style="margin:0 0 9px">Os lotes estão sendo reenfileirados indefinidamente: o contador de tentativas nunca é gravado quando o worker morre por timeout.</p>
+              <p style="margin:0">O incremento acontece na mesma transação do processamento, então o rollback o desfaz <span style="display:inline-flex;padding:1px 5px;border-radius:3px;font:500 10.5px/1.4 'JetBrains Mono',monospace;border:1px solid var(--green-l);color:var(--green);background:var(--green-b)">código · LoteWorker:112</span> e o limite de 5 tentativas nunca é atingido <span style="display:inline-flex;padding:1px 5px;border-radius:3px;font:500 10.5px/1.4 'JetBrains Mono',monospace;border:1px solid var(--blue-l);color:var(--blue);background:var(--blue-b)">doc · Barramento §4.2</span>.</p>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--line);background:var(--panel);padding:9px 10px">
+          <div style="border:1px solid var(--line2);border-radius:4px;background:var(--bg);display:flex;align-items:flex-end;gap:7px;padding:7px 8px">
+            <span style="flex:1;color:var(--txt3);font-size:13px">pergunte sobre docs, código ou banco…</span>
+            <button style="background:var(--acc);color:#04100f;border:none;border-radius:3px;width:30px;height:30px;font:600 13px/1 'JetBrains Mono',monospace;cursor:pointer;flex:none">↑</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:6px;font:400 10px/1 'JetBrains Mono',monospace;color:var(--txt3)"><span>escopo: 41 repos</span><span>shell desligada</span></div>
+        </div>
+      </div>
+      <div style="max-width:300px;padding-top:6px;font-size:12.5px;color:var(--txt2);text-wrap:pretty">
+        <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">celular</div>
+        <p style="margin:0 0 9px">Só a conversa. A lista de conversas vira gaveta no ☰ e o painel de fontes abre em tela cheia pelo contador “6 fontes”.</p>
+        <p style="margin:0 0 9px">Blocos de ferramenta nascem recolhidos e mostram apenas nome e duração; a citação continua clicável, abrindo o trecho em folha inferior.</p>
+        <p style="margin:0">Aprovação de comando sensível ocupa a largura toda, com o comando literal em mono rolável na horizontal — nunca truncado.</p>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;tema&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;'dark'|'light'&quot;,&quot;section&quot;:&quot;Aparência&quot;},&quot;telaInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;chat&quot;,&quot;audit&quot;,&quot;perfis&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;chat&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Navegação&quot;},&quot;estadoInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;resolvida&quot;,&quot;streaming&quot;,&quot;tool&quot;,&quot;aprovacao&quot;,&quot;vazio&quot;,&quot;oculto&quot;,&quot;bloqueado&quot;,&quot;erro&quot;],&quot;default&quot;:&quot;resolvida&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Navegação&quot;},&quot;painelFontes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Navegação&quot;}}">
+const CITES = {
+  c1: {
+    kind: 'código', rank: 3, color: 'var(--green)', bg: 'var(--green-b)', line: 'var(--green-l)',
+    path: 'dsg-fiscal-ingestao/src/lote/LoteWorker.java',
+    meta: 'main · 1a7c39f · linhas 104-118 · indexado há 11 min',
+    why: 'Trecho recuperado por busca semântica no índice de código e confirmado por leitura direta do arquivo. Sustenta a afirmação de que o incremento de tentativas é revertido junto com a transação.',
+    action: 'abrir no repositório',
+    lines: [
+      { n: 104, t: '@Transactional' },
+      { n: 105, t: 'public void processar(Lote lote) {' },
+      { n: 106, t: '  lote.setStatus(RETRY);' },
+      { n: 107, t: '  loteRepo.save(lote);' },
+      { n: 108, t: '  try {' },
+      { n: 109, t: '    sefaz.enviar(lote.getItens());' },
+      { n: 110, t: '  } catch (SocketTimeoutException e) {' },
+      { n: 111, t: '    // rollback desfaz o incremento abaixo' },
+      { n: 112, t: '    lote.setTentativas(lote.getTentativas() + 1);', hl: true },
+      { n: 113, t: '    throw new ReprocessarException(e);' },
+      { n: 114, t: '  }' },
+      { n: 115, t: '  lote.setStatus(CONCLUIDO);' },
+      { n: 116, t: '}' }
+    ]
+  },
+  c2: {
+    kind: 'documentação', rank: 2, color: 'var(--blue)', bg: 'var(--blue-b)', line: 'var(--blue-l)',
+    path: 'Barramento de mensagens — §4.2 Política de retry',
+    meta: 'confluence/plataforma/barramento · v3.1 · atualizado 12 jun 2026 · autor p.duarte',
+    why: 'Documento oficial da plataforma. Define o limite de tentativas que o consumidor usa para mover a mensagem para a DLQ.',
+    action: 'abrir documento',
+    lines: [
+      { n: 1, t: 'O consumidor move a mensagem para a fila .dlq quando o' },
+      { n: 2, t: 'campo tentativas do lote atinge 5. A contagem é de' },
+      { n: 3, t: 'responsabilidade do produtor: o barramento não conta.', hl: true },
+      { n: 4, t: '' },
+      { n: 5, t: 'Antes de drenar a DLQ, pause o consumidor da fila de' },
+      { n: 6, t: 'origem (nfe.lote.retry) e exporte as mensagens para o' },
+      { n: 7, t: 'bucket de quarentena.' }
+    ]
+  },
+  c3: {
+    kind: 'banco de dados', rank: 3, color: 'var(--gold)', bg: 'var(--gold-b)', line: 'var(--gold-l)',
+    path: 'fiscal_prod.lote · select somente-leitura',
+    meta: 'executado 14:22:45 · conexão oraculo_ro · aprovado por t.aguiar · 3 linhas · 2,1 s',
+    why: 'Consulta gerada pelo assistente e liberada por aprovação humana. Os números citados na resposta vêm literalmente destas linhas — nada foi arredondado.',
+    action: 'reexecutar consulta',
+    lines: [
+      { n: 1, t: 'id     | status | tentativas | ultima' },
+      { n: 2, t: '-------+--------+------------+--------------------' },
+      { n: 3, t: '884213 | RETRY  |          0 | 2026-08-03 14:19:58', hl: true },
+      { n: 4, t: '884198 | RETRY  |          0 | 2026-08-03 14:19:51' },
+      { n: 5, t: '884176 | ERRO   |         12 | 2026-08-03 03:41:02' },
+      { n: 6, t: '(3 linhas · execuções reais: 147, 146, 12)' }
+    ]
+  },
+  c4: {
+    kind: 'conhecimento curado', rank: 1, color: 'var(--gray)', bg: 'var(--gray-b)', line: 'var(--gray-l)',
+    path: 'Nota — Lote preso em RETRY após queda da SEFAZ',
+    meta: 't.aguiar (plataforma) · 21 mai 2026 · revisada 2× · 4 conversas usaram esta nota',
+    why: 'Nível mais alto de autoridade: conhecimento escrito e revisado por especialista. A ordem das etapas de contenção na resposta é a desta nota, não uma sugestão do modelo.',
+    action: 'abrir nota curada',
+    lines: [
+      { n: 1, t: 'Sintoma: lote fica em RETRY com tentativas=0 e o worker' },
+      { n: 2, t: 'reprocessa em loop. Sempre depois de queda de conexão' },
+      { n: 3, t: 'com a SEFAZ acima de 30s (timeout do keystore client).', hl: true },
+      { n: 4, t: '' },
+      { n: 5, t: 'Contenção: 1) pausar consumidor nfe.lote.retry;' },
+      { n: 6, t: '2) mover lotes presos para DLQ; 3) corrigir o' },
+      { n: 7, t: 'incremento para transação própria (commit antes).' }
+    ]
+  }
+};
+
+const ON = { b: 'var(--acc-b)', c: 'var(--acc)', l: 'var(--acc-l)' };
+const OFF = { b: 'transparent', c: 'var(--txt3)', l: 'var(--line)' };
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      screen: props.telaInicial || 'chat',
+      chat: props.estadoInicial || 'resolvida',
+      theme: props.tema || 'dark',
+      sel: null,
+      rightOpen: props.painelFontes === false ? false : 'auto',
+      leftOpen: false,
+      w: typeof window !== 'undefined' ? window.innerWidth : 1440
+    };
+    this.onResize = () => this.setState({ w: window.innerWidth });
+  }
+
+  componentDidMount() { window.addEventListener('resize', this.onResize); }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); }
+
+  pick(key, val, cur) { return cur === val ? ON[key] : OFF[key]; }
+
+  renderVals() {
+    const s = this.state;
+    const screens = ['login', 'chat', 'audit', 'perfis', 'mobile'];
+    const states = ['resolvida', 'streaming', 'tool', 'aprovacao', 'vazio', 'oculto', 'bloqueado', 'erro'];
+    const nav = {}, tb = {}, tc = {}, tl = {};
+    screens.forEach(k => {
+      nav[k] = () => this.setState({ screen: k });
+      tb[k] = this.pick('b', k, s.screen); tc[k] = this.pick('c', k, s.screen); tl[k] = this.pick('l', k, s.screen);
+    });
+    const st = {}, sb = {}, sc2 = {}, sl = {};
+    states.forEach(k => {
+      st[k] = () => this.setState({ chat: k });
+      sb[k] = this.pick('b', k, s.chat); sc2[k] = this.pick('c', k, s.chat); sl[k] = this.pick('l', k, s.chat);
+    });
+    const cites = {};
+    Object.keys(CITES).forEach(k => { cites[k] = () => this.setState({ sel: k, rightOpen: true }); });
+
+    const w = s.w || 1440;
+    const wide = w >= 1080;
+    const overlayRight = w < 1400;
+    const left = wide ? '248px ' : (s.leftOpen ? '248px ' : '');
+    const main = 'minmax(0,1fr)';
+    const rightOpen = s.rightOpen === 'auto' ? !overlayRight : !!s.rightOpen;
+    const right = rightOpen && !overlayRight ? ' 320px' : '';
+
+    const raw = s.sel ? CITES[s.sel] : null;
+    const sel = raw ? Object.assign({}, raw, {
+      lines: raw.lines.map(l => ({
+        n: l.n, t: l.t,
+        bg: l.hl ? 'var(--sel)' : 'transparent',
+        color: l.hl ? 'var(--txt)' : 'var(--txt2)'
+      }))
+    }) : null;
+
+    const followUp = {
+      streaming: 'Posso drenar a DLQ com o consumidor pausado sem perder mensagem?',
+      tool: 'Posso drenar a DLQ com o consumidor pausado sem perder mensagem?',
+      aprovacao: 'Confirma se o consumidor nfe.lote.retry já está pausado em produção.',
+      vazio: 'Existe rotina documentada de expurgo dos lotes fiscais de 2019?',
+      oculto: 'Como o worker autentica na SEFAZ? Onde fica a senha do keystore?',
+      bloqueado: 'Quem está de plantão no barramento agora e qual o telefone?',
+      erro: 'Monta um resumo do incidente para eu colar no chamado.'
+    }[s.chat] || null;
+
+    return {
+      theme: s.theme,
+      toggleTheme: () => this.setState({ theme: s.theme === 'dark' ? 'light' : 'dark' }),
+      nav, tb, tc, tl, st, sb, sc2, sl, cites,
+      isLogin: s.screen === 'login', isChat: s.screen === 'chat', isAudit: s.screen === 'audit',
+      isPerfis: s.screen === 'perfis', isMobile: s.screen === 'mobile',
+      isStreaming: s.chat === 'streaming', isTool: s.chat === 'tool', isAprovacao: s.chat === 'aprovacao',
+      isVazio: s.chat === 'vazio', isOculto: s.chat === 'oculto', isBloqueado: s.chat === 'bloqueado',
+      isErro: s.chat === 'erro',
+      hasFollowUp: !!followUp, followUpText: followUp,
+      rightOpen,
+      dimRight: rightOpen && overlayRight,
+      toggleRight: () => this.setState({ rightOpen: !rightOpen }),
+      toggleLeft: () => this.setState({ leftOpen: !s.leftOpen }),
+      showLeft: wide || s.leftOpen,
+      hideLeft: !wide,
+      chatCols: left + main + right,
+      asidePos: overlayRight ? 'absolute' : 'static',
+      asideW: overlayRight ? '340px' : 'auto',
+      asideShadow: overlayRight ? '-14px 0 28px rgba(0,0,0,.42)' : 'none',
+      showRightBtn: !(rightOpen && overlayRight),
+      rightBtnLabel: rightOpen ? 'fechar fontes' : 'painel de fontes · 6',
+      hasSel: !!sel, noSel: !sel, sel,
+      clearSel: () => this.setState({ sel: null }),
+      panelTitle: sel ? 'fonte · trecho exato' : 'contexto da resposta'
+    };
+  }
+}
+
+</script>
+</body>
+</html>

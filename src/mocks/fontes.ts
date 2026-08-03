@@ -1,0 +1,137 @@
+import type { Fonte } from '@/types/oraculo';
+
+export const FONTES: Fonte[] = [
+  {
+    id: 'c4',
+    tipo: 'curado',
+    autoridade: 1,
+    titulo: 'Lote preso em RETRY após queda da SEFAZ',
+    caminho: 'Nota — Lote preso em RETRY após queda da SEFAZ',
+    meta: 't.aguiar (plataforma) · 21 mai 2026 · revisada 2× · 4 conversas usaram esta nota',
+    porque:
+      'Nível mais alto de autoridade: conhecimento escrito e revisado por especialista. A ordem das etapas de contenção na resposta é a desta nota, não uma sugestão do modelo.',
+    acao: 'abrir nota curada',
+    etiqueta: 'maio/2026',
+    detalhe: 'nota de t.aguiar · revisada 2×',
+    linhas: [
+      { n: 1, texto: 'Sintoma: lote fica em RETRY com tentativas=0 e o worker' },
+      { n: 2, texto: 'reprocessa em loop. Sempre depois de queda de conexão' },
+      { n: 3, texto: 'com a SEFAZ acima de 30s (timeout do keystore client).', destaque: true },
+      { n: 4, texto: '' },
+      { n: 5, texto: 'Contenção: 1) pausar consumidor nfe.lote.retry;' },
+      { n: 6, texto: '2) mover lotes presos para DLQ; 3) corrigir o' },
+      { n: 7, texto: 'incremento para transação própria (commit antes).' },
+    ],
+  },
+  {
+    id: 'c2',
+    tipo: 'doc',
+    autoridade: 2,
+    titulo: 'Barramento de mensagens — política de retry',
+    caminho: 'Barramento de mensagens — §4.2 Política de retry',
+    meta: 'confluence/plataforma/barramento · v3.1 · atualizado 12 jun 2026 · autor p.duarte',
+    porque:
+      'Documento oficial da plataforma. Define o limite de tentativas que o consumidor usa para mover a mensagem para a DLQ.',
+    acao: 'abrir documento',
+    etiqueta: 'v3.1 · §4.2',
+    detalhe: 'confluence/plataforma/barramento',
+    linhas: [
+      { n: 1, texto: 'O consumidor move a mensagem para a fila .dlq quando o' },
+      { n: 2, texto: 'campo tentativas do lote atinge 5. A contagem é de' },
+      { n: 3, texto: 'responsabilidade do produtor: o barramento não conta.', destaque: true },
+      { n: 4, texto: '' },
+      { n: 5, texto: 'Antes de drenar a DLQ, pause o consumidor da fila de' },
+      { n: 6, texto: 'origem (nfe.lote.retry) e exporte as mensagens para o' },
+      { n: 7, texto: 'bucket de quarentena.' },
+    ],
+  },
+  {
+    id: 'c5',
+    tipo: 'doc',
+    autoridade: 2,
+    titulo: 'Runbook — ingestão de NF-e',
+    caminho: 'Runbook — ingestão de NF-e · §2',
+    meta: 'confluence/fiscal/runbooks · atualizado 03 jul 2026',
+    porque:
+      'Procedimento operacional oficial da ingestão fiscal. Usado para confirmar a ordem das etapas de contenção.',
+    acao: 'abrir documento',
+    etiqueta: '§2',
+    detalhe: 'confluence/fiscal/runbooks',
+    linhas: [
+      { n: 1, texto: 'Ao identificar reprocessamento em loop, o primeiro passo' },
+      { n: 2, texto: 'é sempre pausar o consumidor — nunca reiniciar o worker,', destaque: true },
+      { n: 3, texto: 'porque o restart reenfileira o lote em processamento.' },
+    ],
+  },
+  {
+    id: 'c1',
+    tipo: 'codigo',
+    autoridade: 3,
+    titulo: 'LoteWorker.java:88-140',
+    caminho: 'dsg-fiscal-ingestao/src/lote/LoteWorker.java',
+    meta: 'main · 1a7c39f · linhas 104-118 · indexado há 11 min',
+    porque:
+      'Trecho recuperado por busca no índice de código e confirmado por leitura direta do arquivo. Sustenta a afirmação de que o incremento de tentativas é revertido junto com a transação.',
+    acao: 'abrir no repositório',
+    etiqueta: 'main · 1a7c39f',
+    detalhe: 'dsg-fiscal-ingestao',
+    linhas: [
+      { n: 104, texto: '@Transactional' },
+      { n: 105, texto: 'public void processar(Lote lote) {' },
+      { n: 106, texto: '  lote.setStatus(RETRY);' },
+      { n: 107, texto: '  loteRepo.save(lote);' },
+      { n: 108, texto: '  try {' },
+      { n: 109, texto: '    sefaz.enviar(lote.getItens());' },
+      { n: 110, texto: '  } catch (SocketTimeoutException e) {' },
+      { n: 111, texto: '    // rollback desfaz o incremento abaixo' },
+      { n: 112, texto: '    lote.setTentativas(lote.getTentativas() + 1);', destaque: true },
+      { n: 113, texto: '    throw new ReprocessarException(e);' },
+      { n: 114, texto: '  }' },
+      { n: 115, texto: '  lote.setStatus(CONCLUIDO);' },
+      { n: 116, texto: '}' },
+    ],
+  },
+  {
+    id: 'c6',
+    tipo: 'codigo',
+    autoridade: 3,
+    titulo: 'RetryPolicy.java:22-37',
+    caminho: 'dsg-barramento/src/retry/RetryPolicy.java',
+    meta: 'main · 4b81de2 · indexado há 11 min',
+    porque:
+      'Confirma que o limite de tentativas lido pelo consumidor vem da configuração do barramento, não do produtor.',
+    acao: 'abrir no repositório',
+    etiqueta: 'main',
+    detalhe: 'dsg-barramento',
+    linhas: [
+      { n: 22, texto: 'public boolean deveMoverParaDlq(Mensagem m) {' },
+      { n: 23, texto: '  return m.getTentativas() >= limite;', destaque: true },
+      { n: 24, texto: '}' },
+    ],
+  },
+  {
+    id: 'c3',
+    tipo: 'banco',
+    autoridade: 3,
+    titulo: 'fiscal_prod.lote · 3 linhas',
+    caminho: 'fiscal_prod.lote · select somente-leitura',
+    meta: 'executado 14:22:45 · conexão oraculo_ro · aprovado por t.aguiar · 3 linhas · 2,1 s',
+    porque:
+      'Consulta gerada pelo assistente e liberada por aprovação humana. Os números citados na resposta vêm literalmente destas linhas — nada foi arredondado.',
+    acao: 'reexecutar consulta',
+    etiqueta: '14:22:41',
+    detalhe: 'select somente-leitura · aprovado',
+    linhas: [
+      { n: 1, texto: 'id     | status | tentativas | ultima' },
+      { n: 2, texto: '-------+--------+------------+--------------------' },
+      { n: 3, texto: '884213 | RETRY  |          0 | 2026-08-03 14:19:58', destaque: true },
+      { n: 4, texto: '884198 | RETRY  |          0 | 2026-08-03 14:19:51' },
+      { n: 5, texto: '884176 | ERRO   |         12 | 2026-08-03 03:41:02' },
+      { n: 6, texto: '(3 linhas · execuções reais: 147, 146, 12)' },
+    ],
+  },
+];
+
+export function fonte(id: string): Fonte | undefined {
+  return FONTES.find((f) => f.id === id);
+}

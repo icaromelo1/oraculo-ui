@@ -1,1 +1,171 @@
-// app global css
+@use 'tokens' as *;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#q-app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: $sans;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--acc);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line2);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes ocaret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes ospin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes opulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes obar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+.o-btn {
+  @include mono(11px, 400);
+  background: var(--panel2);
+  color: var(--txt2);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 4px 9px;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--line2);
+    color: var(--txt);
+  }
+
+  &--ghost {
+    background: none;
+  }
+
+  &--primary {
+    @include mono(11.5px, 600);
+    background: var(--acc);
+    color: var(--acc-on);
+    border: none;
+    padding: 7px 12px;
+
+    &:hover {
+      filter: brightness(1.1);
+      color: var(--acc-on);
+    }
+  }
+
+  &--neutral {
+    @include mono(11.5px, 500);
+    background: var(--panel2);
+    color: var(--txt);
+    border: 1px solid var(--line2);
+    padding: 7px 12px;
+
+    &:hover {
+      border-color: var(--acc);
+      color: var(--acc);
+    }
+  }
+}
+
+.o-field {
+  @include mono(13px, 400, 1.2);
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line2);
+  border-radius: 3px;
+  padding: 8px 10px;
+  color: var(--txt);
+  outline: none;
+
+  &:focus {
+    border-color: var(--acc);
+  }
+
+  &::placeholder {
+    color: var(--txt3);
+  }
+}
+
+.o-caps {
+  @include caps;
+}
+
+.o-panel {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.o-code {
+  @include mono(12.5px, 400);
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 1px 4px;
+}

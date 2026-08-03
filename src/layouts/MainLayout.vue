@@ -1,81 +1,147 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+  <div class="app">
+    <header class="barra">
+      <div class="marca">
+        <span class="marca__glifo" aria-hidden="true"><i /></span>
+        <span class="marca__nome">ORÁCULO</span>
+        <span class="marca__tag">v0.1</span>
+      </div>
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+      <nav class="nav">
+        <RouterLink
+          v-for="item in navegacao"
+          :key="item.nome"
+          v-slot="{ isActive, navigate }"
+          :to="item.para"
+          custom
+        >
+          <button class="aba" :class="{ 'aba--ativa': isActive }" type="button" @click="navigate">
+            {{ item.rotulo }}
+          </button>
+        </RouterLink>
+      </nav>
 
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
+      <DemoEstados v-if="ehDesenvolvimento && naTelaDeChat" />
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+      <div class="espacador" />
 
-        <EssentialLink v-for="link in linksList" :key="link.label" v-bind="link" />
-      </q-list>
-    </q-drawer>
+      <span class="usuario">{{ sessao.usuario }} · {{ sessao.perfil }}</span>
+      <button class="o-btn" type="button" @click="sessao.alternarTema()">
+        tema: {{ sessao.tema }}
+      </button>
+    </header>
 
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-  </q-layout>
+    <RouterView />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { type EssentialLinkProps } from '@/components/EssentialLink.vue';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import DemoEstados from '@/components/DemoEstados.vue';
+import { useSessaoStore } from '@/stores/sessao';
 
-const linksList: EssentialLinkProps[] = [
-  {
-    label: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    label: 'GitHub',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    label: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    label: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    label: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    label: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    label: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
+const sessao = useSessaoStore();
+const route = useRoute();
+
+const ehDesenvolvimento = import.meta.env.DEV;
+const naTelaDeChat = computed(() => route.name === 'chat');
+
+const navegacao = [
+  { nome: 'chat', rotulo: 'chat', para: { name: 'chat' } },
+  { nome: 'auditoria', rotulo: 'auditoria', para: { name: 'auditoria' } },
+  { nome: 'perfis', rotulo: 'perfis', para: { name: 'perfis' } },
 ];
-
-const leftDrawerOpen = ref(false);
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
 </script>
+
+<style scoped lang="scss">
+@use '@/css/tokens' as *;
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--txt);
+  overflow: hidden;
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: 10px 14px;
+  flex-wrap: wrap;
+  min-height: 42px;
+  padding: 6px 12px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  flex: none;
+  z-index: 40;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 12px;
+  border-right: 1px solid var(--line);
+
+  &__glifo {
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid var(--acc);
+    border-radius: 2px;
+    position: relative;
+
+    i {
+      position: absolute;
+      inset: 3px;
+      background: var(--acc);
+      border-radius: 1px;
+    }
+  }
+
+  &__nome {
+    @include mono(12px, 600);
+    letter-spacing: 0.06em;
+    color: var(--txt);
+  }
+
+  &__tag {
+    @include mono(10px, 400);
+    color: var(--txt3);
+  }
+}
+
+.nav {
+  display: flex;
+  gap: 2px;
+}
+
+.aba {
+  @include mono(11px, 500);
+  background: transparent;
+  color: var(--txt3);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 4px 9px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+
+  &--ativa {
+    background: var(--acc-b);
+    color: var(--acc);
+    border-color: var(--acc-l);
+  }
+}
+
+.espacador {
+  flex: 1;
+}
+
+.usuario {
+  @include mono(11px, 400);
+  color: var(--txt3);
+  white-space: nowrap;
+}
+</style>

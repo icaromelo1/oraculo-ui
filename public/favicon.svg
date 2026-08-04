@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Oráculo">
+  <style>
+    .anel { stroke: #57866f; }
+    .pupila { fill: #a9762c; }
+    @media (prefers-color-scheme: dark) {
+      .anel { stroke: #8fbca6; }
+      .pupila { fill: #d8ac63; }
+    }
+  </style>
+  <circle class="anel" cx="16" cy="16" r="12.5" fill="none" stroke-width="3.5" />
+  <circle class="pupila" cx="16" cy="16" r="4" />
+</svg>

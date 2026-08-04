@@ -159,6 +159,7 @@ export const useChatStore = defineStore('chat', () => {
   const mensagens = ref<MensagemChat[]>([]);
   const filtro = ref('');
   const fonteSelecionada = ref<string | null>(null);
+  const fonteParaFerramenta = ref<Record<string, string>>({});
   const painelFontesAberto = ref(true);
   const listaConversasAberta = ref(false);
   const rascunho = ref('');
@@ -293,6 +294,7 @@ export const useChatStore = defineStore('chat', () => {
         if (alvo) {
           alvo.status = evento.status;
           alvo.metrica = evento.metrica;
+          alvo.duracaoMs = evento.duracaoMs;
           alvo.resultado = evento.resultado;
           if (evento.aprovadaPor) alvo.aprovadaPor = evento.aprovadaPor;
         }
@@ -304,6 +306,8 @@ export const useChatStore = defineStore('chat', () => {
         if (!mensagem.fontes.some((f) => f.id === evento.fonte.id)) {
           mensagem.fontes.push(evento.fonte);
         }
+
+        fonteParaFerramenta.value[evento.fonte.id] = evento.ferramentaId;
 
         break;
 
@@ -416,6 +420,7 @@ export const useChatStore = defineStore('chat', () => {
     mensagens,
     filtro,
     fonteSelecionada,
+    fonteParaFerramenta,
     painelFontesAberto,
     listaConversasAberta,
     rascunho,

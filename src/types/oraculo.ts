@@ -63,6 +63,7 @@ export interface Ferramenta {
   argumento: string;
   status: StatusFerramenta;
   metrica: string;
+  duracaoMs?: number;
   expandida?: boolean;
   aprovadaPor?: string;
   progresso?: string;

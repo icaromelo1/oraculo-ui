@@ -1,55 +1,12 @@
 <template>
   <aside class="painel" :class="{ 'painel--flutuante': flutuante }">
     <div class="painel__topo">
-      <span class="painel__titulo">{{ titulo }}</span>
-      <div class="painel__espacador" />
-      <button v-if="detalhe" class="o-btn o-btn--ghost" type="button" @click="chat.limparFonte()">
-        todas as fontes
-      </button>
+      <span class="painel__titulo">Fontes desta resposta</span>
+      <span class="painel__contagem">{{ chat.fontes.length }}</span>
       <button class="painel__fechar" type="button" @click="chat.alternarPainelFontes()">×</button>
     </div>
 
-    <div v-if="detalhe" class="painel__corpo">
-      <div class="cabecalho">
-        <div class="cabecalho__linha">
-          <i class="ponto" :class="`ponto--${tomTipoFonte(detalhe.tipo)}`" aria-hidden="true" />
-          <span class="cabecalho__tipo" :class="`cabecalho__tipo--${tomTipoFonte(detalhe.tipo)}`">
-            {{ rotuloTipoFonte(detalhe.tipo) }}
-          </span>
-        </div>
-        <div class="cabecalho__titulo">{{ detalhe.titulo }}</div>
-        <div class="cabecalho__caminho">{{ detalhe.caminho }}</div>
-        <div class="cabecalho__meta">{{ detalhe.meta }}</div>
-      </div>
-
-      <div class="trecho">
-        <div class="rotulo-secao">trecho exato</div>
-        <div class="trecho__quadro">
-          <div
-            v-for="linha in detalhe.linhas"
-            :key="linha.n"
-            class="trecho__linha"
-            :class="{ 'trecho__linha--destaque': linha.destaque }"
-          >
-            <span class="trecho__numero">{{ linha.n }}</span>
-            <span class="trecho__texto">{{ linha.texto }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="porque">
-        <div class="rotulo-secao">por que isso entrou na resposta</div>
-        <p class="porque__texto">{{ detalhe.porque }}</p>
-        <div class="porque__acoes">
-          <button class="o-btn" type="button">{{ detalhe.acao }}</button>
-          <button class="o-btn o-btn--ghost" type="button" @click="copiarCaminho(detalhe.caminho)">
-            {{ copiado ? 'copiado!' : 'copiar caminho' }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div v-else class="painel__corpo">
+    <div class="painel__corpo">
       <div class="autoridades">
         <div class="rotulo-secao">quanto vale cada fonte</div>
         <div class="autoridades__lista">
@@ -62,29 +19,27 @@
         </div>
       </div>
 
-      <div class="rotulo-secao fontes__titulo">
-        fontes desta resposta · {{ chat.fontes.length }}
-      </div>
-
-      <div class="fontes">
-        <button
-          v-for="item in chat.fontes"
-          :key="item.id"
-          class="fonte"
-          :class="`fonte--${tomTipoFonte(item.tipo)}`"
-          type="button"
-          @click="chat.selecionarFonte(item.id)"
-        >
-          <span class="fonte__topo">
-            <i class="ponto" :class="`ponto--${tomTipoFonte(item.tipo)}`" aria-hidden="true" />
-            <span class="fonte__tipo" :class="`fonte__tipo--${tomTipoFonte(item.tipo)}`">{{
-              rotuloTipoFonte(item.tipo)
-            }}</span>
-            <span v-if="item.meta" class="fonte__etiqueta">{{ item.meta }}</span>
-          </span>
-          <span class="fonte__titulo">{{ item.titulo }}</span>
-          <span class="fonte__caminho">{{ item.caminho }}</span>
-        </button>
+      <div class="grupos">
+        <div v-for="grupo in gruposFontes" :key="grupo.tipo" class="grupo">
+          <div class="grupo__cabecalho">
+            <i class="ponto" :class="`ponto--${grupo.tom}`" aria-hidden="true" />
+            <span class="grupo__nome" :class="`grupo__nome--${grupo.tom}`">{{ grupo.rotulo }}</span>
+            <span class="grupo__contagem">{{ grupo.itens.length }}</span>
+          </div>
+          <div class="grupo__itens">
+            <button
+              v-for="item in grupo.itens"
+              :key="item.id"
+              class="fonte"
+              :class="`fonte--${grupo.tom}`"
+              type="button"
+              @click="chat.selecionarFonte(item.id)"
+            >
+              <span class="fonte__titulo">{{ item.titulo }}</span>
+              <span class="fonte__caminho">{{ item.caminho }}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div v-if="cobertura.total > 0" class="cobertura">
@@ -105,15 +60,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { rotuloTipoFonte, tomTipoFonte } from '@/composables/useRotuloFonte';
+import { computed } from 'vue';
+import { tomTipoFonte } from '@/composables/useRotuloFonte';
 import { useChatStore } from '@/stores/chat';
-import type { Cobertura } from '@/types/oraculo';
+import type { Cobertura, Fonte, TipoFonte } from '@/types/oraculo';
 
 defineProps<{ flutuante: boolean }>();
 
 const chat = useChatStore();
-const copiado = ref(false);
 
 const NIVEIS = [
   { tom: 'amber', rotulo: 'Suas notas — o que você mesmo escreveu' },
@@ -121,28 +75,48 @@ const NIVEIS = [
   { tom: 'neutro', rotulo: 'Dedução do modelo — sem fonte' },
 ] as const;
 
+const ROTULOS_GRUPO: Record<TipoFonte, string> = {
+  curado: 'Suas notas',
+  doc: 'Documentação e configs',
+  codigo: 'Código',
+  banco: 'Estado dos serviços',
+  inferencia: 'Dedução do modelo',
+};
+
+const ORDEM_TIPOS: TipoFonte[] = ['curado', 'doc', 'codigo', 'banco', 'inferencia'];
+
+interface GrupoFontes {
+  tipo: TipoFonte;
+  tom: 'amber' | 'slate' | 'neutro';
+  rotulo: string;
+  itens: Fonte[];
+}
+
+const gruposFontes = computed<GrupoFontes[]>(() => {
+  const mapa = new Map<TipoFonte, Fonte[]>();
+
+  for (const fonte of chat.fontes) {
+    const lista = mapa.get(fonte.tipo) ?? [];
+    lista.push(fonte);
+    mapa.set(fonte.tipo, lista);
+  }
+
+  return ORDEM_TIPOS.filter((tipo) => mapa.has(tipo)).map((tipo) => ({
+    tipo,
+    tom: tomTipoFonte(tipo),
+    rotulo: ROTULOS_GRUPO[tipo],
+    itens: mapa.get(tipo) ?? [],
+  }));
+});
+
 const cobertura = computed<Cobertura>(
   () => chat.coberturaAtual ?? { citadas: 0, total: 0, semFonte: 0 },
 );
 
-const detalhe = computed(() => chat.detalheFonte);
-const titulo = computed(() => (detalhe.value ? 'Trecho citado' : 'Fontes desta resposta'));
 const percentual = computed(() => {
   const total = cobertura.value.total;
   return total > 0 ? `${Math.round((cobertura.value.citadas / total) * 100)}%` : '0%';
 });
-
-async function copiarCaminho(caminho: string): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(caminho);
-    copiado.value = true;
-    setTimeout(() => {
-      copiado.value = false;
-    }, 1500);
-  } catch {
-    copiado.value = false;
-  }
-}
 </script>
 
 <style scoped lang="scss">
@@ -170,8 +144,9 @@ async function copiarCaminho(caminho: string): Promise<void> {
     flex: 1;
   }
 
-  &__espacador {
-    flex: 1;
+  &__contagem {
+    font-size: 12px;
+    color: var(--ink3);
   }
 
   &__fechar {
@@ -215,117 +190,6 @@ async function copiarCaminho(caminho: string): Promise<void> {
   }
 }
 
-.cabecalho {
-  padding: 14px;
-  border-bottom: 1px solid var(--line);
-
-  &__linha {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  &__tipo {
-    font-size: 12.5px;
-
-    &--amber {
-      color: var(--amber);
-    }
-
-    &--slate {
-      color: var(--slate);
-    }
-
-    &--neutro {
-      color: var(--ink3);
-    }
-  }
-
-  &__titulo {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
-
-  &__caminho {
-    font: 400 12px/1.6 $mono;
-    color: var(--ink3);
-    word-break: break-all;
-  }
-
-  &__meta {
-    font-size: 12.5px;
-    color: var(--ink3);
-    margin-top: 7px;
-  }
-}
-
-.trecho {
-  padding: 14px;
-  border-bottom: 1px solid var(--line);
-
-  &__quadro {
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background: var(--panel2);
-    overflow-x: auto;
-    margin-top: 9px;
-  }
-
-  &__linha {
-    display: flex;
-
-    &--destaque {
-      background: var(--sel);
-
-      .trecho__texto {
-        color: var(--ink);
-      }
-    }
-  }
-
-  &__numero {
-    font: 400 11.5px/1.75 $mono;
-    width: 34px;
-    flex: none;
-    text-align: right;
-    padding: 2px 9px 2px 0;
-    color: var(--ink3);
-    user-select: none;
-  }
-
-  &__texto {
-    font: 400 12.5px/1.75 $mono;
-    padding: 2px 10px 2px 0;
-    color: var(--ink2);
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-}
-
-.porque {
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-
-  &__texto {
-    margin: 0;
-    font-size: 13.5px;
-    color: var(--ink2);
-    text-wrap: pretty;
-  }
-
-  &__acoes {
-    display: flex;
-    gap: 7px;
-    flex-wrap: wrap;
-    margin-top: 2px;
-  }
-}
-
 .autoridades {
   padding: 13px 14px;
   border-bottom: 1px solid var(--line);
@@ -353,51 +217,26 @@ async function copiarCaminho(caminho: string): Promise<void> {
   }
 }
 
-.fontes {
-  padding: 0 10px 12px;
+.grupos {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-
-  &__titulo {
-    padding: 13px 14px 6px;
-  }
 }
 
-.fonte {
-  text-align: left;
-  background: var(--panel2);
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  padding: 11px 12px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-
-  &:hover {
-    background: var(--panel3);
-    border-color: var(--line2);
+.grupo {
+  &:not(:first-child) {
+    border-top: 1px solid var(--line);
   }
 
-  &--amber:hover {
-    background: var(--amber-s);
-    border-color: var(--amber-l);
-  }
-
-  &--slate:hover {
-    background: var(--slate-s);
-    border-color: var(--slate-l);
-  }
-
-  &__topo {
+  &__cabecalho {
     display: flex;
     align-items: center;
-    gap: 7px;
-    margin-bottom: 5px;
+    gap: 8px;
+    padding: 12px 14px 7px;
   }
 
-  &__tipo {
-    font-size: 12px;
+  &__nome {
+    font-size: 12.5px;
+    font-weight: 600;
 
     &--amber {
       color: var(--amber);
@@ -412,17 +251,64 @@ async function copiarCaminho(caminho: string): Promise<void> {
     }
   }
 
-  &__etiqueta {
+  &__contagem {
     font-size: 12px;
     color: var(--ink3);
     margin-left: auto;
+  }
+
+  &__itens {
+    padding: 0 10px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.fonte {
+  text-align: left;
+  background: none;
+  border: none;
+  border-left: 2px solid var(--amber-l);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &:hover {
+    background: var(--panel2);
+  }
+
+  &--amber {
+    border-left-color: var(--amber-l);
+
+    &:hover {
+      background: var(--amber-s);
+    }
+  }
+
+  &--slate {
+    border-left-color: var(--slate-l);
+
+    &:hover {
+      background: var(--slate-s);
+    }
+  }
+
+  &--neutro {
+    border-left-color: var(--line2);
+
+    &:hover {
+      background: var(--panel3);
+    }
   }
 
   &__titulo {
     font-size: 13.5px;
     font-weight: 500;
     color: var(--ink);
-    margin-bottom: 3px;
   }
 
   &__caminho {

@@ -3,6 +3,10 @@
     <div class="grade">
       <div class="cartao">
         <form class="acesso" @submit.prevent="entrar">
+          <div class="acesso__marca">
+            <MarcaOraculo tamanho="lg" />
+            <span class="acesso__marca-nome">Oráculo</span>
+          </div>
           <h1 class="acesso__titulo">Bem-vindo de volta</h1>
           <p class="acesso__sub">Seu assistente sobre a sua infraestrutura.</p>
 
@@ -53,6 +57,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import MarcaOraculo from '@/components/MarcaOraculo.vue';
 import { obterSaude } from '@/services/saude.service';
 import { useSessaoStore } from '@/stores/sessao';
 
@@ -155,6 +160,20 @@ async function entrar(): Promise<void> {
 }
 
 .acesso {
+  &__marca {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 18px;
+  }
+
+  &__marca-nome {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
   &__titulo {
     margin: 0 0 4px;
     font-size: 22px;

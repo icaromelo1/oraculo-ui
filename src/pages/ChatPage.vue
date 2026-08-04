@@ -42,6 +42,8 @@
       :flutuante="painelFlutuante"
       :style="estiloPainel"
     />
+
+    <ModalFonte />
   </div>
 </template>
 
@@ -50,6 +52,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import BarraConversa from '@/components/chat/BarraConversa.vue';
 import ListaConversas from '@/components/chat/ListaConversas.vue';
 import MensagemUsuario from '@/components/chat/MensagemUsuario.vue';
+import ModalFonte from '@/components/chat/ModalFonte.vue';
 import PainelFontes from '@/components/chat/PainelFontes.vue';
 import RedatorPergunta from '@/components/chat/RedatorPergunta.vue';
 import RespostaAssistente from '@/components/chat/RespostaAssistente.vue';

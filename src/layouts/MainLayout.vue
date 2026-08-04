@@ -2,7 +2,7 @@
   <div class="app">
     <header class="barra">
       <div class="marca">
-        <span class="marca__glifo" aria-hidden="true"><i /></span>
+        <MarcaOraculo tamanho="sm" />
         <span class="marca__nome">Oráculo</span>
       </div>
 
@@ -36,6 +36,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import MarcaOraculo from '@/components/MarcaOraculo.vue';
 import { useSessaoStore } from '@/stores/sessao';
 
 const sessao = useSessaoStore();
@@ -88,24 +89,6 @@ const navegacao = [
   display: flex;
   align-items: center;
   gap: 9px;
-
-  &__glifo {
-    width: 22px;
-    height: 22px;
-    border-radius: 7px;
-    background: var(--sage-s);
-    border: 1px solid var(--sage-l);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    i {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--sage);
-    }
-  }
 
   &__nome {
     font-weight: 600;

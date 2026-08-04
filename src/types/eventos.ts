@@ -41,6 +41,7 @@ export interface EventoTextoDelta {
 export interface EventoCitacao {
   tipo: 'citacao';
   fonte: Fonte;
+  ferramentaId: string;
 }
 
 export interface EventoAprovacaoPedido {

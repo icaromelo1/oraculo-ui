@@ -165,16 +165,23 @@
               style="
                 width: 22px;
                 height: 22px;
-                border-radius: 7px;
-                background: var(--sage-s);
-                border: 1px solid var(--sage-l);
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                border-radius: 50%;
+                border: 2.5px solid var(--sage);
+                position: relative;
+                flex: none;
               "
             >
               <div
-                style="width: 7px; height: 7px; border-radius: 50%; background: var(--sage)"
+                style="
+                  position: absolute;
+                  width: 6px;
+                  height: 6px;
+                  border-radius: 50%;
+                  background: var(--amber);
+                  left: 50%;
+                  top: 50%;
+                  transform: translate(-50%, -50%);
+                "
               ></div>
             </div>
             <span style="font-weight: 600; font-size: 15px; letter-spacing: -0.01em">Oráculo</span>
@@ -318,6 +325,34 @@
                   box-shadow: var(--shadow);
                 "
               >
+                <div style="display: flex; align-items: center; gap: 11px; margin-bottom: 18px">
+                  <div
+                    style="
+                      width: 34px;
+                      height: 34px;
+                      border-radius: 50%;
+                      border: 4px solid var(--sage);
+                      position: relative;
+                      flex: none;
+                    "
+                  >
+                    <div
+                      style="
+                        position: absolute;
+                        width: 9px;
+                        height: 9px;
+                        border-radius: 50%;
+                        background: var(--amber);
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                      "
+                    ></div>
+                  </div>
+                  <span style="font-size: 18px; font-weight: 600; letter-spacing: -0.01em"
+                    >Oráculo</span
+                  >
+                </div>
                 <h1
                   style="
                     margin: 0 0 4px;
@@ -2027,25 +2062,9 @@ KAIROS_TZ=America/Sao_Paulo</pre>
                   "
                 >
                   <span style="font-size: 13.5px; font-weight: 600; flex: 1"
-                    >{{ tituloPainel }}</span
+                    >Fontes desta resposta</span
                   >
-                  <sc-if value="{{ temSel }}" hint-placeholder-val="{{ false }}">
-                    <button
-                      onClick="{{ limparSel }}"
-                      style="
-                        background: none;
-                        border: 1px solid var(--line);
-                        border-radius: 7px;
-                        color: var(--ink2);
-                        padding: 4px 9px;
-                        font-size: 12px;
-                        cursor: pointer;
-                      "
-                      style-hover="color:var(--ink)"
-                    >
-                      todas as fontes
-                    </button>
-                  </sc-if>
+                  <span style="font-size: 12px; color: var(--ink3)">4</span>
                   <button
                     onClick="{{ toggleRight }}"
                     style="
@@ -2062,16 +2081,277 @@ KAIROS_TZ=America/Sao_Paulo</pre>
                   </button>
                 </div>
 
-                <sc-if value="{{ temSel }}" hint-placeholder-val="{{ false }}">
-                  <div style="flex: 1; overflow-y: auto">
-                    <div style="padding: 14px; border-bottom: 1px solid var(--line)">
-                      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px">
-                        <i
-                          style="width:7px;height:7px;border-radius:50%;background:{{ sel.cor }};flex:none"
-                        ></i>
-                        <span style="font-size:12.5px;color:{{ sel.cor }}">{{ sel.nivel }}</span>
+                <div
+                  style="
+                    padding: 12px 14px;
+                    border-bottom: 1px solid var(--line);
+                    background: var(--panel2);
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      align-items: baseline;
+                      justify-content: space-between;
+                      margin-bottom: 7px;
+                    "
+                  >
+                    <span style="font-size: 13px; color: var(--ink2)">Afirmações com fonte</span
+                    ><span style="font-size: 13px; font-weight: 600">4 de 5</span>
+                  </div>
+                  <div style="display: flex; gap: 3px; height: 6px">
+                    <div style="flex: 1; background: var(--amber); border-radius: 3px"></div>
+                    <div style="flex: 3; background: var(--slate); border-radius: 3px"></div>
+                    <div style="flex: 1; background: var(--line2); border-radius: 3px"></div>
+                  </div>
+                  <div style="font-size: 12px; color: var(--ink3); margin-top: 7px">
+                    A quinta é dedução minha — está marcada no texto.
+                  </div>
+                </div>
+
+                <div style="flex: 1; overflow-y: auto">
+                  <div style="display: flex; align-items: center; gap: 8px; padding: 12px 14px 7px">
+                    <i
+                      style="
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background: var(--amber);
+                        flex: none;
+                      "
+                    ></i
+                    ><span style="font-size: 12.5px; color: var(--amber); font-weight: 600"
+                      >Suas notas</span
+                    ><span style="font-size: 12px; color: var(--ink3); margin-left: auto">1</span>
+                  </div>
+                  <div style="padding: 0 10px 6px">
+                    <div
+                      onClick="{{ ct.c1 }}"
+                      style="
+                        border-left: 2px solid var(--amber-l);
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        border-radius: 0 8px 8px 0;
+                      "
+                      style-hover="background:var(--amber-s)"
+                    >
+                      <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 2px">
+                        Porta interna sempre explícita
                       </div>
-                      <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px">
+                      <div
+                        style="
+                          font:
+                            400 11.5px/1.5 'IBM Plex Mono',
+                            monospace;
+                          color: var(--ink3);
+                        "
+                      >
+                        notas/traefik-armadilhas.md · 12 jun
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 8px;
+                      padding: 12px 14px 7px;
+                      border-top: 1px solid var(--line);
+                    "
+                  >
+                    <i
+                      style="
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background: var(--slate);
+                        flex: none;
+                      "
+                    ></i
+                    ><span style="font-size: 12.5px; color: var(--slate); font-weight: 600"
+                      >Documentação</span
+                    ><span style="font-size: 12px; color: var(--ink3); margin-left: auto">2</span>
+                  </div>
+                  <div style="padding: 0 10px 6px; display: flex; flex-direction: column; gap: 2px">
+                    <div
+                      onClick="{{ ct.c2 }}"
+                      style="
+                        border-left: 2px solid var(--slate-l);
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        border-radius: 0 8px 8px 0;
+                      "
+                      style-hover="background:var(--slate-s)"
+                    >
+                      <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 2px">
+                        AGENTE-SERVIDOR.md
+                      </div>
+                      <div
+                        style="
+                          font:
+                            400 11.5px/1.5 'IBM Plex Mono',
+                            monospace;
+                          color: var(--ink3);
+                        "
+                      >
+                        § Roteamento · linhas 41-47
+                      </div>
+                    </div>
+                    <div
+                      onClick="{{ ct.c4 }}"
+                      style="
+                        border-left: 2px solid var(--slate-l);
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        border-radius: 0 8px 8px 0;
+                      "
+                      style-hover="background:var(--slate-s)"
+                    >
+                      <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 2px">
+                        project_kairos_visao.md
+                      </div>
+                      <div
+                        style="
+                          font:
+                            400 11.5px/1.5 'IBM Plex Mono',
+                            monospace;
+                          color: var(--ink3);
+                        "
+                      >
+                        § Visão · linhas 3-9
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 8px;
+                      padding: 12px 14px 7px;
+                      border-top: 1px solid var(--line);
+                    "
+                  >
+                    <i
+                      style="
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background: var(--slate);
+                        flex: none;
+                      "
+                    ></i
+                    ><span style="font-size: 12.5px; color: var(--slate); font-weight: 600"
+                      >Código e configs</span
+                    ><span style="font-size: 12px; color: var(--ink3); margin-left: auto">1</span>
+                  </div>
+                  <div style="padding: 0 10px 12px">
+                    <div
+                      onClick="{{ ct.c3 }}"
+                      style="
+                        border-left: 2px solid var(--slate-l);
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        border-radius: 0 8px 8px 0;
+                      "
+                      style-hover="background:var(--slate-s)"
+                    >
+                      <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 2px">
+                        docker-compose.yml
+                      </div>
+                      <div
+                        style="
+                          font:
+                            400 11.5px/1.5 'IBM Plex Mono',
+                            monospace;
+                          color: var(--ink3);
+                        "
+                      >
+                        stacks/traefik/ · linhas 14-22
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style="
+                      padding: 12px 14px;
+                      border-top: 1px solid var(--line);
+                      background: var(--panel2);
+                    "
+                  >
+                    <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 7px">
+                      Não usei, mas estava perto
+                    </div>
+                    <div
+                      style="
+                        font:
+                          400 12px/1.5 'IBM Plex Mono',
+                          monospace;
+                        color: var(--ink2);
+                      "
+                    >
+                      certificados-letsencrypt.md · 2 trechos
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            </sc-if>
+
+            <sc-if value="{{ temSel }}" hint-placeholder-val="{{ false }}">
+              <div
+                style="
+                  position: fixed;
+                  inset: 0;
+                  z-index: 60;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  padding: 24px;
+                "
+              >
+                <div
+                  onClick="{{ limparSel }}"
+                  style="position: absolute; inset: 0; background: rgba(30, 26, 22, 0.42)"
+                ></div>
+                <div
+                  style="
+                    position: relative;
+                    background: var(--panel);
+                    border: 1px solid var(--line);
+                    border-radius: 16px;
+                    box-shadow: 0 24px 64px -24px rgba(30, 26, 22, 0.5);
+                    width: min(880px, 100%);
+                    max-height: min(660px, 88vh);
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      align-items: flex-start;
+                      gap: 12px;
+                      padding: 16px 18px;
+                      border-bottom: 1px solid var(--line);
+                    "
+                  >
+                    <i
+                      style="width:8px;height:8px;border-radius:50%;background:{{ sel.cor }};flex:none;margin-top:7px"
+                    ></i>
+                    <div style="flex: 1; min-width: 0">
+                      <div style="font-size:12.5px;color:{{ sel.cor }};margin-bottom:3px">
+                        {{ sel.nivel }}
+                      </div>
+                      <div
+                        style="
+                          font-size: 16px;
+                          font-weight: 600;
+                          letter-spacing: -0.01em;
+                          margin-bottom: 4px;
+                        "
+                      >
                         {{ sel.titulo }}
                       </div>
                       <div
@@ -2085,13 +2365,39 @@ KAIROS_TZ=America/Sao_Paulo</pre>
                       >
                         {{ sel.caminho }}
                       </div>
-                      <div style="font-size: 12.5px; color: var(--ink3); margin-top: 7px">
-                        {{ sel.meta }}
-                      </div>
                     </div>
-                    <div style="padding: 14px; border-bottom: 1px solid var(--line)">
-                      <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 9px">
-                        Trecho exato
+                    <button
+                      onClick="{{ limparSel }}"
+                      style="
+                        background: var(--panel2);
+                        border: 1px solid var(--line);
+                        border-radius: 8px;
+                        color: var(--ink2);
+                        font-size: 15px;
+                        cursor: pointer;
+                        line-height: 1;
+                        padding: 5px 9px;
+                        flex: none;
+                      "
+                      style-hover="color:var(--ink);border-color:var(--line2)"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  <div
+                    style="flex:1;overflow-y:auto;display:grid;grid-template-columns:{{ colunasModal }}"
+                  >
+                    <div
+                      style="padding: 16px 18px; border-right: 1px solid var(--line); min-width: 0"
+                    >
+                      <div
+                        style="display: flex; align-items: baseline; gap: 9px; margin-bottom: 10px"
+                      >
+                        <span style="font-size: 12.5px; color: var(--ink3); flex: 1"
+                          >Trecho exato, como está no arquivo</span
+                        >
+                        <span style="font-size: 12px; color: var(--ink3)">{{ sel.meta }}</span>
                       </div>
                       <div
                         style="
@@ -2101,16 +2407,16 @@ KAIROS_TZ=America/Sao_Paulo</pre>
                           overflow: hidden;
                         "
                       >
-                        <sc-for list="{{ sel.linhas }}" as="l" hint-placeholder-count="6">
+                        <sc-for list="{{ sel.linhas }}" as="l" hint-placeholder-count="7">
                           <div style="display:flex;background:{{ l.bg }}">
                             <span
                               style="
-                                width: 34px;
+                                width: 36px;
                                 flex: none;
                                 text-align: right;
-                                padding: 2px 9px 2px 0;
+                                padding: 2px 10px 2px 0;
                                 font:
-                                  400 11.5px/1.75 'IBM Plex Mono',
+                                  400 11.5px/1.8 'IBM Plex Mono',
                                   monospace;
                                 color: var(--ink3);
                                 user-select: none;
@@ -2118,322 +2424,142 @@ KAIROS_TZ=America/Sao_Paulo</pre>
                               >{{ l.n }}</span
                             >
                             <span
-                              style="padding:2px 10px 2px 0;font:400 12.5px/1.75 'IBM Plex Mono',monospace;color:{{ l.cor }};white-space:pre-wrap;word-break:break-word"
+                              style="padding:2px 11px 2px 0;font:400 12.5px/1.8 'IBM Plex Mono',monospace;color:{{ l.cor }};white-space:pre-wrap;word-break:break-word"
                               >{{ l.t }}</span
                             >
                           </div>
                         </sc-for>
                       </div>
-                    </div>
-                    <div style="padding: 14px; display: flex; flex-direction: column; gap: 9px">
-                      <div style="font-size: 12.5px; color: var(--ink3)">
-                        Por que isso entrou na resposta
-                      </div>
-                      <div style="font-size: 13.5px; color: var(--ink2)">{{ sel.porque }}</div>
-                      <div style="display: flex; gap: 7px; flex-wrap: wrap; margin-top: 2px">
-                        <button
-                          style="
-                            background: var(--panel2);
-                            border: 1px solid var(--line2);
-                            border-radius: 8px;
-                            color: var(--ink2);
-                            padding: 6px 11px;
-                            font-size: 12.5px;
-                            cursor: pointer;
-                          "
-                          style-hover="color:var(--ink)"
-                        >
-                          Abrir arquivo
-                        </button>
-                        <button
-                          style="
-                            background: none;
-                            border: 1px solid var(--line);
-                            border-radius: 8px;
-                            color: var(--ink3);
-                            padding: 6px 11px;
-                            font-size: 12.5px;
-                            cursor: pointer;
-                          "
-                          style-hover="color:var(--ink)"
-                        >
-                          Copiar caminho
-                        </button>
+                      <div
+                        style="
+                          margin-top: 14px;
+                          padding-top: 13px;
+                          border-top: 1px solid var(--line);
+                        "
+                      >
+                        <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 5px">
+                          Por que isso entrou na resposta
+                        </div>
+                        <div style="font-size: 13.5px; color: var(--ink2)">{{ sel.porque }}</div>
                       </div>
                     </div>
-                  </div>
-                </sc-if>
 
-                <sc-if value="{{ semSel }}" hint-placeholder-val="{{ true }}">
-                  <div style="flex: 1; overflow-y: auto">
-                    <div style="padding: 13px 14px; border-bottom: 1px solid var(--line)">
-                      <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 9px">
-                        Quanto vale cada fonte
+                    <div style="padding: 16px 18px; min-width: 0; background: var(--panel2)">
+                      <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 12px">
+                        Como eu cheguei nesta fonte
                       </div>
-                      <div style="display: flex; flex-direction: column; gap: 7px; font-size: 13px">
-                        <div style="display: flex; align-items: center; gap: 9px">
-                          <i
-                            style="
-                              width: 7px;
-                              height: 7px;
-                              border-radius: 50%;
-                              background: var(--amber);
-                              flex: none;
-                            "
-                          ></i
-                          ><span style="color: var(--ink2)"
-                            >Suas notas — o que você mesma escreveu</span
-                          >
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 9px">
-                          <i
-                            style="
-                              width: 7px;
-                              height: 7px;
-                              border-radius: 50%;
-                              background: var(--slate);
-                              flex: none;
-                            "
-                          ></i
-                          ><span style="color: var(--ink2)"
-                            >Documentação e configs do workspace</span
-                          >
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 9px">
-                          <i
-                            style="
-                              width: 7px;
-                              height: 7px;
-                              border-radius: 50%;
-                              background: var(--line2);
-                              flex: none;
-                            "
-                          ></i
-                          ><span style="color: var(--ink3)">Dedução do modelo — sem fonte</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div style="padding: 13px 14px 6px; font-size: 12.5px; color: var(--ink3)">
-                      Fontes desta resposta · 4
-                    </div>
-                    <div
-                      style="padding: 0 10px 12px; display: flex; flex-direction: column; gap: 7px"
-                    >
-                      <button
-                        onClick="{{ ct.c1 }}"
-                        style="
-                          text-align: left;
-                          background: var(--panel2);
-                          border: 1px solid var(--line);
-                          border-radius: 11px;
-                          padding: 11px 12px;
-                          cursor: pointer;
-                        "
-                        style-hover="border-color:var(--amber-l);background:var(--amber-s)"
-                      >
-                        <div
-                          style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px"
-                        >
-                          <i
-                            style="
-                              width: 6px;
-                              height: 6px;
-                              border-radius: 50%;
-                              background: var(--amber);
-                              flex: none;
-                            "
-                          ></i
-                          ><span style="font-size: 12px; color: var(--amber)">sua nota</span
-                          ><span style="font-size: 12px; color: var(--ink3); margin-left: auto"
-                            >12 jun</span
-                          >
-                        </div>
-                        <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 3px">
-                          Porta interna sempre explícita no Traefik
-                        </div>
-                        <div
-                          style="
-                            font:
-                              400 11.5px/1.5 'IBM Plex Mono',
-                              monospace;
-                            color: var(--ink3);
-                            word-break: break-all;
-                          "
-                        >
-                          docs/notas/traefik-armadilhas.md
-                        </div>
-                      </button>
-                      <button
-                        onClick="{{ ct.c2 }}"
-                        style="
-                          text-align: left;
-                          background: var(--panel2);
-                          border: 1px solid var(--line);
-                          border-radius: 11px;
-                          padding: 11px 12px;
-                          cursor: pointer;
-                        "
-                        style-hover="border-color:var(--slate-l);background:var(--slate-s)"
-                      >
-                        <div
-                          style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px"
-                        >
-                          <i
-                            style="
-                              width: 6px;
-                              height: 6px;
-                              border-radius: 50%;
-                              background: var(--slate);
-                              flex: none;
-                            "
-                          ></i
-                          ><span style="font-size: 12px; color: var(--slate)">documentação</span
-                          ><span style="font-size: 12px; color: var(--ink3); margin-left: auto"
-                            >§ Roteamento</span
-                          >
-                        </div>
-                        <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 3px">
-                          AGENTE-SERVIDOR.md
-                        </div>
-                        <div
-                          style="
-                            font:
-                              400 11.5px/1.5 'IBM Plex Mono',
-                              monospace;
-                            color: var(--ink3);
-                            word-break: break-all;
-                          "
-                        >
-                          /home/ubuntu/oraculo-workspace/docs/
-                        </div>
-                      </button>
-                      <button
-                        onClick="{{ ct.c3 }}"
-                        style="
-                          text-align: left;
-                          background: var(--panel2);
-                          border: 1px solid var(--line);
-                          border-radius: 11px;
-                          padding: 11px 12px;
-                          cursor: pointer;
-                        "
-                        style-hover="border-color:var(--slate-l);background:var(--slate-s)"
-                      >
-                        <div
-                          style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px"
-                        >
-                          <i
-                            style="
-                              width: 6px;
-                              height: 6px;
-                              border-radius: 50%;
-                              background: var(--slate);
-                              flex: none;
-                            "
-                          ></i
-                          ><span style="font-size: 12px; color: var(--slate)">config</span
-                          ><span style="font-size: 12px; color: var(--ink3); margin-left: auto"
-                            >linhas 14-22</span
-                          >
-                        </div>
-                        <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 3px">
-                          docker-compose.yml
-                        </div>
-                        <div
-                          style="
-                            font:
-                              400 11.5px/1.5 'IBM Plex Mono',
-                              monospace;
-                            color: var(--ink3);
-                            word-break: break-all;
-                          "
-                        >
-                          stacks/traefik/
-                        </div>
-                      </button>
-                      <button
-                        onClick="{{ ct.c4 }}"
-                        style="
-                          text-align: left;
-                          background: var(--panel2);
-                          border: 1px solid var(--line);
-                          border-radius: 11px;
-                          padding: 11px 12px;
-                          cursor: pointer;
-                        "
-                        style-hover="border-color:var(--slate-l);background:var(--slate-s)"
-                      >
-                        <div
-                          style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px"
-                        >
-                          <i
-                            style="
-                              width: 6px;
-                              height: 6px;
-                              border-radius: 50%;
-                              background: var(--slate);
-                              flex: none;
-                            "
-                          ></i
-                          ><span style="font-size: 12px; color: var(--slate)">documentação</span
-                          ><span style="font-size: 12px; color: var(--ink3); margin-left: auto"
-                            >§ Visão</span
-                          >
-                        </div>
-                        <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 3px">
-                          project_kairos_visao.md
-                        </div>
-                        <div
-                          style="
-                            font:
-                              400 11.5px/1.5 'IBM Plex Mono',
-                              monospace;
-                            color: var(--ink3);
-                            word-break: break-all;
-                          "
-                        >
-                          /home/ubuntu/oraculo-workspace/docs/
-                        </div>
-                      </button>
-                    </div>
-                    <div style="padding: 13px 14px; border-top: 1px solid var(--line)">
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          justify-content: space-between;
-                          font-size: 13px;
-                          color: var(--ink2);
-                          margin-bottom: 8px;
-                        "
-                      >
-                        <span>Afirmações com fonte</span
-                        ><span style="color: var(--ink)">4 de 5</span>
-                      </div>
-                      <div
-                        style="
-                          height: 5px;
-                          background: var(--panel3);
-                          border-radius: 3px;
-                          overflow: hidden;
-                        "
-                      >
-                        <div
-                          style="
-                            width: 80%;
-                            height: 100%;
-                            background: var(--sage);
-                            border-radius: 3px;
-                          "
-                        ></div>
-                      </div>
-                      <div style="font-size: 12.5px; color: var(--ink3); margin-top: 8px">
-                        Uma frase é dedução minha: que a confusão de portas se repetiria aqui.
+                      <div style="display: flex; flex-direction: column; gap: 2px">
+                        <sc-for list="{{ sel.busca }}" as="p" hint-placeholder-count="3">
+                          <div style="display: flex; gap: 11px">
+                            <div
+                              style="
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                flex: none;
+                                padding-top: 4px;
+                              "
+                            >
+                              <i
+                                style="width:7px;height:7px;border-radius:50%;background:{{ p.cor }};flex:none"
+                              ></i>
+                              <div
+                                style="
+                                  width: 1px;
+                                  flex: 1;
+                                  background: var(--line2);
+                                  margin-top: 4px;
+                                "
+                              ></div>
+                            </div>
+                            <div style="flex: 1; min-width: 0; padding-bottom: 16px">
+                              <div
+                                style="
+                                  display: flex;
+                                  align-items: baseline;
+                                  gap: 9px;
+                                  margin-bottom: 5px;
+                                "
+                              >
+                                <span style="font-size: 13px; font-weight: 600; flex: 1"
+                                  >{{ p.titulo }}</span
+                                >
+                                <span
+                                  style="font-size: 12px; color: var(--ink3); white-space: nowrap"
+                                  >{{ p.tempo }}</span
+                                >
+                              </div>
+                              <div
+                                style="
+                                  background: var(--panel);
+                                  border: 1px solid var(--line);
+                                  border-radius: 9px;
+                                  padding: 9px 11px;
+                                  font:
+                                    400 12px/1.7 'IBM Plex Mono',
+                                    monospace;
+                                  color: var(--ink2);
+                                  overflow-x: auto;
+                                  white-space: pre;
+                                "
+                              >
+                                {{ p.comando }}
+                              </div>
+                              <div style="font-size: 12.5px; color: var(--ink3); margin-top: 6px">
+                                {{ p.resultado }}
+                              </div>
+                            </div>
+                          </div>
+                        </sc-for>
                       </div>
                     </div>
                   </div>
-                </sc-if>
-              </aside>
+
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 9px;
+                      padding: 12px 18px;
+                      border-top: 1px solid var(--line);
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <span style="font-size: 12.5px; color: var(--ink3); flex: 1; min-width: 140px"
+                      >{{ sel.rodape }}</span
+                    >
+                    <button
+                      style="
+                        background: var(--panel2);
+                        border: 1px solid var(--line2);
+                        border-radius: 8px;
+                        color: var(--ink2);
+                        padding: 7px 12px;
+                        font-size: 13px;
+                        cursor: pointer;
+                      "
+                      style-hover="color:var(--ink)"
+                    >
+                      Copiar caminho
+                    </button>
+                    <button
+                      style="
+                        background: var(--sage);
+                        border: none;
+                        border-radius: 8px;
+                        color: var(--onaccent);
+                        padding: 7px 13px;
+                        font-size: 13px;
+                        font-weight: 600;
+                        cursor: pointer;
+                      "
+                      style-hover="filter:brightness(1.07)"
+                    >
+                      Abrir arquivo inteiro
+                    </button>
+                  </div>
+                </div>
+              </div>
             </sc-if>
           </div>
         </sc-if>
@@ -3242,6 +3368,18 @@ KAIROS_TZ=America/Sao_Paulo</pre>
           caminho: '/home/ubuntu/oraculo-workspace/docs/notas/traefik-armadilhas.md',
           meta: 'escrita 12 jun 2026 · revisada 1× · usada em 3 conversas',
           porque: 'Nível mais alto de autoridade: é conhecimento seu, não do modelo. A recomendação de fixar a porta veio literalmente daqui.',
+          rodape: 'Nota sua, indexada junto com a documentação — tem prioridade sobre doc e config.',
+          busca: [
+            { titulo: 'Busca híbrida no conhecimento', cor: 'var(--sage)', tempo: '780 ms',
+              comando: 'buscar("traefik serviço novo sem dns entrypoint")\n  modo: híbrido (vetor + termo)  ·  top_k: 8',
+              resultado: '6 trechos acima do corte · este ficou em 1º' },
+            { titulo: 'Consulta ao índice', cor: 'var(--slate)', tempo: '61 ms',
+              comando: 'select caminho, secao, score\nfrom trechos\nwhere fonte = \'nota\'\norder by score desc limit 3;',
+              resultado: 'score 0.89 · notas/traefik-armadilhas.md' },
+            { titulo: 'Leitura do arquivo', cor: 'var(--amber)', tempo: '22 ms',
+              comando: 'ler(docs/notas/traefik-armadilhas.md, linhas 12-17)',
+              resultado: '6 linhas lidas · sem alteração desde 12 jun' }
+          ],
           linhas: [
             { n: 12, t: '## Traefik — armadilhas' },
             { n: 13, t: '' },
@@ -3257,6 +3395,15 @@ KAIROS_TZ=America/Sao_Paulo</pre>
           caminho: '/home/ubuntu/oraculo-workspace/docs/AGENTE-SERVIDOR.md',
           meta: 'atualizado 28 jul 2026 · 3 trechos indexados',
           porque: 'Documento de referência do servidor. Sustenta que o roteamento é por label e que o curinga de DNS já cobre novos subdomínios.',
+          rodape: 'Documentação do workspace — abaixo das suas notas, acima de config.',
+          busca: [
+            { titulo: 'Busca híbrida no conhecimento', cor: 'var(--sage)', tempo: '780 ms',
+              comando: 'buscar("traefik serviço novo sem dns entrypoint")\n  modo: híbrido (vetor + termo)  ·  top_k: 8',
+              resultado: '6 trechos · 2 vindos deste arquivo' },
+            { titulo: 'Leitura do arquivo', cor: 'var(--slate)', tempo: '31 ms',
+              comando: 'ler(docs/AGENTE-SERVIDOR.md, § Roteamento)',
+              resultado: 'linhas 41-47 · seção inteira lida para não citar fora de contexto' }
+          ],
           linhas: [
             { n: 41, t: '### Roteamento' },
             { n: 42, t: '' },
@@ -3273,6 +3420,18 @@ KAIROS_TZ=America/Sao_Paulo</pre>
           caminho: '/home/ubuntu/oraculo-workspace/stacks/traefik/docker-compose.yml',
           meta: 'lido 14:22 · 34 linhas · sem alteração há 9 dias',
           porque: 'Arquivo lido na hora. Confirma o nome da rede externa (proxy) e o entrypoint websecure usados no exemplo.',
+          rodape: 'Config lido na hora — vale pelo que está no disco, não pelo que a doc diz.',
+          busca: [
+            { titulo: 'Leitura do arquivo', cor: 'var(--slate)', tempo: '96 ms',
+              comando: 'ler(stacks/traefik/docker-compose.yml)',
+              resultado: '34 linhas · sem alteração há 9 dias' },
+            { titulo: 'Estado dos serviços (Portainer)', cor: 'var(--sage)', tempo: '210 ms',
+              comando: 'GET /api/endpoints/1/docker/networks/proxy\n  → containers conectados',
+              resultado: '3 containers na rede proxy · traefik, oraculo-web, kairos' },
+            { titulo: 'Logs do container', cor: 'var(--sage)', tempo: '340 ms',
+              comando: 'GET /api/.../containers/traefik/logs?tail=50',
+              resultado: 'nenhum erro de roteamento nas últimas 50 linhas' }
+          ],
           linhas: [
             { n: 14, t: 'networks:' },
             { n: 15, t: '  proxy:' },
@@ -3291,6 +3450,18 @@ KAIROS_TZ=America/Sao_Paulo</pre>
           caminho: '/home/ubuntu/oraculo-workspace/docs/project_kairos_visao.md',
           meta: 'atualizado 19 jul 2026 · 5 trechos indexados',
           porque: 'Define o que o Kairos é e o formato das rotinas. A explicação do produto vem daqui, sem paráfrase inventada.',
+          rodape: 'Documentação do projeto — a definição do Kairos veio daqui, sem paráfrase.',
+          busca: [
+            { titulo: 'Busca híbrida no conhecimento', cor: 'var(--sage)', tempo: '640 ms',
+              comando: 'buscar("kairos para que serve uso rotinas")\n  modo: híbrido (vetor + termo)  ·  top_k: 8',
+              resultado: '4 trechos · 3 deste arquivo' },
+            { titulo: 'Consulta ao índice', cor: 'var(--slate)', tempo: '58 ms',
+              comando: 'select secao, score\nfrom trechos\nwhere caminho like \'%kairos%\'\norder by score desc;',
+              resultado: '§ Visão em 1º (0.91) · § Rotinas em 2º (0.77)' },
+            { titulo: 'Leitura do arquivo', cor: 'var(--slate)', tempo: '27 ms',
+              comando: 'ler(docs/project_kairos_visao.md, linhas 3-9)',
+              resultado: '7 linhas lidas' }
+          ],
           linhas: [
             { n: 3, t: '# Kairos — visão' },
             { n: 4, t: '' },
@@ -3358,6 +3529,7 @@ KAIROS_TZ=America/Sao_Paulo</pre>
 
           const bruto = s.sel ? FONTES[s.sel] : null;
           const sel = bruto ? Object.assign({}, bruto, {
+            busca: bruto.busca,
             linhas: bruto.linhas.map(l => ({
               n: l.n, t: l.t,
               bg: l.hl ? 'var(--sel)' : 'transparent',
@@ -3397,9 +3569,9 @@ KAIROS_TZ=America/Sao_Paulo</pre>
             detalheAberto: s.detalhe,
             rotuloDetalhe: s.detalhe ? 'ocultar detalhe' : 'ver detalhe',
             toggleDetalhe: () => this.setState({ detalhe: !s.detalhe }),
-            temSel: !!sel, semSel: !sel, sel,
-            limparSel: () => this.setState({ sel: null }),
-            tituloPainel: sel ? 'Trecho citado' : 'Fontes desta resposta'
+            temSel: !!sel, sel,
+            colunasModal: s.w < 760 ? 'minmax(0,1fr)' : 'minmax(0,1.05fr) minmax(0,1fr)',
+            limparSel: () => this.setState({ sel: null })
           };
         }
       }

@@ -80,7 +80,7 @@
             <span class="fonte__tipo" :class="`fonte__tipo--${tomTipoFonte(item.tipo)}`">{{
               rotuloTipoFonte(item.tipo)
             }}</span>
-            <span class="fonte__etiqueta">{{ item.etiqueta }}</span>
+            <span v-if="item.meta" class="fonte__etiqueta">{{ item.meta }}</span>
           </span>
           <span class="fonte__titulo">{{ item.titulo }}</span>
           <span class="fonte__caminho">{{ item.caminho }}</span>

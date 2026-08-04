@@ -3,12 +3,13 @@
     <div class="pagina__coluna">
       <div class="titulo">
         <h1>Perfis e capacidades</h1>
-        <span>instalação DSG · {{ perfis.length }} perfis · {{ colunas.length }} capacidades</span>
+        <span>{{ perfis.length }} perfis · {{ colunas.length }} capacidades · dados fixos</span>
       </div>
 
       <p class="explicacao">
-        Uma capacidade desligada na instalação não pode ser concedida a nenhum perfil — a coluna
-        aparece inteira em cinza. Mudanças valem para novas sessões e ficam na auditoria.
+        Esta tela ainda mostra dados fixos de exemplo — o backend não tem uma rota de perfis e
+        matriz de capacidades. Uma capacidade desligada nesta instalação não pode ser concedida a
+        nenhum perfil — a coluna aparece inteira em cinza.
       </p>
 
       <div class="legenda">
@@ -93,10 +94,10 @@
 
         <div class="o-panel">
           <div class="cartoes__topo">
-            <span class="o-caps">capacidades da instalação DSG</span>
+            <span class="o-caps">capacidades desta instalação</span>
           </div>
           <div class="instalacao">
-            <div v-for="item in capacidadesInstalacao" :key="item.rotulo" class="instalacao__linha">
+            <div v-for="item in capacidadesFixas" :key="item.rotulo" class="instalacao__linha">
               <span class="instalacao__rotulo">{{ item.rotulo }}</span>
               <span class="instalacao__estado" :class="{ 'tom-ok': item.ligada }">{{
                 item.estado
@@ -113,18 +114,18 @@
 
 <script setup lang="ts">
 import {
-  CAPACIDADES_INSTALACAO,
+  CAPACIDADES_FIXAS,
   COLUNAS_MATRIZ,
   DETALHE_CAPACIDADE,
   MATRIZ,
   PERFIS,
-} from '@/mocks/perfis';
+} from './perfis-fixos';
 import type { StatusCapacidade } from '@/types/oraculo';
 
 const perfis = PERFIS;
 const colunas = COLUNAS_MATRIZ;
 const detalhe = DETALHE_CAPACIDADE;
-const capacidadesInstalacao = CAPACIDADES_INSTALACAO;
+const capacidadesFixas = CAPACIDADES_FIXAS;
 
 function status(capacidade: string, perfil: string): StatusCapacidade {
   const linha = MATRIZ.find((item) => item.capacidade === capacidade);

@@ -1,5 +1,3 @@
-export type Instalacao = 'pessoal' | 'dsg' | 'cast';
-
 export type NivelAutoridade = 1 | 2 | 3 | 4;
 
 export type TipoFonte = 'curado' | 'doc' | 'codigo' | 'banco' | 'inferencia';
@@ -68,6 +66,7 @@ export interface Ferramenta {
   expandida?: boolean;
   aprovadaPor?: string;
   progresso?: string;
+  resultado?: string;
   resultadoSql?: ResultadoSql;
 }
 
@@ -100,7 +99,6 @@ export interface RegistroAuditoria {
   hora: string;
   usuario: string;
   perfil: string;
-  instalacao: string;
   pergunta: string;
   ferramentas: { sigla: string; tipo: TipoFonte | 'shell'; bloqueada?: boolean }[];
   fontes: number;

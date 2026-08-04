@@ -79,6 +79,13 @@ export default defineConfig((/* ctx */) => {
       // vueDevtools: true,
       // https: true,
       open: true, // opens browser window automatically
+      proxy: {
+        '/oraculo-api': {
+          target: process.env.VITE_API_PROXY_TARGET || 'http://localhost:3100',
+          changeOrigin: true,
+          rewrite: (caminho: string) => caminho.replace(/^\/oraculo-api/, ''),
+        },
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

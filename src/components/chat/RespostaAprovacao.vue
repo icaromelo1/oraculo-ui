@@ -1,41 +1,36 @@
 <template>
   <div>
-    <CabecalhoResposta meta="pausado · aguardando você" />
+    <CabecalhoResposta meta="avaliando política de acesso" />
 
-    <p class="intro">
-      Para confirmar se o consumidor já está pausado eu preciso ler o estado da fila no barramento
-      de produção. Essa é uma ação sensível: revise o comando literal antes de liberar.
-    </p>
+    <p class="intro">Esta ação é sensível e passou por uma checagem de política antes de rodar.</p>
 
-    <div class="cartao">
+    <div v-if="pedido" class="cartao">
       <div class="cartao__topo">
         <span class="cartao__selo">aprovação necessária</span>
-        <span class="cartao__alvo">shell · alvo bus-prod-02</span>
+        <span class="cartao__alvo">{{ pedido.comando }} · {{ pedido.alvo }}</span>
         <div class="cartao__espacador" />
-        <span class="cartao__prazo">expira em 04:38</span>
+        <span class="cartao__prazo">expira {{ formatarHora(pedido.expiraEm) }}</span>
       </div>
 
       <div class="cartao__corpo">
-        <div class="o-caps">comando literal</div>
-        <pre class="comando">
-ssh ops@bus-prod-02 \
-  'rabbitmqctl list_consumers -p fiscal | grep nfe.lote.retry'</pre>
-
         <div class="grade">
-          <div v-for="campo in campos" :key="campo.chave" class="grade__celula">
-            <div class="grade__chave">{{ campo.chave }}</div>
-            <div class="grade__valor">{{ campo.valor }}</div>
+          <div class="grade__celula">
+            <div class="grade__chave">efeito colateral</div>
+            <div class="grade__valor">{{ pedido.efeitoColateral }}</div>
+          </div>
+          <div class="grade__celula">
+            <div class="grade__chave">política</div>
+            <div class="grade__valor">{{ pedido.politica }}</div>
           </div>
         </div>
 
         <div class="acoes">
-          <button class="acoes__aprovar" type="button">aprovar e executar</button>
-          <button class="o-btn o-btn--neutral" type="button">recusar</button>
-          <button class="o-btn o-btn--ghost" type="button">editar comando</button>
-          <label class="acoes__persistir">
-            <input type="checkbox" />
-            liberar comandos de leitura nesta sessão
-          </label>
+          <button class="acoes__aprovar" type="button" disabled>aprovar e executar</button>
+          <button class="o-btn o-btn--neutral" type="button" disabled>recusar</button>
+          <span class="acoes__nota">
+            aprovação interativa ainda não existe nesta fase do oráculo — a política decide sozinha
+            e a ferramenta não roda.
+          </span>
         </div>
       </div>
     </div>
@@ -43,14 +38,21 @@ ssh ops@bus-prod-02 \
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import CabecalhoResposta from '@/components/chat/CabecalhoResposta.vue';
+import type { MensagemAssistenteChat } from '@/stores/chat';
 
-const campos = [
-  { chave: 'quem executa', valor: 'oráculo como ops (leitura)' },
-  { chave: 'efeito colateral', valor: 'nenhum · comando de leitura' },
-  { chave: 'política', valor: 'shell-prod · aprovação por sessão' },
-  { chave: 'registro', valor: 'vai para a auditoria com seu usuário' },
-];
+const props = defineProps<{ mensagem: MensagemAssistenteChat }>();
+
+const pedido = computed(() => props.mensagem.aprovacaoPedido);
+
+function formatarHora(iso: string): string {
+  return new Date(iso).toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+}
 </script>
 
 <style scoped lang="scss">
@@ -105,18 +107,6 @@ const campos = [
   }
 }
 
-.comando {
-  @include mono(12.5px, 400, 1.6);
-  margin: 6px 0 11px;
-  padding: 9px 11px;
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  color: var(--txt);
-  overflow-x: auto;
-  white-space: pre-wrap;
-}
-
 .grade {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -157,26 +147,13 @@ const campos = [
     border: none;
     border-radius: 3px;
     padding: 7px 12px;
-    cursor: pointer;
-
-    &:hover {
-      filter: brightness(1.1);
-    }
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
-  &__persistir {
-    @include mono(11.5px, 400);
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  &__nota {
+    @include mono(10.5px, 400, 1.5);
     color: var(--txt3);
-    cursor: pointer;
-    margin-left: auto;
-
-    input {
-      accent-color: var(--warn);
-      margin: 0;
-    }
   }
 }
 </style>

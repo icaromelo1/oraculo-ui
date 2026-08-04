@@ -6,18 +6,34 @@
           v-model="chat.rascunho"
           rows="2"
           placeholder="pergunte sobre documentação, código, banco ou estado dos serviços…"
+          :disabled="chat.enviando"
           @keydown.enter.exact.prevent="enviar"
         />
 
         <div class="caixa__acoes">
-          <button class="o-btn" type="button">escopo: 41 repos + fiscal_prod ▾</button>
-          <button class="o-btn" type="button">
-            ferramentas: {{ sessao.ferramentasDisponiveis }} de {{ sessao.ferramentasTotais }} ▾
-          </button>
-          <span class="caixa__aviso">shell desligada nesta instalação</span>
+          <span class="caixa__info">
+            ferramentas: {{ sessao.ferramentasDisponiveis }} de {{ sessao.ferramentasTotais }}
+          </span>
+          <p v-if="chat.erro" class="caixa__erro">{{ chat.erro }}</p>
           <div class="caixa__espacador" />
           <span class="caixa__atalho">⏎ envia · ⇧⏎ nova linha</span>
-          <button class="o-btn o-btn--primary" type="button" @click="enviar">enviar</button>
+          <button
+            v-if="chat.enviando"
+            class="o-btn o-btn--neutral"
+            type="button"
+            @click="chat.interromper()"
+          >
+            interromper
+          </button>
+          <button
+            v-else
+            class="o-btn o-btn--primary"
+            type="button"
+            :disabled="!chat.rascunho.trim()"
+            @click="enviar"
+          >
+            enviar
+          </button>
         </div>
       </div>
     </div>
@@ -31,9 +47,9 @@ import { useSessaoStore } from '@/stores/sessao';
 const chat = useChatStore();
 const sessao = useSessaoStore();
 
-function enviar() {
-  if (!chat.rascunho.trim()) return;
-  chat.rascunho = '';
+function enviar(): void {
+  if (chat.enviando || !chat.rascunho.trim()) return;
+  void chat.enviar();
 }
 </script>
 
@@ -69,6 +85,10 @@ function enviar() {
     &::placeholder {
       color: var(--txt3);
     }
+
+    &:disabled {
+      opacity: 0.6;
+    }
   }
 
   &__acoes {
@@ -79,10 +99,16 @@ function enviar() {
     flex-wrap: wrap;
   }
 
-  &__aviso,
+  &__info,
   &__atalho {
     @include mono(10.5px, 400);
     color: var(--txt3);
+  }
+
+  &__erro {
+    @include mono(10.5px, 400);
+    margin: 0;
+    color: var(--err);
   }
 
   &__espacador {

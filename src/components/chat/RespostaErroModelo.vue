@@ -1,30 +1,26 @@
 <template>
   <div>
-    <CabecalhoResposta tom-erro meta="interrompido em 68 % da resposta" />
+    <CabecalhoResposta tom-erro :meta="meta" />
 
     <div class="cartao">
       <div class="cartao__topo">
         <span class="cartao__selo">modelo indisponível</span>
-        <span class="cartao__alvo">{{ sessao.modelo.nome }} · gpu-02</span>
-        <div class="cartao__espacador" />
-        <span class="cartao__hora">14:31:07</span>
+        <span class="cartao__alvo">código {{ mensagem.erro?.codigo ?? '—' }}</span>
       </div>
 
-      <pre class="cartao__log">
-POST /v1/chat/completions → 503 upstream_unavailable
-trace 9f2c-41ab · cuda oom após 2 480 tok · tentativa 2 de 2</pre>
-
       <div class="cartao__corpo">
-        <p class="cartao__texto">
-          As 4 ferramentas já executaram e as evidências estão preservadas — só a redação da
-          resposta caiu. Retomar não vai repetir a consulta ao banco.
-        </p>
+        <p class="cartao__texto">{{ mensagem.erro?.mensagem }}</p>
 
         <div class="acoes">
-          <button class="o-btn o-btn--primary" type="button">retomar do ponto</button>
-          <button class="o-btn o-btn--neutral" type="button">usar oraculo-8b (gpu-01)</button>
-          <button class="o-btn o-btn--ghost" type="button">ver evidências coletadas</button>
-          <span class="acoes__fila">fila do gpu-02: 3 sessões</span>
+          <button
+            v-if="mensagem.erro?.retomavel"
+            class="o-btn o-btn--primary"
+            type="button"
+            @click="$emit('tentar-novamente')"
+          >
+            tentar novamente
+          </button>
+          <span v-else class="acoes__nota">este erro não é retomável automaticamente.</span>
         </div>
       </div>
     </div>
@@ -32,10 +28,14 @@ trace 9f2c-41ab · cuda oom após 2 480 tok · tentativa 2 de 2</pre>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import CabecalhoResposta from '@/components/chat/CabecalhoResposta.vue';
-import { useSessaoStore } from '@/stores/sessao';
+import type { MensagemAssistenteChat } from '@/stores/chat';
 
-const sessao = useSessaoStore();
+const props = defineProps<{ mensagem: MensagemAssistenteChat }>();
+defineEmits<{ 'tentar-novamente': [] }>();
+
+const meta = computed(() => `erro do modelo · código ${props.mensagem.erro?.codigo ?? '—'}`);
 </script>
 
 <style scoped lang="scss">
@@ -69,25 +69,6 @@ const sessao = useSessaoStore();
     color: var(--txt2);
   }
 
-  &__espacador {
-    flex: 1;
-  }
-
-  &__hora {
-    @include mono(11px, 400);
-    color: var(--txt3);
-  }
-
-  &__log {
-    @include mono(11.5px, 400, 1.65);
-    margin: 0;
-    padding: 9px 11px;
-    background: var(--bg);
-    border-bottom: 1px solid var(--line);
-    color: var(--txt2);
-    overflow-x: auto;
-  }
-
   &__corpo {
     padding: 11px;
     display: flex;
@@ -109,10 +90,9 @@ const sessao = useSessaoStore();
   flex-wrap: wrap;
   align-items: center;
 
-  &__fila {
+  &__nota {
     @include mono(11px, 400);
     color: var(--txt3);
-    margin-left: auto;
   }
 }
 </style>

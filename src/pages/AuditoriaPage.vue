@@ -3,7 +3,7 @@
     <div class="pagina__coluna">
       <div class="titulo">
         <h1>Auditoria</h1>
-        <span>instalação DSG · retenção 180 dias · exportação assinada</span>
+        <span>trilha de execução de todas as conversas</span>
       </div>
 
       <div class="resumo">
@@ -19,24 +19,20 @@
         <input
           v-model="busca"
           class="filtros__busca"
-          placeholder="buscar por usuário, pergunta, tabela, comando…"
+          placeholder="buscar por usuário, pergunta ou resultado…"
         />
-        <button class="o-btn" type="button">instalação: DSG ▾</button>
-        <button class="o-btn" type="button">ferramenta: todas ▾</button>
-        <button class="filtros__ativo" type="button">resultado: bloqueado ×</button>
-        <button class="o-btn" type="button">03 ago · 00:00–14:40 ▾</button>
-        <div class="filtros__espacador" />
-        <button class="o-btn o-btn--neutral" type="button">exportar csv</button>
       </div>
 
       <div class="o-panel">
-        <div class="tabela">
+        <p v-if="carregando" class="aviso">carregando…</p>
+        <p v-else-if="registros.length === 0" class="aviso">nenhum registro encontrado.</p>
+
+        <div v-else class="tabela">
           <table>
             <thead>
               <tr>
                 <th>hora</th>
                 <th>usuário · perfil</th>
-                <th>inst.</th>
                 <th class="tabela__pergunta">pergunta</th>
                 <th>ferramentas</th>
                 <th class="ao-fim">fontes</th>
@@ -46,22 +42,21 @@
               </tr>
             </thead>
             <tbody>
-              <template v-for="registro in registrosVisiveis" :key="registro.id">
+              <template v-for="registro in registros" :key="registro.id">
                 <tr
                   class="linha"
                   :class="{ 'linha--aberta': registro.id === expandido }"
-                  @click="alternar(registro)"
+                  @click="void alternar(registro)"
                 >
                   <td class="sem-quebra">{{ registro.hora }}</td>
                   <td class="forte">
                     {{ registro.usuario }} <span class="fraco">{{ registro.perfil }}</span>
                   </td>
-                  <td>{{ registro.instalacao }}</td>
                   <td>{{ registro.pergunta }}</td>
                   <td>
                     <span
-                      v-for="ferramenta in registro.ferramentas"
-                      :key="ferramenta.sigla"
+                      v-for="(ferramenta, indice) in registro.ferramentas"
+                      :key="indice"
                       class="sigla"
                       :class="[
                         `sigla--${ferramenta.tipo}`,
@@ -79,18 +74,20 @@
                   <td class="fraco">{{ registro.modelo }}</td>
                 </tr>
 
-                <tr v-if="registro.id === expandido && registro.trilha" class="linha--aberta">
-                  <td colspan="9" class="detalhe">
-                    <div class="detalhe__grade">
+                <tr v-if="registro.id === expandido" class="linha--aberta">
+                  <td colspan="8" class="detalhe">
+                    <p v-if="carregandoDetalhe" class="aviso">carregando trilha…</p>
+                    <div v-else class="detalhe__grade">
                       <div class="o-panel">
                         <div class="detalhe__titulo">trilha de execução</div>
-                        <div class="detalhe__trilha">
+                        <div v-if="registro.trilha?.length" class="detalhe__trilha">
                           <div v-for="(passo, indice) in registro.trilha" :key="indice">
                             {{ passo }}
                           </div>
                         </div>
+                        <p v-else class="detalhe__vazio">sem trilha registrada.</p>
                       </div>
-                      <div class="o-panel">
+                      <div v-if="registro.sqlExecutado" class="o-panel">
                         <div class="detalhe__titulo">sql literal executado</div>
                         <pre class="detalhe__sql">{{ registro.sqlExecutado }}</pre>
                         <div class="detalhe__nota">{{ registro.notaSql }}</div>
@@ -104,10 +101,24 @@
         </div>
 
         <div class="paginacao">
-          <span>{{ registrosVisiveis.length }} de 1 284 registros</span>
+          <span>{{ registros.length }} de {{ total }} registros</span>
           <div class="filtros__espacador" />
-          <button class="o-btn o-btn--ghost" type="button">← anteriores</button>
-          <button class="o-btn o-btn--ghost" type="button">próximos →</button>
+          <button
+            class="o-btn o-btn--ghost"
+            type="button"
+            :disabled="pagina <= 1"
+            @click="irParaPagina(pagina - 1)"
+          >
+            ← anteriores
+          </button>
+          <button
+            class="o-btn o-btn--ghost"
+            type="button"
+            :disabled="pagina * porPagina >= total"
+            @click="irParaPagina(pagina + 1)"
+          >
+            próximos →
+          </button>
         </div>
       </div>
     </div>
@@ -115,29 +126,89 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { REGISTROS, RESUMO_AUDITORIA } from '@/mocks/auditoria';
+import { onMounted, ref, watch } from 'vue';
+import {
+  listarAuditoria,
+  obterAuditoria,
+  resumoAuditoria,
+  type CartaoResumo,
+} from '@/services/auditoria.service';
 import type { RegistroAuditoria } from '@/types/oraculo';
 
-const resumo = RESUMO_AUDITORIA;
+const resumo = ref<CartaoResumo[]>([]);
+const registros = ref<RegistroAuditoria[]>([]);
+const total = ref(0);
+const pagina = ref(1);
+const porPagina = 25;
 const busca = ref('');
-const expandido = ref<string | null>('a1');
+const expandido = ref<string | null>(null);
+const carregando = ref(false);
+const carregandoDetalhe = ref(false);
 
-const registrosVisiveis = computed(() => {
-  const alvo = busca.value.trim().toLowerCase();
-  if (!alvo) return REGISTROS;
-  return REGISTROS.filter((registro) =>
-    [registro.usuario, registro.pergunta, registro.resultado, registro.perfil]
-      .join(' ')
-      .toLowerCase()
-      .includes(alvo),
-  );
+let referenciaBusca = 0;
+
+async function carregarResumo(): Promise<void> {
+  resumo.value = await resumoAuditoria();
+}
+
+async function carregarRegistros(): Promise<void> {
+  const referencia = ++referenciaBusca;
+  carregando.value = true;
+
+  try {
+    const resposta = await listarAuditoria({ busca: busca.value, pagina: pagina.value, porPagina });
+    if (referencia !== referenciaBusca) return;
+    registros.value = resposta.registros;
+    total.value = resposta.total;
+  } finally {
+    if (referencia === referenciaBusca) carregando.value = false;
+  }
+}
+
+function irParaPagina(alvo: number): void {
+  if (alvo < 1) return;
+  pagina.value = alvo;
+}
+
+async function alternar(registro: RegistroAuditoria): Promise<void> {
+  if (expandido.value === registro.id) {
+    expandido.value = null;
+    return;
+  }
+
+  expandido.value = registro.id;
+
+  if (registro.trilha || registro.sqlExecutado) return;
+
+  carregandoDetalhe.value = true;
+
+  try {
+    const detalhe = await obterAuditoria(registro.id);
+    const indice = registros.value.findIndex((item) => item.id === registro.id);
+    if (indice !== -1) registros.value[indice] = detalhe;
+  } finally {
+    carregandoDetalhe.value = false;
+  }
+}
+
+let temporizadorBusca: ReturnType<typeof setTimeout> | undefined;
+
+watch(busca, () => {
+  clearTimeout(temporizadorBusca);
+  temporizadorBusca = setTimeout(() => {
+    pagina.value = 1;
+    void carregarRegistros();
+  }, 300);
 });
 
-function alternar(registro: RegistroAuditoria) {
-  if (!registro.trilha) return;
-  expandido.value = expandido.value === registro.id ? null : registro.id;
-}
+watch(pagina, () => {
+  void carregarRegistros();
+});
+
+onMounted(() => {
+  void carregarResumo();
+  void carregarRegistros();
+});
 </script>
 
 <style scoped lang="scss">
@@ -237,19 +308,15 @@ function alternar(registro: RegistroAuditoria) {
     }
   }
 
-  &__ativo {
-    @include mono(11.5px, 500);
-    background: var(--err-b);
-    border: 1px solid var(--err-l);
-    border-radius: 3px;
-    color: var(--err);
-    padding: 6px 9px;
-    cursor: pointer;
-  }
-
   &__espacador {
     flex: 1;
   }
+}
+
+.aviso {
+  @include mono(11.5px, 400);
+  padding: 14px;
+  color: var(--txt3);
 }
 
 .tabela {
@@ -334,6 +401,10 @@ function alternar(registro: RegistroAuditoria) {
     color: var(--warn);
   }
 
+  &--inferencia {
+    color: var(--txt3);
+  }
+
   &--bloqueada {
     color: var(--err);
   }
@@ -377,6 +448,13 @@ function alternar(registro: RegistroAuditoria) {
     flex-direction: column;
     gap: 5px;
     color: var(--txt2);
+  }
+
+  &__vazio {
+    @include mono(11px, 400);
+    padding: 9px;
+    margin: 0;
+    color: var(--txt3);
   }
 
   &__sql {

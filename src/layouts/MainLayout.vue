@@ -21,14 +21,13 @@
         </RouterLink>
       </nav>
 
-      <DemoEstados v-if="mostrarDemo && naTelaDeChat" />
-
       <div class="espacador" />
 
       <span class="usuario">{{ sessao.usuario }} · {{ sessao.perfil }}</span>
       <button class="o-btn" type="button" @click="sessao.alternarTema()">
         tema: {{ sessao.tema }}
       </button>
+      <button class="o-btn" type="button" @click="sair">sair</button>
     </header>
 
     <RouterView />
@@ -36,16 +35,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import DemoEstados from '@/components/DemoEstados.vue';
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useSessaoStore } from '@/stores/sessao';
 
 const sessao = useSessaoStore();
-const route = useRoute();
+const router = useRouter();
 
-const mostrarDemo = import.meta.env.DEV || window.location.href.includes('demo');
-const naTelaDeChat = computed(() => route.name === 'chat');
+onMounted(() => {
+  if (sessao.autenticado && !sessao.usuario) {
+    void sessao.carregarPerfil();
+  }
+});
+
+function sair(): void {
+  sessao.sair();
+  void router.push({ name: 'login' });
+}
 
 const navegacao = [
   { nome: 'chat', rotulo: 'chat', para: { name: 'chat' } },

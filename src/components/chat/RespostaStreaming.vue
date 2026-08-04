@@ -1,32 +1,33 @@
 <template>
   <div>
-    <CabecalhoResposta pulsando meta="gerando · 2 ferramentas concluídas · 41 tok/s">
+    <CabecalhoResposta pulsando :meta="meta">
       <template #extra>
-        <button class="interromper" type="button">interromper ⎋</button>
+        <button class="interromper" type="button" @click="$emit('interromper')">
+          interromper ⎋
+        </button>
       </template>
     </CabecalhoResposta>
 
-    <ListaFerramentas :ferramentas="ferramentas" />
+    <ListaFerramentas :ferramentas="mensagem.ferramentas" />
 
-    <div class="corpo">
-      <p>
-        Drenar a DLQ é seguro desde que nenhum consumidor esteja ativo na fila de origem. O
-        procedimento homologado tem três etapas: confirmar que
-        <code class="o-code">nfe.lote.retry</code> está pausado
-        <ChipCitacao fonte-id="c2" tipo="doc" rotulo="doc · Barramento §4.2" />, exportar as
-        mensagens para o bucket de quarentena e<span class="cursor" aria-hidden="true" />
-      </p>
-    </div>
+    <RespostaMarkdown :texto="mensagem.texto" :fontes="mensagem.fontes" cursor />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import CabecalhoResposta from '@/components/chat/CabecalhoResposta.vue';
-import ChipCitacao from '@/components/chat/ChipCitacao.vue';
 import ListaFerramentas from '@/components/chat/ListaFerramentas.vue';
-import { FERRAMENTAS_STREAMING } from '@/mocks/conversa';
+import RespostaMarkdown from '@/components/chat/RespostaMarkdown.vue';
+import type { MensagemAssistenteChat } from '@/stores/chat';
 
-const ferramentas = FERRAMENTAS_STREAMING;
+const props = defineProps<{ mensagem: MensagemAssistenteChat }>();
+defineEmits<{ interromper: [] }>();
+
+const meta = computed(() => {
+  const concluidas = props.mensagem.ferramentas.filter((f) => f.status !== 'executando').length;
+  return concluidas > 0 ? `gerando · ${concluidas} ferramenta(s) concluída(s)` : 'gerando';
+});
 </script>
 
 <style scoped lang="scss">
@@ -45,26 +46,5 @@ const ferramentas = FERRAMENTAS_STREAMING;
     color: var(--err);
     border-color: var(--err-l);
   }
-}
-
-.corpo {
-  font-size: 14px;
-  color: var(--txt);
-  max-width: 76ch;
-  text-wrap: pretty;
-
-  p {
-    margin: 0;
-  }
-}
-
-.cursor {
-  display: inline-block;
-  width: 7px;
-  height: 15px;
-  background: var(--acc);
-  vertical-align: -3px;
-  margin-left: 2px;
-  animation: ocaret 1s step-end infinite;
 }
 </style>

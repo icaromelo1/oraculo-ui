@@ -1,14 +1,15 @@
 <template>
   <aside class="lateral">
     <div class="lateral__topo">
-      <button class="nova" type="button">
+      <button class="nova" type="button" @click="chat.novaConversa()">
         <span>+ nova conversa</span>
-        <span class="nova__atalho">⌘K</span>
       </button>
       <input v-model="chat.filtro" class="filtro" placeholder="filtrar conversas…" />
     </div>
 
     <div class="lateral__lista">
+      <p v-if="chat.carregandoConversas" class="aviso">carregando…</p>
+      <p v-else-if="chat.grupos.length === 0" class="aviso">nenhuma conversa ainda.</p>
       <template v-for="grupo in chat.grupos" :key="grupo.titulo">
         <div class="grupo">{{ grupo.titulo }}</div>
         <button
@@ -17,7 +18,7 @@
           class="item"
           :class="{ 'item--ativo': item.id === chat.conversaAtiva }"
           type="button"
-          @click="chat.selecionarConversa(item.id)"
+          @click="void chat.selecionarConversa(item.id)"
         >
           <span class="item__titulo">{{ item.titulo }}</span>
           <span class="item__meta">
@@ -110,6 +111,12 @@ const chat = useChatStore();
   &::placeholder {
     color: var(--txt3);
   }
+}
+
+.aviso {
+  @include mono(11.5px, 400);
+  padding: 10px 8px;
+  color: var(--txt3);
 }
 
 .grupo {

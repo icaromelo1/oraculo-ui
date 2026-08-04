@@ -1,21 +1,37 @@
 <template>
   <div>
-    <CabecalhoResposta meta="reunindo evidências · etapa 3 de 4">
+    <CabecalhoResposta :meta="meta">
       <template #extra>
-        <button class="interromper" type="button">interromper ⎋</button>
+        <button class="interromper" type="button" @click="$emit('interromper')">
+          interromper ⎋
+        </button>
       </template>
     </CabecalhoResposta>
 
-    <ListaFerramentas :ferramentas="ferramentas" />
+    <ListaFerramentas :ferramentas="mensagem.ferramentas" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import CabecalhoResposta from '@/components/chat/CabecalhoResposta.vue';
 import ListaFerramentas from '@/components/chat/ListaFerramentas.vue';
-import { FERRAMENTAS_EXECUTANDO } from '@/mocks/conversa';
+import type { MensagemAssistenteChat } from '@/stores/chat';
 
-const ferramentas = FERRAMENTAS_EXECUTANDO;
+const props = defineProps<{ mensagem: MensagemAssistenteChat }>();
+defineEmits<{ interromper: [] }>();
+
+const meta = computed(() => {
+  const total = props.mensagem.ferramentas.length;
+
+  if (total === 0) return 'iniciando…';
+
+  const concluidas = props.mensagem.ferramentas.filter(
+    (f) => f.status !== 'executando' && f.status !== 'na_fila',
+  ).length;
+
+  return `reunindo evidências · ${concluidas} de ${total}`;
+});
 </script>
 
 <style scoped lang="scss">

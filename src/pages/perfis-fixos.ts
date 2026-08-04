@@ -1,10 +1,13 @@
+// TODO: não existe endpoint de perfis/matriz de capacidades no backend ainda.
+// Estes dados são fixos e não refletem o estado real da instalação — trocar
+// por uma chamada real assim que a API expuser essa rota.
 import type { LinhaMatriz, PerfilAcesso, StatusCapacidade, TipoFonte } from '@/types/oraculo';
 
 export const PERFIS: PerfilAcesso[] = [
   { id: 'dev', nome: 'desenvolvedor', descricao: '18 usuários', usuarios: 18 },
   { id: 'n1', nome: 'suporte n1', descricao: '24 usuários', usuarios: 24 },
   { id: 'n2', nome: 'suporte n2', descricao: '9 usuários · seu perfil', usuarios: 9 },
-  { id: 'admin', nome: 'admin da instalação', descricao: '3 usuários', usuarios: 3 },
+  { id: 'admin', nome: 'admin', descricao: '3 usuários', usuarios: 3 },
   { id: 'leitor', nome: 'leitor', descricao: '31 usuários', usuarios: 31 },
 ];
 
@@ -42,10 +45,10 @@ export const MATRIZ: LinhaMatriz[] = [
   linha('pessoais', false, ['negada', 'negada', 'negada', 'aprovacao', 'negada']),
 ];
 
-export const CAPACIDADES_INSTALACAO = [
+export const CAPACIDADES_FIXAS = [
   { rotulo: 'comando de shell', estado: 'desligada no servidor', ligada: false, acao: 'ligar' },
   { rotulo: 'dados pessoais (rh_prod)', estado: 'ligada', ligada: true, acao: 'desligar' },
-  { rotulo: 'indexação de código (41 repos)', estado: 'ligada', ligada: true, acao: 'desligar' },
+  { rotulo: 'indexação de código', estado: 'ligada', ligada: true, acao: 'desligar' },
   {
     rotulo: 'modelo externo (fallback)',
     estado: 'desligada por política',

@@ -1,13 +1,51 @@
 <template>
   <div class="rodape">
-    <span>2 890 tok · 3,8 s</span>
-    <span>fontes: 2 código · 2 doc · 1 banco · 1 curado</span>
+    <span>{{ formatarTokens(tokens) }} · {{ formatarSegundos(duracaoMs) }}</span>
+    <span v-if="fontes.length">fontes: {{ resumoFontes }}</span>
     <div class="rodape__espacador" />
-    <button type="button">copiar</button>
-    <button type="button">exportar trilha</button>
-    <button type="button">refazer sem cache</button>
+    <button type="button" @click="copiar">{{ copiado ? 'copiado!' : 'copiar' }}</button>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { formatarSegundos, formatarTokens } from '@/composables/useFormato';
+import { rotuloTipoFonte } from '@/composables/useRotuloFonte';
+import type { Fonte, TipoFonte } from '@/types/oraculo';
+
+const props = defineProps<{
+  tokens: number | null;
+  duracaoMs: number | null;
+  fontes: Fonte[];
+  texto: string;
+}>();
+
+const copiado = ref(false);
+
+const resumoFontes = computed(() => {
+  const contagem = new Map<TipoFonte, number>();
+
+  for (const fonte of props.fontes) {
+    contagem.set(fonte.tipo, (contagem.get(fonte.tipo) ?? 0) + 1);
+  }
+
+  return [...contagem.entries()]
+    .map(([tipo, quantidade]) => `${quantidade} ${rotuloTipoFonte(tipo)}`)
+    .join(' · ');
+});
+
+async function copiar(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(props.texto);
+    copiado.value = true;
+    setTimeout(() => {
+      copiado.value = false;
+    }, 1500);
+  } catch {
+    copiado.value = false;
+  }
+}
+</script>
 
 <style scoped lang="scss">
 @use '@/css/tokens' as *;

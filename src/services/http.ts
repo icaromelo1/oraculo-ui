@@ -1,0 +1,72 @@
+import { irParaLogin } from './navegacao';
+import { EVENTO_SESSAO_EXPIRADA, limparToken, obterToken } from './token';
+
+const BASE_URL: string = import.meta.env.VITE_API_URL ?? '/oraculo-api';
+
+export class ErroApi extends Error {
+  readonly status: number;
+
+  constructor(status: number, mensagem: string) {
+    super(mensagem);
+    this.name = 'ErroApi';
+    this.status = status;
+  }
+}
+
+export function urlBase(): string {
+  return BASE_URL;
+}
+
+export function cabecalhosAutenticados(comCorpo: boolean): HeadersInit {
+  const cabecalho: Record<string, string> = {};
+  const token = obterToken();
+
+  if (token) cabecalho.Authorization = `Bearer ${token}`;
+  if (comCorpo) cabecalho['Content-Type'] = 'application/json';
+
+  return cabecalho;
+}
+
+export function tratarNaoAutorizado(): void {
+  limparToken();
+  window.dispatchEvent(new Event(EVENTO_SESSAO_EXPIRADA));
+  irParaLogin();
+}
+
+interface OpcoesApi {
+  metodo?: string;
+  corpo?: unknown;
+  signal?: AbortSignal;
+}
+
+export async function apiFetch<T>(caminho: string, opcoes: OpcoesApi = {}): Promise<T> {
+  let resposta: Response;
+
+  try {
+    resposta = await fetch(`${BASE_URL}${caminho}`, {
+      method: opcoes.metodo ?? 'GET',
+      headers: cabecalhosAutenticados(opcoes.corpo !== undefined),
+      ...(opcoes.corpo !== undefined ? { body: JSON.stringify(opcoes.corpo) } : {}),
+      ...(opcoes.signal ? { signal: opcoes.signal } : {}),
+    });
+  } catch (falha) {
+    if (falha instanceof DOMException && falha.name === 'AbortError') throw falha;
+    throw new ErroApi(0, 'falha de rede ao falar com a api do oráculo');
+  }
+
+  if (resposta.status === 401) {
+    tratarNaoAutorizado();
+    throw new ErroApi(401, 'sessão expirada');
+  }
+
+  if (!resposta.ok) {
+    const texto = await resposta.text().catch(() => '');
+    throw new ErroApi(resposta.status, texto || `erro ${resposta.status} na api do oráculo`);
+  }
+
+  if (resposta.status === 204) {
+    return undefined as T;
+  }
+
+  return (await resposta.json()) as T;
+}

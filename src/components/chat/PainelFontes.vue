@@ -102,31 +102,29 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { COBERTURA } from '@/mocks/conversa';
+import { rotuloTipoFonte } from '@/composables/useRotuloFonte';
 import { useChatStore } from '@/stores/chat';
-import type { TipoFonte } from '@/types/oraculo';
+import type { Cobertura, TipoFonte } from '@/types/oraculo';
 
 defineProps<{ flutuante: boolean }>();
 
 const chat = useChatStore();
-const cobertura = COBERTURA;
+
+const cobertura = computed<Cobertura>(
+  () => chat.coberturaAtual ?? { citadas: 0, total: 0, semFonte: 0 },
+);
 
 const detalhe = computed(() => chat.detalheFonte);
 const titulo = computed(() => (detalhe.value ? 'fonte · trecho exato' : 'contexto da resposta'));
-const percentual = computed(() => `${Math.round((cobertura.citadas / cobertura.total) * 100)}%`);
+const percentual = computed(() => {
+  const total = cobertura.value.total;
+  return total > 0 ? `${Math.round((cobertura.value.citadas / total) * 100)}%` : '0%';
+});
 
-const rotulos: Record<TipoFonte, string> = {
-  curado: 'curado',
-  doc: 'doc',
-  codigo: 'código',
-  banco: 'banco',
-  inferencia: 'inferência',
-};
-
-const rotuloTipo = computed(() => (detalhe.value ? rotulos[detalhe.value.tipo] : ''));
+const rotuloTipo = computed(() => (detalhe.value ? rotuloTipoFonte(detalhe.value.tipo) : ''));
 
 function rotulo(tipo: TipoFonte) {
-  return rotulos[tipo];
+  return rotuloTipoFonte(tipo);
 }
 
 const niveis = [

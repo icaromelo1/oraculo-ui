@@ -6,7 +6,7 @@
           <span class="acesso__glifo" aria-hidden="true"><i /></span>
           <span class="acesso__nome">ORÁCULO</span>
         </div>
-        <p class="acesso__sub">assistente técnico · infraestrutura DSG</p>
+        <p class="acesso__sub">assistente técnico de infraestrutura</p>
 
         <label class="acesso__rotulo" for="usuario">usuário</label>
         <input
@@ -25,26 +25,21 @@
           autocomplete="current-password"
         />
 
-        <div class="acesso__opcoes">
-          <label class="acesso__manter">
-            <input v-model="manterSessao" type="checkbox" />
-            manter sessão neste terminal
-          </label>
-          <a href="#">esqueci a senha</a>
-        </div>
+        <p v-if="sessao.erroLogin" class="acesso__erro">{{ sessao.erroLogin }}</p>
 
-        <button class="acesso__entrar" type="submit">ENTRAR</button>
+        <button class="acesso__entrar" type="submit" :disabled="sessao.carregandoSessao">
+          {{ sessao.carregandoSessao ? 'entrando…' : 'ENTRAR' }}
+        </button>
 
         <p class="acesso__nota">
-          Autenticação pelo diretório interno. Sessões expiram em 12&nbsp;h de inatividade e ficam
-          registradas na auditoria.
+          Autenticação pelo diretório interno. Sessões ficam registradas na auditoria.
         </p>
       </form>
 
       <div class="estado">
         <div class="o-caps">estado da instalação</div>
         <div class="estado__lista">
-          <div v-for="item in instalacao" :key="item.rotulo" class="estado__linha">
+          <div v-for="item in estado" :key="item.rotulo" class="estado__linha">
             <span class="estado__chave">{{ item.rotulo }}</span>
             <span class="estado__valor" :class="{ 'estado__valor--ok': item.ok }">
               <i v-if="item.ok" aria-hidden="true" />
@@ -52,39 +47,62 @@
             </span>
           </div>
         </div>
-        <div class="estado__rodape">
-          <div>build 2026.08.03-0a1f4c2</div>
-          <div>base: fts pt-br · 1.2 M trechos</div>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { obterSaude } from '@/services/saude.service';
 import { useSessaoStore } from '@/stores/sessao';
 
 const router = useRouter();
 const sessao = useSessaoStore();
 
-const usuario = ref(sessao.usuario);
+const usuario = ref('');
 const senha = ref('');
-const manterSessao = ref(true);
 
-const instalacao = [
-  { rotulo: 'api-oraculo', valor: 'online · 38 ms', ok: true },
-  { rotulo: 'modelo', valor: sessao.modelo.nome, ok: true },
-  { rotulo: 'índice de conhecimento', valor: 'há 11 min', ok: false },
-  { rotulo: 'repositórios indexados', valor: '41 / 41', ok: false },
-  { rotulo: 'execução de shell', valor: 'desligada', ok: false },
-];
+interface ItemEstado {
+  rotulo: string;
+  valor: string;
+  ok: boolean;
+}
 
-function entrar() {
-  sessao.usuario = usuario.value;
-  sessao.entrar();
-  void router.push({ name: 'chat' });
+const estado = ref<ItemEstado[]>([{ rotulo: 'api-oráculo', valor: 'verificando…', ok: false }]);
+
+onMounted(() => {
+  void carregarEstado();
+});
+
+async function carregarEstado(): Promise<void> {
+  try {
+    const saude = await obterSaude();
+    const ligadas = Object.values(saude.capacidades).filter(Boolean).length;
+    const total = Object.values(saude.capacidades).length;
+
+    estado.value = [
+      { rotulo: 'api-oráculo', valor: `online · ${saude.status}`, ok: saude.status === 'ok' },
+      { rotulo: 'provedor de modelo', valor: saude.provedor, ok: true },
+      { rotulo: 'ambiente', valor: saude.ambiente, ok: true },
+      { rotulo: 'capacidades ligadas', valor: `${ligadas} de ${total}`, ok: ligadas > 0 },
+    ];
+  } catch {
+    estado.value = [{ rotulo: 'api-oráculo', valor: 'indisponível', ok: false }];
+  }
+}
+
+async function entrar(): Promise<void> {
+  if (!usuario.value.trim() || !senha.value) return;
+
+  try {
+    await sessao.entrar(usuario.value.trim(), senha.value);
+    senha.value = '';
+    await router.push({ name: 'chat' });
+  } catch {
+    senha.value = '';
+  }
 }
 </script>
 
@@ -160,29 +178,10 @@ function entrar() {
     margin-bottom: 16px;
   }
 
-  &__opcoes {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: -8px 0 22px;
-    font-size: 12px;
-
-    a {
-      color: var(--txt3);
-    }
-  }
-
-  &__manter {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--txt2);
-    cursor: pointer;
-
-    input {
-      accent-color: var(--acc);
-      margin: 0;
-    }
+  &__erro {
+    @include mono(11.5px, 400, 1.4);
+    margin: -8px 0 16px;
+    color: var(--err);
   }
 
   &__entrar {
@@ -196,8 +195,13 @@ function entrar() {
     letter-spacing: 0.06em;
     cursor: pointer;
 
-    &:hover {
+    &:hover:not(:disabled) {
       filter: brightness(1.1);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: default;
     }
   }
 
@@ -253,14 +257,6 @@ function entrar() {
       border-radius: 50%;
       background: var(--green);
     }
-  }
-
-  &__rodape {
-    @include mono(11px, 400, 1.6);
-    margin-top: 18px;
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
-    color: var(--txt3);
   }
 }
 </style>

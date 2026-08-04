@@ -9,28 +9,10 @@
       ☰ conversas
     </button>
 
-    <div class="instalacoes">
-      <button
-        v-for="opcao in instalacoes"
-        :key="opcao.valor"
-        class="instalacoes__item"
-        :class="{ 'instalacoes__item--ativa': sessao.instalacao === opcao.valor }"
-        type="button"
-        @click="sessao.instalacao = opcao.valor"
-      >
-        {{ opcao.rotulo }}
-      </button>
-    </div>
-
-    <span class="divisor">|</span>
-
     <div class="modelo">
       <i class="modelo__estado" aria-hidden="true" />
       <span class="modelo__nome">{{ sessao.modelo.nome }}</span>
-      <span class="modelo__meta">
-        {{ sessao.modelo.local ? 'local' : 'remoto' }} · {{ sessao.modelo.contexto }} ·
-        {{ sessao.modelo.repositorios }} repos
-      </span>
+      <span class="modelo__meta">{{ sessao.modelo.local ? 'local' : 'remoto' }}</span>
     </div>
 
     <div class="espacador" />
@@ -51,7 +33,6 @@
 <script setup lang="ts">
 import { useChatStore } from '@/stores/chat';
 import { useSessaoStore } from '@/stores/sessao';
-import type { Instalacao } from '@/types/oraculo';
 
 defineProps<{
   mostrarBotaoLista: boolean;
@@ -61,12 +42,6 @@ defineProps<{
 
 const chat = useChatStore();
 const sessao = useSessaoStore();
-
-const instalacoes: { valor: Instalacao; rotulo: string }[] = [
-  { valor: 'pessoal', rotulo: 'Pessoal' },
-  { valor: 'dsg', rotulo: 'DSG' },
-  { valor: 'cast', rotulo: 'CAST' },
-];
 </script>
 
 <style scoped lang="scss">
@@ -84,38 +59,6 @@ const instalacoes: { valor: Instalacao; rotulo: string }[] = [
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
-}
-
-.instalacoes {
-  display: flex;
-  border: 1px solid var(--line2);
-  border-radius: 3px;
-  overflow: hidden;
-  flex: none;
-
-  &__item {
-    @include mono(11px, 400);
-    background: var(--panel2);
-    color: var(--txt3);
-    border: none;
-    padding: 5px 9px;
-    cursor: pointer;
-
-    & + & {
-      border-left: 1px solid var(--line2);
-    }
-
-    &--ativa {
-      @include mono(11px, 500);
-      background: var(--acc-b);
-      color: var(--acc);
-    }
-  }
-}
-
-.divisor {
-  color: var(--line2);
-  flex: none;
 }
 
 .modelo {

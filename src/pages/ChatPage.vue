@@ -9,21 +9,25 @@
         :rotulo-fontes="rotuloBotaoFontes"
       />
 
-      <div class="chat__rolagem">
+      <div ref="areaRolagem" class="chat__rolagem">
         <div class="chat__coluna">
-          <MensagemUsuario :hora="'14:22'" :texto="perguntaInicial" />
+          <p v-if="chat.carregandoMensagens" class="aviso">carregando conversa…</p>
 
-          <RespostaResolvida />
+          <template v-for="mensagem in chat.mensagens" :key="mensagem.id">
+            <MensagemUsuario
+              v-if="mensagem.papel === 'usuario'"
+              :hora="mensagem.hora"
+              :texto="mensagem.texto"
+            />
+            <RespostaAssistente
+              v-else
+              :mensagem="mensagem"
+              @interromper="chat.interromper()"
+              @tentar-novamente="void chat.reenviarUltima()"
+            />
+          </template>
 
-          <MensagemUsuario v-if="chat.seguimento" :hora="'14:26'" :texto="chat.seguimento" />
-
-          <RespostaStreaming v-if="chat.estado === 'streaming'" />
-          <RespostaExecutando v-else-if="chat.estado === 'executando'" />
-          <RespostaAprovacao v-else-if="chat.estado === 'aprovacao'" />
-          <RespostaSemResultado v-else-if="chat.estado === 'sem_resultado'" />
-          <RespostaTrechoOculto v-else-if="chat.estado === 'trecho_oculto'" />
-          <RespostaBloqueada v-else-if="chat.estado === 'bloqueada'" />
-          <RespostaErroModelo v-else-if="chat.estado === 'erro_modelo'" />
+          <p v-if="mostrarVazio" class="aviso">faça uma pergunta para começar.</p>
         </div>
       </div>
 
@@ -42,28 +46,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import BarraConversa from '@/components/chat/BarraConversa.vue';
 import ListaConversas from '@/components/chat/ListaConversas.vue';
 import MensagemUsuario from '@/components/chat/MensagemUsuario.vue';
 import PainelFontes from '@/components/chat/PainelFontes.vue';
 import RedatorPergunta from '@/components/chat/RedatorPergunta.vue';
-import RespostaAprovacao from '@/components/chat/RespostaAprovacao.vue';
-import RespostaBloqueada from '@/components/chat/RespostaBloqueada.vue';
-import RespostaErroModelo from '@/components/chat/RespostaErroModelo.vue';
-import RespostaExecutando from '@/components/chat/RespostaExecutando.vue';
-import RespostaResolvida from '@/components/chat/RespostaResolvida.vue';
-import RespostaSemResultado from '@/components/chat/RespostaSemResultado.vue';
-import RespostaStreaming from '@/components/chat/RespostaStreaming.vue';
-import RespostaTrechoOculto from '@/components/chat/RespostaTrechoOculto.vue';
+import RespostaAssistente from '@/components/chat/RespostaAssistente.vue';
 import { useLarguraJanela } from '@/composables/useLarguraJanela';
-import { PERGUNTA_INICIAL } from '@/mocks/conversa';
 import { useChatStore } from '@/stores/chat';
 
 const chat = useChatStore();
 const { largura } = useLarguraJanela();
 
-const perguntaInicial = PERGUNTA_INICIAL;
+const areaRolagem = ref<HTMLElement | null>(null);
 
 const telaLarga = computed(() => largura.value >= 1080);
 const painelFlutuante = computed(() => largura.value < 1400);
@@ -71,6 +67,7 @@ const mostrarLista = computed(() => telaLarga.value || chat.listaConversasAberta
 const painelAberto = computed(() => chat.painelFontesAberto);
 const escurecerFundo = computed(() => painelAberto.value && painelFlutuante.value);
 const mostrarBotaoFontes = computed(() => !escurecerFundo.value);
+const mostrarVazio = computed(() => !chat.carregandoMensagens && chat.mensagens.length === 0);
 
 const rotuloBotaoFontes = computed(() =>
   painelAberto.value ? 'fechar fontes' : `painel de fontes · ${chat.fontes.length}`,
@@ -91,9 +88,30 @@ const estiloPainel = computed(() =>
       }
     : {},
 );
+
+function rolarParaFinal(): void {
+  const elemento = areaRolagem.value;
+  if (elemento) elemento.scrollTop = elemento.scrollHeight;
+}
+
+watch(
+  () => [chat.mensagens.length, chat.mensagens.at(-1)?.texto],
+  () => {
+    void nextTick(() => rolarParaFinal());
+  },
+);
+
+onMounted(() => {
+  void chat.carregarConversas().then(() => {
+    const primeira = chat.conversas[0];
+    if (primeira) void chat.selecionarConversa(primeira.id);
+  });
+});
 </script>
 
 <style scoped lang="scss">
+@use '@/css/tokens' as *;
+
 .chat {
   display: grid;
   flex: 1;
@@ -140,5 +158,12 @@ const estiloPainel = computed(() =>
     max-width: 100%;
     z-index: 20;
   }
+}
+
+.aviso {
+  @include mono(12px, 400);
+  color: var(--txt3);
+  text-align: center;
+  padding: 24px 0;
 }
 </style>

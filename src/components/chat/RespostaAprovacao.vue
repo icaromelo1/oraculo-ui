@@ -1,14 +1,14 @@
 <template>
   <div>
-    <CabecalhoResposta meta="avaliando política de acesso" />
+    <CabecalhoResposta tom="neutro" meta="avaliando política de acesso" />
 
     <p class="intro">Esta ação é sensível e passou por uma checagem de política antes de rodar.</p>
 
     <div v-if="pedido" class="cartao">
       <div class="cartao__topo">
+        <i class="cartao__ponto" aria-hidden="true" />
         <span class="cartao__selo">aprovação necessária</span>
         <span class="cartao__alvo">{{ pedido.comando }} · {{ pedido.alvo }}</span>
-        <div class="cartao__espacador" />
         <span class="cartao__prazo">expira {{ formatarHora(pedido.expiraEm) }}</span>
       </div>
 
@@ -59,51 +59,56 @@ function formatarHora(iso: string): string {
 @use '@/css/tokens' as *;
 
 .intro {
-  font-size: 14px;
-  color: var(--txt);
-  max-width: 76ch;
-  margin: 0 0 12px;
+  font-size: 15px;
+  color: var(--ink);
+  max-width: 68ch;
+  margin: 0 0 14px;
 }
 
 .cartao {
-  border: 1px solid var(--warn-l);
-  border-radius: 4px;
+  border: 1px solid var(--amber-l);
+  border-radius: 12px;
   background: var(--panel);
   overflow: hidden;
+  max-width: 560px;
 
   &__topo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     flex-wrap: wrap;
-    padding: 8px 11px;
-    background: var(--warn-b);
-    border-bottom: 1px solid var(--warn-l);
+    padding: 11px 14px;
+    background: var(--amber-s);
+    border-bottom: 1px solid var(--amber-l);
+  }
+
+  &__ponto {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--amber);
+    flex: none;
   }
 
   &__selo {
-    @include mono(10.5px, 600);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--warn);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--amber);
   }
 
   &__alvo {
-    @include mono(11px, 400);
-    color: var(--txt2);
-  }
-
-  &__espacador {
-    flex: 1;
+    font: 400 12.5px/1 $mono;
+    color: var(--ink2);
   }
 
   &__prazo {
-    @include mono(11px, 400);
-    color: var(--txt3);
+    font-size: 12px;
+    color: var(--ink3);
+    margin-left: auto;
   }
 
   &__corpo {
-    padding: 11px;
+    padding: 14px;
   }
 }
 
@@ -113,24 +118,24 @@ function formatarHora(iso: string): string {
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: 9px;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 
   &__celula {
     background: var(--panel2);
-    padding: 7px 10px;
+    padding: 9px 11px;
   }
 
   &__chave {
-    @include mono(10px, 400);
-    color: var(--txt3);
+    font-size: 11.5px;
+    color: var(--ink3);
     margin-bottom: 3px;
   }
 
   &__valor {
-    @include mono(11.5px, 400);
-    color: var(--txt2);
+    font-size: 12.5px;
+    color: var(--ink2);
   }
 }
 
@@ -141,19 +146,20 @@ function formatarHora(iso: string): string {
   flex-wrap: wrap;
 
   &__aprovar {
-    @include mono(11.5px, 600);
-    background: var(--warn);
-    color: var(--warn-on);
+    font: 600 13px/1 $sans;
+    background: var(--amber);
+    color: var(--onaccent);
     border: none;
-    border-radius: 3px;
-    padding: 7px 12px;
+    border-radius: 8px;
+    padding: 8px 14px;
     opacity: 0.5;
     cursor: not-allowed;
   }
 
   &__nota {
-    @include mono(10.5px, 400, 1.5);
-    color: var(--txt3);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink3);
   }
 }
 </style>

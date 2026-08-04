@@ -1,10 +1,13 @@
 <template>
-  <div class="cabecalho">
-    <span class="cabecalho__marca">oráculo</span>
-    <span class="cabecalho__meta" :class="{ 'cabecalho__meta--erro': tomErro }">
-      <i v-if="pulsando" class="cabecalho__pulso" aria-hidden="true" />
-      <slot>{{ meta }}</slot>
-    </span>
+  <div class="linha">
+    <i
+      class="linha__ponto"
+      :class="[`linha__ponto--${tom}`, { 'linha__ponto--pulsa': pulsando }]"
+      :aria-hidden="true"
+    />
+    <span class="linha__texto"
+      ><slot>{{ meta }}</slot></span
+    >
     <slot name="extra" />
   </div>
 </template>
@@ -14,47 +17,53 @@ withDefaults(
   defineProps<{
     meta?: string;
     pulsando?: boolean;
-    tomErro?: boolean;
+    tom?: 'sage' | 'sage-suave' | 'clay' | 'neutro';
   }>(),
-  { meta: '', pulsando: false, tomErro: false },
+  { meta: '', pulsando: false, tom: 'sage-suave' },
 );
 </script>
 
 <style scoped lang="scss">
 @use '@/css/tokens' as *;
 
-.cabecalho {
+.linha {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--ink3);
 
-  &__marca {
-    @include mono(10px, 600);
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--acc);
-  }
+  &__ponto {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex: none;
 
-  &__meta {
-    @include mono(10.5px, 400);
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    color: var(--txt3);
+    &--sage {
+      background: var(--sage);
+    }
 
-    &--erro {
-      color: var(--err);
+    &--sage-suave {
+      background: var(--sage-l);
+    }
+
+    &--clay {
+      background: var(--clay);
+    }
+
+    &--neutro {
+      background: var(--line2);
+    }
+
+    &--pulsa {
+      animation: opulse 1.2s infinite;
     }
   }
 
-  &__pulso {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--acc);
-    animation: opulse 1.1s infinite;
+  &__texto {
+    color: var(--ink3);
   }
 }
 </style>

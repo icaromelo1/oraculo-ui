@@ -51,15 +51,14 @@ async function copiar(): Promise<void> {
 @use '@/css/tokens' as *;
 
 .rodape {
-  @include mono(10.5px, 400);
+  font-size: 12.5px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-top: 16px;
   padding-top: 9px;
-  border-top: 1px solid var(--line);
-  color: var(--txt3);
+  color: var(--ink3);
 
   &__espacador {
     flex: 1;
@@ -68,12 +67,13 @@ async function copiar(): Promise<void> {
   button {
     background: none;
     border: none;
-    color: var(--txt3);
+    color: var(--ink3);
     cursor: pointer;
     font: inherit;
+    text-decoration: underline;
 
     &:hover {
-      color: var(--txt);
+      color: var(--ink);
     }
   }
 }

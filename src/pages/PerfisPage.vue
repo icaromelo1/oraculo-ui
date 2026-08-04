@@ -177,13 +177,13 @@ function simbolo(valor: StatusCapacidade) {
 
   span {
     @include mono(11.5px, 400);
-    color: var(--txt3);
+    color: var(--ink3);
   }
 }
 
 .explicacao {
   margin: 0 0 14px;
-  color: var(--txt2);
+  color: var(--ink2);
   font-size: 12.5px;
   max-width: 80ch;
   text-wrap: pretty;
@@ -200,7 +200,7 @@ function simbolo(valor: StatusCapacidade) {
   border: 1px solid var(--line);
   border-radius: 4px;
   background: var(--panel);
-  color: var(--txt2);
+  color: var(--ink2);
 
   span {
     display: flex;
@@ -239,46 +239,46 @@ function simbolo(valor: StatusCapacidade) {
     padding: 8px 11px;
     border-right: 1px solid var(--line);
     min-width: 190px;
-    color: var(--txt3);
+    color: var(--ink3);
   }
 
   &__cap {
     &--doc {
-      color: var(--blue);
+      color: var(--slate);
     }
 
     &--curado {
-      color: var(--gray);
+      color: var(--ink3);
     }
 
     &--codigo {
-      color: var(--green);
+      color: var(--sage);
     }
 
     &--banco {
-      color: var(--gold);
+      color: var(--amber);
     }
 
     &--shell {
-      color: var(--txt3);
+      color: var(--ink3);
     }
 
     &--servico {
-      color: var(--txt2);
+      color: var(--ink2);
     }
 
     &--inferencia {
-      color: var(--err);
+      color: var(--clay);
     }
   }
 
   &__nome {
-    color: var(--txt);
+    color: var(--ink);
     font-weight: 500;
   }
 
   &__usuarios {
-    color: var(--txt3);
+    color: var(--ink3);
     font-size: 10.5px;
   }
 
@@ -300,19 +300,19 @@ function simbolo(valor: StatusCapacidade) {
   text-align: center;
 
   &--permitida {
-    color: var(--green);
+    color: var(--sage);
   }
 
   &--aprovacao {
-    color: var(--warn);
+    color: var(--amber);
   }
 
   &--negada {
-    color: var(--err);
+    color: var(--clay);
   }
 
   &--desligada {
-    color: var(--txt3);
+    color: var(--ink3);
     background: var(--panel2);
   }
 }
@@ -334,7 +334,7 @@ function simbolo(valor: StatusCapacidade) {
 
   &__alvo {
     @include mono(11.5px, 500);
-    color: var(--gold);
+    color: var(--amber);
   }
 
   &__corpo {
@@ -350,26 +350,26 @@ function simbolo(valor: StatusCapacidade) {
   align-items: center;
   gap: 8px;
   font-size: 12.5px;
-  color: var(--txt2);
+  color: var(--ink2);
   cursor: pointer;
 
   &--ativa {
-    color: var(--txt);
+    color: var(--ink);
   }
 
   &__radio {
     margin: 0;
 
     &--acc {
-      accent-color: var(--acc);
+      accent-color: var(--sage);
     }
 
     &--warn {
-      accent-color: var(--warn);
+      accent-color: var(--amber);
     }
 
     &--err {
-      accent-color: var(--err);
+      accent-color: var(--clay);
     }
   }
 }
@@ -382,14 +382,14 @@ function simbolo(valor: StatusCapacidade) {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: var(--txt2);
+  color: var(--ink2);
 
   .valor {
-    color: var(--txt);
+    color: var(--ink);
   }
 
   .destaque {
-    color: var(--gold);
+    color: var(--amber);
   }
 }
 
@@ -410,33 +410,33 @@ function simbolo(valor: StatusCapacidade) {
   }
 
   &__rotulo {
-    color: var(--txt);
+    color: var(--ink);
     flex: 1;
   }
 
   &__estado {
-    color: var(--txt3);
+    color: var(--ink3);
   }
 
   &__travada {
-    color: var(--txt3);
+    color: var(--ink3);
     opacity: 0.6;
   }
 }
 
 .tom-ok {
-  color: var(--green);
+  color: var(--sage);
 }
 
 .tom-aviso {
-  color: var(--warn);
+  color: var(--amber);
 }
 
 .tom-erro {
-  color: var(--err);
+  color: var(--clay);
 }
 
 .fraco {
-  color: var(--txt3);
+  color: var(--ink3);
 }
 </style>

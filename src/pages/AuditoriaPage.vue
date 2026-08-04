@@ -1,9 +1,11 @@
 <template>
   <div class="pagina">
     <div class="pagina__coluna">
-      <div class="titulo">
-        <h1>Auditoria</h1>
-        <span>trilha de execução de todas as conversas</span>
+      <h1 class="titulo">Histórico</h1>
+      <p class="subtitulo">O que você perguntou, o que eu busquei e o que ficou de fora.</p>
+
+      <div class="filtros">
+        <input v-model="busca" class="o-field filtros__busca" placeholder="Buscar no histórico…" />
       </div>
 
       <div class="resumo">
@@ -15,111 +17,81 @@
         </div>
       </div>
 
-      <div class="filtros">
-        <input
-          v-model="busca"
-          class="filtros__busca"
-          placeholder="buscar por usuário, pergunta ou resultado…"
-        />
+      <p v-if="carregando" class="aviso">carregando…</p>
+      <p v-else-if="registros.length === 0" class="aviso">nenhum registro encontrado.</p>
+
+      <div v-else class="lista">
+        <div v-for="registro in registros" :key="registro.id" class="cartao">
+          <button
+            class="cartao__linha"
+            type="button"
+            :class="{ 'cartao__linha--aberta': registro.id === expandido }"
+            @click="void alternar(registro)"
+          >
+            <span class="cartao__topo">
+              <span class="cartao__pergunta">{{ registro.pergunta }}</span>
+              <span class="cartao__quando">{{ registro.hora }} · {{ registro.duracao }}</span>
+            </span>
+            <span class="cartao__meta">
+              <span v-if="registro.ferramentas.length" class="cartao__ferramentas">
+                <span
+                  v-for="(ferramenta, indice) in registro.ferramentas"
+                  :key="indice"
+                  class="sigla"
+                  :class="[
+                    `sigla--${ferramenta.tipo}`,
+                    { 'sigla--bloqueada': ferramenta.bloqueada },
+                  ]"
+                >
+                  {{ ferramenta.sigla }}
+                </span>
+              </span>
+              <span v-if="registro.fontes > 0">{{ registro.fontes }} fontes</span>
+              <span :class="`tom-${registro.tomResultado}`">{{ registro.resultado }}</span>
+              <span class="cartao__espacador" />
+              <span class="cartao__modelo">{{ registro.modelo }}</span>
+            </span>
+          </button>
+
+          <div v-if="registro.id === expandido" class="detalhe">
+            <p v-if="carregandoDetalhe" class="aviso">carregando trilha…</p>
+            <div v-else class="detalhe__grade">
+              <div class="o-panel">
+                <div class="detalhe__titulo">trilha de execução</div>
+                <div v-if="registro.trilha?.length" class="detalhe__trilha">
+                  <div v-for="(passo, indice) in registro.trilha" :key="indice">{{ passo }}</div>
+                </div>
+                <p v-else class="detalhe__vazio">sem trilha registrada.</p>
+              </div>
+              <div v-if="registro.sqlExecutado" class="o-panel">
+                <div class="detalhe__titulo">sql executado</div>
+                <pre class="detalhe__sql">{{ registro.sqlExecutado }}</pre>
+                <div class="detalhe__nota">{{ registro.notaSql }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="o-panel">
-        <p v-if="carregando" class="aviso">carregando…</p>
-        <p v-else-if="registros.length === 0" class="aviso">nenhum registro encontrado.</p>
-
-        <div v-else class="tabela">
-          <table>
-            <thead>
-              <tr>
-                <th>hora</th>
-                <th>usuário · perfil</th>
-                <th class="tabela__pergunta">pergunta</th>
-                <th>ferramentas</th>
-                <th class="ao-fim">fontes</th>
-                <th>resultado</th>
-                <th class="ao-fim">dur.</th>
-                <th>modelo</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-for="registro in registros" :key="registro.id">
-                <tr
-                  class="linha"
-                  :class="{ 'linha--aberta': registro.id === expandido }"
-                  @click="void alternar(registro)"
-                >
-                  <td class="sem-quebra">{{ registro.hora }}</td>
-                  <td class="forte">
-                    {{ registro.usuario }} <span class="fraco">{{ registro.perfil }}</span>
-                  </td>
-                  <td>{{ registro.pergunta }}</td>
-                  <td>
-                    <span
-                      v-for="(ferramenta, indice) in registro.ferramentas"
-                      :key="indice"
-                      class="sigla"
-                      :class="[
-                        `sigla--${ferramenta.tipo}`,
-                        { 'sigla--bloqueada': ferramenta.bloqueada },
-                      ]"
-                    >
-                      {{ ferramenta.sigla }}
-                    </span>
-                  </td>
-                  <td class="ao-fim" :class="{ fraco: registro.fontes === 0 }">
-                    {{ registro.fontes }}
-                  </td>
-                  <td :class="`tom-${registro.tomResultado}`">{{ registro.resultado }}</td>
-                  <td class="ao-fim">{{ registro.duracao }}</td>
-                  <td class="fraco">{{ registro.modelo }}</td>
-                </tr>
-
-                <tr v-if="registro.id === expandido" class="linha--aberta">
-                  <td colspan="8" class="detalhe">
-                    <p v-if="carregandoDetalhe" class="aviso">carregando trilha…</p>
-                    <div v-else class="detalhe__grade">
-                      <div class="o-panel">
-                        <div class="detalhe__titulo">trilha de execução</div>
-                        <div v-if="registro.trilha?.length" class="detalhe__trilha">
-                          <div v-for="(passo, indice) in registro.trilha" :key="indice">
-                            {{ passo }}
-                          </div>
-                        </div>
-                        <p v-else class="detalhe__vazio">sem trilha registrada.</p>
-                      </div>
-                      <div v-if="registro.sqlExecutado" class="o-panel">
-                        <div class="detalhe__titulo">sql literal executado</div>
-                        <pre class="detalhe__sql">{{ registro.sqlExecutado }}</pre>
-                        <div class="detalhe__nota">{{ registro.notaSql }}</div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="paginacao">
-          <span>{{ registros.length }} de {{ total }} registros</span>
-          <div class="filtros__espacador" />
-          <button
-            class="o-btn o-btn--ghost"
-            type="button"
-            :disabled="pagina <= 1"
-            @click="irParaPagina(pagina - 1)"
-          >
-            ← anteriores
-          </button>
-          <button
-            class="o-btn o-btn--ghost"
-            type="button"
-            :disabled="pagina * porPagina >= total"
-            @click="irParaPagina(pagina + 1)"
-          >
-            próximos →
-          </button>
-        </div>
+      <div class="paginacao">
+        <span>{{ registros.length }} de {{ total }} registros</span>
+        <div class="paginacao__espacador" />
+        <button
+          class="o-btn o-btn--ghost"
+          type="button"
+          :disabled="pagina <= 1"
+          @click="irParaPagina(pagina - 1)"
+        >
+          ← anteriores
+        </button>
+        <button
+          class="o-btn o-btn--ghost"
+          type="button"
+          :disabled="pagina * porPagina >= total"
+          @click="irParaPagina(pagina + 1)"
+        >
+          próximos →
+        </button>
       </div>
     </div>
   </div>
@@ -218,269 +190,247 @@ onMounted(() => {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 18px 20px;
+  padding: 26px 22px 40px;
 
   &__coluna {
-    max-width: 1400px;
+    max-width: 840px;
     margin: 0 auto;
   }
 }
 
 .titulo {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
 
-  h1 {
-    margin: 0;
-    font: 600 16px/1 $sans;
-  }
+.subtitulo {
+  margin: 0 0 20px;
+  color: var(--ink2);
+  font-size: 13.5px;
+}
 
-  span {
-    @include mono(11.5px, 400);
-    color: var(--txt3);
+.filtros {
+  margin-bottom: 18px;
+
+  &__busca {
+    max-width: 420px;
   }
 }
 
 .resumo {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 1px;
-  background: var(--line);
+  display: flex;
+  gap: 26px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 14px;
-
-  &__cartao {
-    background: var(--panel);
-    padding: 11px 13px;
-  }
+  border-radius: 12px;
+  margin-bottom: 22px;
 
   &__rotulo {
-    @include mono(10px, 400);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--txt3);
-    margin-bottom: 6px;
+    font-size: 12.5px;
+    color: var(--ink3);
+    margin-bottom: 3px;
   }
 
   &__valor {
-    @include mono(20px, 600);
-    color: var(--txt);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
 
     &--erro {
-      color: var(--err);
+      color: var(--clay);
     }
 
     &--aviso {
-      color: var(--warn);
+      color: var(--amber);
     }
   }
 }
 
-.filtros {
+.aviso {
+  font-size: 13px;
+  padding: 14px 2px;
+  color: var(--ink3);
+}
+
+.lista {
   display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 16px;
+}
 
-  &__busca {
-    @include mono(12px, 400, 1.2);
+.cartao {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+
+  &__linha {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 14px 16px;
+    cursor: pointer;
+    display: block;
+
+    &:hover {
+      background: var(--panel2);
+    }
+
+    &--aberta {
+      background: var(--sel);
+    }
+  }
+
+  &__topo {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin-bottom: 7px;
+  }
+
+  &__pergunta {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
     flex: 1;
-    min-width: 240px;
-    background: var(--panel);
-    border: 1px solid var(--line2);
-    border-radius: 3px;
-    padding: 6px 9px;
-    color: var(--txt);
-    outline: none;
+    min-width: 200px;
+  }
 
-    &:focus {
-      border-color: var(--acc);
-    }
+  &__quando {
+    font-size: 12.5px;
+    color: var(--ink3);
+    white-space: nowrap;
+  }
 
-    &::placeholder {
-      color: var(--txt3);
-    }
+  &__meta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 12.5px;
+    color: var(--ink2);
+  }
+
+  &__ferramentas {
+    display: flex;
+    gap: 6px;
   }
 
   &__espacador {
     flex: 1;
   }
-}
 
-.aviso {
-  @include mono(11.5px, 400);
-  padding: 14px;
-  color: var(--txt3);
-}
-
-.tabela {
-  overflow-x: auto;
-
-  table {
-    @include mono(11.5px, 400, 1.4);
-    width: 100%;
-    border-collapse: collapse;
+  &__modelo {
+    font: 400 12px/1 $mono;
+    color: var(--ink3);
   }
-
-  th {
-    text-align: left;
-    padding: 7px 10px;
-    font-weight: 500;
-    color: var(--txt3);
-    border-bottom: 1px solid var(--line);
-    background: var(--panel2);
-    white-space: nowrap;
-  }
-
-  td {
-    padding: 7px 10px;
-    color: var(--txt2);
-    border-bottom: 1px solid var(--line);
-  }
-
-  &__pergunta {
-    min-width: 280px;
-  }
-}
-
-.linha {
-  cursor: pointer;
-
-  &:hover {
-    background: var(--panel2);
-  }
-
-  &--aberta {
-    background: var(--sel);
-  }
-}
-
-.ao-fim {
-  text-align: right;
-  color: var(--txt);
-}
-
-.forte {
-  color: var(--txt);
-}
-
-.fraco {
-  color: var(--txt3);
-}
-
-.sem-quebra {
-  white-space: nowrap;
 }
 
 .sigla {
-  margin-right: 5px;
-
-  &--doc {
-    color: var(--blue);
-  }
-
-  &--codigo {
-    color: var(--green);
-  }
-
+  &--doc,
+  &--codigo,
   &--banco {
-    color: var(--gold);
+    color: var(--slate);
   }
 
   &--curado {
-    color: var(--gray);
+    color: var(--amber);
   }
 
   &--shell {
-    color: var(--warn);
+    color: var(--amber);
   }
 
   &--inferencia {
-    color: var(--txt3);
+    color: var(--ink3);
   }
 
   &--bloqueada {
-    color: var(--err);
+    color: var(--clay);
   }
 }
 
 .tom-ok {
-  color: var(--green);
+  color: var(--sage);
 }
 
 .tom-aviso {
-  color: var(--warn);
+  color: var(--amber);
 }
 
 .tom-erro {
-  color: var(--err);
+  color: var(--clay);
 }
 
 .tom-neutro {
-  color: var(--txt2);
+  color: var(--ink2);
 }
 
 .detalhe {
-  padding: 0 10px 10px;
+  padding: 0 16px 14px;
 
   &__grade {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 10px;
   }
 
   &__titulo {
-    @include caps;
-    padding: 6px 9px;
+    font-size: 12.5px;
+    color: var(--ink3);
+    padding: 9px 12px;
     border-bottom: 1px solid var(--line);
   }
 
   &__trilha {
-    @include mono(11px, 400, 1.5);
-    padding: 7px 9px;
+    font: 400 12px/1.6 $mono;
+    padding: 9px 12px;
     display: flex;
     flex-direction: column;
     gap: 5px;
-    color: var(--txt2);
+    color: var(--ink2);
   }
 
   &__vazio {
-    @include mono(11px, 400);
-    padding: 9px;
+    font-size: 12.5px;
+    padding: 12px;
     margin: 0;
-    color: var(--txt3);
+    color: var(--ink3);
   }
 
   &__sql {
-    @include mono(11px, 400, 1.6);
+    font: 400 12px/1.6 $mono;
     margin: 0;
-    padding: 7px 9px;
-    color: var(--txt2);
+    padding: 9px 12px;
+    color: var(--ink2);
     overflow-x: auto;
   }
 
   &__nota {
-    @include mono(10.5px, 400);
-    padding: 6px 9px;
+    font-size: 11.5px;
+    padding: 8px 12px;
     border-top: 1px solid var(--line);
-    color: var(--txt3);
+    color: var(--ink3);
   }
 }
 
 .paginacao {
-  @include mono(11px, 400);
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 10px;
-  border-top: 1px solid var(--line);
-  background: var(--panel2);
-  color: var(--txt3);
+  font-size: 12.5px;
+  color: var(--ink3);
+
+  &__espacador {
+    flex: 1;
+  }
 }
 </style>

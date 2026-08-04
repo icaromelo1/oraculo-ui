@@ -1,15 +1,17 @@
 <template>
   <div>
-    <CabecalhoResposta tom-erro :meta="meta" />
+    <CabecalhoResposta tom="sage-suave" :meta="resumo" />
 
     <div class="cartao">
       <div class="cartao__topo">
-        <span class="cartao__selo">modelo indisponível</span>
-        <span class="cartao__alvo">código {{ mensagem.erro?.codigo ?? '—' }}</span>
+        <i class="cartao__ponto" aria-hidden="true" />
+        <span class="cartao__selo">O modelo não respondeu</span>
+        <span class="cartao__modelo">{{ mensagem.modelo || '—' }}</span>
       </div>
 
       <div class="cartao__corpo">
         <p class="cartao__texto">{{ mensagem.erro?.mensagem }}</p>
+        <div class="cartao__tecnico">código {{ mensagem.erro?.codigo ?? '—' }}</div>
 
         <div class="acoes">
           <button
@@ -18,9 +20,19 @@
             type="button"
             @click="$emit('tentar-novamente')"
           >
-            tentar novamente
+            Tentar de novo
           </button>
-          <span v-else class="acoes__nota">este erro não é retomável automaticamente.</span>
+          <button
+            v-if="mensagem.fontes.length"
+            class="o-btn o-btn--neutral"
+            type="button"
+            @click="chat.alternarPainelFontes()"
+          >
+            Ver as {{ mensagem.fontes.length }} fontes encontradas
+          </button>
+          <span v-if="!mensagem.erro?.retomavel" class="acoes__nota">
+            este erro não é retomável automaticamente.
+          </span>
         </div>
       </div>
     </div>
@@ -30,69 +42,84 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import CabecalhoResposta from '@/components/chat/CabecalhoResposta.vue';
+import { resumoBusca } from '@/composables/useResumoFerramentas';
+import { useChatStore } from '@/stores/chat';
 import type { MensagemAssistenteChat } from '@/stores/chat';
 
 const props = defineProps<{ mensagem: MensagemAssistenteChat }>();
 defineEmits<{ 'tentar-novamente': [] }>();
 
-const meta = computed(() => `erro do modelo · código ${props.mensagem.erro?.codigo ?? '—'}`);
+const chat = useChatStore();
+
+const resumo = computed(() => resumoBusca(props.mensagem.ferramentas, props.mensagem.duracaoMs));
 </script>
 
 <style scoped lang="scss">
 @use '@/css/tokens' as *;
 
 .cartao {
-  border: 1px solid var(--err-l);
-  border-radius: 4px;
+  border: 1px solid var(--clay-l);
+  border-radius: 12px;
   background: var(--panel);
   overflow: hidden;
+  max-width: 560px;
 
   &__topo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
+    padding: 12px 14px;
+    background: var(--clay-s);
+    border-bottom: 1px solid var(--clay-l);
     flex-wrap: wrap;
-    padding: 8px 11px;
-    background: var(--err-b);
-    border-bottom: 1px solid var(--err-l);
+  }
+
+  &__ponto {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--clay);
+    flex: none;
   }
 
   &__selo {
-    @include mono(10.5px, 600);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--err);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--clay);
   }
 
-  &__alvo {
-    @include mono(11px, 400);
-    color: var(--txt2);
+  &__modelo {
+    font: 400 12.5px/1 $mono;
+    color: var(--ink3);
+    margin-left: auto;
   }
 
   &__corpo {
-    padding: 11px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    padding: 14px;
   }
 
   &__texto {
-    margin: 0;
-    font-size: 13px;
-    color: var(--txt2);
-    text-wrap: pretty;
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  &__tecnico {
+    font: 400 12.5px/1.6 $mono;
+    color: var(--ink3);
+    margin-bottom: 14px;
   }
 }
 
 .acoes {
   display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
   align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 
   &__nota {
-    @include mono(11px, 400);
-    color: var(--txt3);
+    font-size: 12px;
+    color: var(--ink3);
   }
 }
 </style>

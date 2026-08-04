@@ -1,10 +1,10 @@
 <template>
   <aside class="painel" :class="{ 'painel--flutuante': flutuante }">
     <div class="painel__topo">
-      <span class="o-caps">{{ titulo }}</span>
+      <span class="painel__titulo">{{ titulo }}</span>
       <div class="painel__espacador" />
       <button v-if="detalhe" class="o-btn o-btn--ghost" type="button" @click="chat.limparFonte()">
-        ← todas as fontes
+        todas as fontes
       </button>
       <button class="painel__fechar" type="button" @click="chat.alternarPainelFontes()">×</button>
     </div>
@@ -12,15 +12,18 @@
     <div v-if="detalhe" class="painel__corpo">
       <div class="cabecalho">
         <div class="cabecalho__linha">
-          <span class="etiqueta" :class="`etiqueta--${detalhe.tipo}`">{{ rotuloTipo }}</span>
-          <span class="cabecalho__autoridade">autoridade {{ detalhe.autoridade }} de 4</span>
+          <i class="ponto" :class="`ponto--${tomTipoFonte(detalhe.tipo)}`" aria-hidden="true" />
+          <span class="cabecalho__tipo" :class="`cabecalho__tipo--${tomTipoFonte(detalhe.tipo)}`">
+            {{ rotuloTipoFonte(detalhe.tipo) }}
+          </span>
         </div>
+        <div class="cabecalho__titulo">{{ detalhe.titulo }}</div>
         <div class="cabecalho__caminho">{{ detalhe.caminho }}</div>
         <div class="cabecalho__meta">{{ detalhe.meta }}</div>
       </div>
 
       <div class="trecho">
-        <div class="o-caps">trecho exato</div>
+        <div class="rotulo-secao">trecho exato</div>
         <div class="trecho__quadro">
           <div
             v-for="linha in detalhe.linhas"
@@ -35,65 +38,66 @@
       </div>
 
       <div class="porque">
-        <div class="o-caps">como isso entrou na resposta</div>
+        <div class="rotulo-secao">por que isso entrou na resposta</div>
         <p class="porque__texto">{{ detalhe.porque }}</p>
         <div class="porque__acoes">
           <button class="o-btn" type="button">{{ detalhe.acao }}</button>
-          <button class="o-btn o-btn--ghost" type="button">copiar referência</button>
+          <button class="o-btn o-btn--ghost" type="button" @click="copiarCaminho(detalhe.caminho)">
+            {{ copiado ? 'copiado!' : 'copiar caminho' }}
+          </button>
         </div>
       </div>
     </div>
 
     <div v-else class="painel__corpo">
       <div class="autoridades">
-        <div class="o-caps">níveis de autoridade</div>
+        <div class="rotulo-secao">quanto vale cada fonte</div>
         <div class="autoridades__lista">
-          <div v-for="nivel in niveis" :key="nivel.ordem" class="autoridades__item">
-            <span class="autoridades__ordem" :class="`autoridades__ordem--${nivel.tipo}`">
-              {{ nivel.ordem }}
-            </span>
-            <i class="autoridades__marca" :class="`autoridades__marca--${nivel.tipo}`" />
-            <span class="autoridades__rotulo" :class="{ fraco: nivel.tipo === 'inferencia' }">
+          <div v-for="nivel in NIVEIS" :key="nivel.tom" class="autoridades__item">
+            <i class="ponto" :class="`ponto--${nivel.tom}`" aria-hidden="true" />
+            <span class="autoridades__rotulo" :class="{ fraco: nivel.tom === 'neutro' }">
               {{ nivel.rotulo }}
             </span>
           </div>
         </div>
       </div>
 
-      <div class="o-caps fontes__titulo">fontes desta resposta · {{ chat.fontes.length }}</div>
+      <div class="rotulo-secao fontes__titulo">
+        fontes desta resposta · {{ chat.fontes.length }}
+      </div>
 
       <div class="fontes">
         <button
           v-for="item in chat.fontes"
           :key="item.id"
           class="fonte"
-          :class="`fonte--${item.tipo}`"
+          :class="`fonte--${tomTipoFonte(item.tipo)}`"
           type="button"
           @click="chat.selecionarFonte(item.id)"
         >
           <span class="fonte__topo">
-            <span class="fonte__tipo" :class="`fonte__tipo--${item.tipo}`">{{
-              rotulo(item.tipo)
+            <i class="ponto" :class="`ponto--${tomTipoFonte(item.tipo)}`" aria-hidden="true" />
+            <span class="fonte__tipo" :class="`fonte__tipo--${tomTipoFonte(item.tipo)}`">{{
+              rotuloTipoFonte(item.tipo)
             }}</span>
             <span class="fonte__etiqueta">{{ item.etiqueta }}</span>
           </span>
           <span class="fonte__titulo">{{ item.titulo }}</span>
-          <span class="fonte__detalhe">{{ item.detalhe }}</span>
+          <span class="fonte__caminho">{{ item.caminho }}</span>
         </button>
       </div>
 
-      <div class="cobertura">
-        <div class="o-caps">cobertura</div>
-        <div class="cobertura__linha">
-          <span>afirmações citadas</span>
+      <div v-if="cobertura.total > 0" class="cobertura">
+        <div class="cobertura__linha cobertura__linha--titulo">
+          <span>Afirmações com fonte</span>
           <span>{{ cobertura.citadas }} de {{ cobertura.total }}</span>
         </div>
         <div class="cobertura__barra">
           <span :style="{ width: percentual }" />
         </div>
-        <div class="cobertura__linha">
-          <span>sem fonte (inferência)</span>
-          <span class="cobertura__inferencia">{{ cobertura.semFonte }}</span>
+        <div v-if="cobertura.semFonte > 0" class="cobertura__nota">
+          {{ cobertura.semFonte }} afirmação(ões) sem fonte — dedução do modelo, sem trecho
+          correspondente na base.
         </div>
       </div>
     </div>
@@ -101,38 +105,44 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { rotuloTipoFonte } from '@/composables/useRotuloFonte';
+import { computed, ref } from 'vue';
+import { rotuloTipoFonte, tomTipoFonte } from '@/composables/useRotuloFonte';
 import { useChatStore } from '@/stores/chat';
-import type { Cobertura, TipoFonte } from '@/types/oraculo';
+import type { Cobertura } from '@/types/oraculo';
 
 defineProps<{ flutuante: boolean }>();
 
 const chat = useChatStore();
+const copiado = ref(false);
+
+const NIVEIS = [
+  { tom: 'amber', rotulo: 'Suas notas — o que você mesmo escreveu' },
+  { tom: 'slate', rotulo: 'Documentação e configs do workspace' },
+  { tom: 'neutro', rotulo: 'Dedução do modelo — sem fonte' },
+] as const;
 
 const cobertura = computed<Cobertura>(
   () => chat.coberturaAtual ?? { citadas: 0, total: 0, semFonte: 0 },
 );
 
 const detalhe = computed(() => chat.detalheFonte);
-const titulo = computed(() => (detalhe.value ? 'fonte · trecho exato' : 'contexto da resposta'));
+const titulo = computed(() => (detalhe.value ? 'Trecho citado' : 'Fontes desta resposta'));
 const percentual = computed(() => {
   const total = cobertura.value.total;
   return total > 0 ? `${Math.round((cobertura.value.citadas / total) * 100)}%` : '0%';
 });
 
-const rotuloTipo = computed(() => (detalhe.value ? rotuloTipoFonte(detalhe.value.tipo) : ''));
-
-function rotulo(tipo: TipoFonte) {
-  return rotuloTipoFonte(tipo);
+async function copiarCaminho(caminho: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(caminho);
+    copiado.value = true;
+    setTimeout(() => {
+      copiado.value = false;
+    }, 1500);
+  } catch {
+    copiado.value = false;
+  }
 }
-
-const niveis = [
-  { ordem: 1, tipo: 'curado', rotulo: 'conhecimento curado' },
-  { ordem: 2, tipo: 'doc', rotulo: 'documentação oficial' },
-  { ordem: 3, tipo: 'codigo', rotulo: 'código / banco' },
-  { ordem: 4, tipo: 'inferencia', rotulo: 'inferência do modelo' },
-];
 </script>
 
 <style scoped lang="scss">
@@ -148,10 +158,16 @@ const niveis = [
   &__topo {
     display: flex;
     align-items: center;
-    gap: 8px;
-    height: 40px;
-    padding: 0 11px;
+    gap: 9px;
+    padding: 12px 14px;
     border-bottom: 1px solid var(--line);
+  }
+
+  &__titulo {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    flex: 1;
   }
 
   &__espacador {
@@ -161,10 +177,11 @@ const niveis = [
   &__fechar {
     background: none;
     border: none;
-    color: var(--txt3);
-    font-size: 14px;
+    color: var(--ink3);
+    font-size: 17px;
     cursor: pointer;
     line-height: 1;
+    padding: 0 2px;
   }
 
   &__corpo {
@@ -173,77 +190,88 @@ const niveis = [
   }
 }
 
+.rotulo-secao {
+  font-size: 12.5px;
+  color: var(--ink3);
+}
+
+.ponto {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+
+  &--amber {
+    background: var(--amber);
+  }
+
+  &--slate {
+    background: var(--slate);
+  }
+
+  &--neutro {
+    background: var(--line2);
+  }
+}
+
 .cabecalho {
-  padding: 11px;
+  padding: 14px;
   border-bottom: 1px solid var(--line);
 
   &__linha {
     display: flex;
     align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-bottom: 7px;
+    gap: 8px;
+    margin-bottom: 8px;
   }
 
-  &__autoridade {
-    @include mono(10.5px, 400);
-    color: var(--txt3);
+  &__tipo {
+    font-size: 12.5px;
+
+    &--amber {
+      color: var(--amber);
+    }
+
+    &--slate {
+      color: var(--slate);
+    }
+
+    &--neutro {
+      color: var(--ink3);
+    }
+  }
+
+  &__titulo {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
   }
 
   &__caminho {
-    @include mono(12.5px, 500, 1.4);
-    color: var(--txt);
+    font: 400 12px/1.6 $mono;
+    color: var(--ink3);
     word-break: break-all;
-    margin-bottom: 5px;
   }
 
   &__meta {
-    @include mono(11px, 400, 1.6);
-    color: var(--txt3);
-  }
-}
-
-.etiqueta {
-  @include mono(10px, 500, 1.4);
-  padding: 2px 6px;
-  border-radius: 3px;
-
-  &--codigo {
-    border: 1px solid var(--green-l);
-    color: var(--green);
-    background: var(--green-b);
-  }
-
-  &--doc {
-    border: 1px solid var(--blue-l);
-    color: var(--blue);
-    background: var(--blue-b);
-  }
-
-  &--banco {
-    border: 1px solid var(--gold-l);
-    color: var(--gold);
-    background: var(--gold-b);
-  }
-
-  &--curado,
-  &--inferencia {
-    border: 1px solid var(--gray-l);
-    color: var(--gray);
-    background: var(--gray-b);
+    font-size: 12.5px;
+    color: var(--ink3);
+    margin-top: 7px;
   }
 }
 
 .trecho {
-  padding: 11px;
+  padding: 14px;
   border-bottom: 1px solid var(--line);
 
   &__quadro {
     border: 1px solid var(--line);
-    border-radius: 3px;
-    background: var(--bg);
+    border-radius: 10px;
+    background: var(--panel2);
     overflow-x: auto;
-    margin-top: 7px;
+    margin-top: 9px;
   }
 
   &__linha {
@@ -253,127 +281,86 @@ const niveis = [
       background: var(--sel);
 
       .trecho__texto {
-        color: var(--txt);
+        color: var(--ink);
       }
     }
   }
 
   &__numero {
-    @include mono(11px, 400, 1.7);
-    width: 38px;
+    font: 400 11.5px/1.75 $mono;
+    width: 34px;
     flex: none;
     text-align: right;
-    padding: 1px 8px 1px 0;
-    color: var(--txt3);
+    padding: 2px 9px 2px 0;
+    color: var(--ink3);
     user-select: none;
   }
 
   &__texto {
-    @include mono(11.5px, 400, 1.7);
-    padding: 1px 9px 1px 0;
-    color: var(--txt2);
-    white-space: pre;
+    font: 400 12.5px/1.75 $mono;
+    padding: 2px 10px 2px 0;
+    color: var(--ink2);
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 }
 
 .porque {
-  padding: 11px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 9px;
 
   &__texto {
     margin: 0;
-    font-size: 12.5px;
-    color: var(--txt2);
+    font-size: 13.5px;
+    color: var(--ink2);
     text-wrap: pretty;
   }
 
   &__acoes {
     display: flex;
-    gap: 6px;
-    margin-top: 3px;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 2px;
   }
 }
 
 .autoridades {
-  padding: 10px 11px;
+  padding: 13px 14px;
   border-bottom: 1px solid var(--line);
 
   &__lista {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-top: 7px;
+    gap: 7px;
+    margin-top: 9px;
   }
 
   &__item {
-    @include mono(11px, 400, 1.4);
     display: flex;
     align-items: center;
-    gap: 7px;
-  }
-
-  &__ordem {
-    width: 16px;
-    text-align: center;
-
-    &--curado {
-      color: var(--gray);
-    }
-
-    &--doc {
-      color: var(--blue);
-    }
-
-    &--codigo {
-      color: var(--green);
-    }
-
-    &--inferencia {
-      color: var(--txt3);
-    }
-  }
-
-  &__marca {
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-
-    &--curado {
-      background: var(--gray);
-    }
-
-    &--doc {
-      background: var(--blue);
-    }
-
-    &--codigo {
-      background: var(--green);
-    }
-
-    &--inferencia {
-      border: 1px dashed var(--gray-l);
-    }
+    gap: 9px;
+    font-size: 13px;
   }
 
   &__rotulo {
-    color: var(--txt2);
+    color: var(--ink2);
 
     &.fraco {
-      color: var(--txt3);
+      color: var(--ink3);
     }
   }
 }
 
 .fontes {
-  padding: 0 8px 10px;
+  padding: 0 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 7px;
 
   &__titulo {
-    padding: 10px 11px 4px;
+    padding: 13px 14px 6px;
   }
 }
 
@@ -381,107 +368,105 @@ const niveis = [
   text-align: left;
   background: var(--panel2);
   border: 1px solid var(--line);
-  border-radius: 3px;
-  padding: 8px 9px;
+  border-radius: 11px;
+  padding: 11px 12px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
 
   &:hover {
+    background: var(--panel3);
     border-color: var(--line2);
   }
 
-  &--curado {
-    border-left: 2px solid var(--gray);
+  &--amber:hover {
+    background: var(--amber-s);
+    border-color: var(--amber-l);
   }
 
-  &--doc {
-    border-left: 2px solid var(--blue);
-  }
-
-  &--codigo {
-    border-left: 2px solid var(--green);
-  }
-
-  &--banco {
-    border-left: 2px solid var(--gold);
+  &--slate:hover {
+    background: var(--slate-s);
+    border-color: var(--slate-l);
   }
 
   &__topo {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
+    gap: 7px;
+    margin-bottom: 5px;
   }
 
   &__tipo {
-    @include mono(10px, 500);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    font-size: 12px;
 
-    &--curado {
-      color: var(--gray);
+    &--amber {
+      color: var(--amber);
     }
 
-    &--doc {
-      color: var(--blue);
+    &--slate {
+      color: var(--slate);
     }
 
-    &--codigo {
-      color: var(--green);
-    }
-
-    &--banco {
-      color: var(--gold);
+    &--neutro {
+      color: var(--ink3);
     }
   }
 
   &__etiqueta {
-    @include mono(10px, 400);
-    color: var(--txt3);
+    font-size: 12px;
+    color: var(--ink3);
+    margin-left: auto;
   }
 
   &__titulo {
-    font-size: 12.5px;
-    color: var(--txt);
-    margin-bottom: 2px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 3px;
   }
 
-  &__detalhe {
-    @include mono(10.5px, 400);
-    color: var(--txt3);
+  &__caminho {
+    font: 400 11.5px/1.5 $mono;
+    color: var(--ink3);
+    word-break: break-all;
   }
 }
 
 .cobertura {
-  padding: 10px 11px 14px;
+  padding: 13px 14px;
   border-top: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 
   &__linha {
-    @include mono(11px, 400);
     display: flex;
     justify-content: space-between;
-    color: var(--txt2);
+    font-size: 13px;
+    color: var(--ink2);
+
+    &--titulo span:last-child {
+      color: var(--ink);
+    }
   }
 
   &__barra {
-    height: 4px;
+    height: 5px;
     background: var(--panel3);
-    border-radius: 2px;
+    border-radius: 3px;
     overflow: hidden;
 
     span {
       display: block;
       height: 100%;
-      background: var(--acc);
+      background: var(--sage);
+      border-radius: 3px;
     }
   }
 
-  &__inferencia {
-    color: var(--gray);
+  &__nota {
+    font-size: 12.5px;
+    color: var(--ink3);
   }
 }
 </style>

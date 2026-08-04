@@ -1,8 +1,7 @@
 <template>
   <div class="capacidades">
     <div class="capacidades__topo">
-      <span class="o-caps">capacidades</span>
-      <span class="capacidades__perfil">perfil: {{ sessao.perfil }}</span>
+      <span class="capacidades__titulo">Capacidades</span>
     </div>
 
     <ul class="capacidades__lista">
@@ -32,18 +31,15 @@ const sessao = useSessaoStore();
 
 .capacidades {
   border-top: 1px solid var(--line);
-  padding: 10px;
+  padding: 13px 14px;
 
   &__topo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
-  &__perfil {
-    @include mono(10px, 400);
-    color: var(--txt3);
+  &__titulo {
+    font-size: 12px;
+    color: var(--ink3);
   }
 
   &__lista {
@@ -52,61 +48,70 @@ const sessao = useSessaoStore();
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
   }
 }
 
 .linha {
-  @include mono(11.5px, 400);
   display: flex;
   align-items: center;
-  gap: 7px;
-  color: var(--txt2);
+  gap: 9px;
+  font-size: 13px;
+  color: var(--ink2);
 
   &__ponto {
-    width: 5px;
-    height: 5px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     flex: none;
-    background: var(--green);
+    background: var(--sage);
   }
 
   &__cruz {
-    width: 5px;
+    width: 7px;
     flex: none;
     text-align: center;
-    color: var(--err);
+    color: var(--clay);
     font-size: 11px;
   }
 
+  &__rotulo {
+    flex: 1;
+  }
+
   &__nota {
-    font-size: 10.5px;
+    font-size: 11.5px;
+    margin-left: auto;
   }
 
   &--aprovacao {
     .linha__ponto {
-      background: var(--warn);
+      background: var(--amber);
     }
 
     .linha__nota {
-      color: var(--warn);
+      color: var(--amber);
     }
   }
 
   &--desligada {
-    color: var(--txt3);
+    color: var(--ink3);
 
     .linha__ponto {
       background: transparent;
-      border: 1px solid var(--txt3);
+      border: 1.5px solid var(--line2);
+    }
+
+    .linha__nota {
+      color: var(--ink3);
     }
   }
 
   &--negada {
-    color: var(--txt3);
+    color: var(--ink3);
 
     .linha__nota {
-      color: var(--err);
+      color: var(--clay);
     }
   }
 }

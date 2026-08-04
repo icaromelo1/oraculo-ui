@@ -1,50 +1,48 @@
 <template>
   <div class="tela">
-    <div class="cartao">
-      <form class="acesso" @submit.prevent="entrar">
-        <div class="acesso__marca">
-          <span class="acesso__glifo" aria-hidden="true"><i /></span>
-          <span class="acesso__nome">ORÁCULO</span>
-        </div>
-        <p class="acesso__sub">assistente técnico de infraestrutura</p>
+    <div class="grade">
+      <div class="cartao">
+        <form class="acesso" @submit.prevent="entrar">
+          <h1 class="acesso__titulo">Bem-vindo de volta</h1>
+          <p class="acesso__sub">Seu assistente sobre a sua infraestrutura.</p>
 
-        <label class="acesso__rotulo" for="usuario">usuário</label>
-        <input
-          id="usuario"
-          v-model="usuario"
-          class="o-field acesso__campo"
-          autocomplete="username"
-        />
+          <label class="acesso__rotulo" for="usuario">Usuário</label>
+          <input
+            id="usuario"
+            v-model="usuario"
+            class="o-field acesso__campo"
+            autocomplete="username"
+          />
 
-        <label class="acesso__rotulo" for="senha">senha</label>
-        <input
-          id="senha"
-          v-model="senha"
-          class="o-field acesso__campo"
-          type="password"
-          autocomplete="current-password"
-        />
+          <label class="acesso__rotulo" for="senha">Senha</label>
+          <input
+            id="senha"
+            v-model="senha"
+            class="o-field acesso__campo"
+            type="password"
+            autocomplete="current-password"
+          />
 
-        <p v-if="sessao.erroLogin" class="acesso__erro">{{ sessao.erroLogin }}</p>
+          <p v-if="sessao.erroLogin" class="acesso__erro">{{ sessao.erroLogin }}</p>
 
-        <button class="acesso__entrar" type="submit" :disabled="sessao.carregandoSessao">
-          {{ sessao.carregandoSessao ? 'entrando…' : 'ENTRAR' }}
-        </button>
-
-        <p class="acesso__nota">
-          Autenticação pelo diretório interno. Sessões ficam registradas na auditoria.
-        </p>
-      </form>
+          <button class="acesso__entrar" type="submit" :disabled="sessao.carregandoSessao">
+            {{ sessao.carregandoSessao ? 'entrando…' : 'Entrar' }}
+          </button>
+        </form>
+      </div>
 
       <div class="estado">
-        <div class="o-caps">estado da instalação</div>
+        <div class="estado__titulo">Estado da instalação</div>
         <div class="estado__lista">
           <div v-for="item in estado" :key="item.rotulo" class="estado__linha">
+            <i class="estado__ponto" :class="{ 'estado__ponto--ok': item.ok }" aria-hidden="true" />
             <span class="estado__chave">{{ item.rotulo }}</span>
-            <span class="estado__valor" :class="{ 'estado__valor--ok': item.ok }">
-              <i v-if="item.ok" aria-hidden="true" />
-              {{ item.valor }}
-            </span>
+            <span class="estado__valor" :class="{ mono: item.mono }">{{ item.valor }}</span>
+          </div>
+          <div v-if="desligadas.length" class="estado__linha">
+            <i class="estado__ponto" aria-hidden="true" />
+            <span class="estado__chave estado__chave--fraco">Desligadas</span>
+            <span class="estado__valor">{{ desligadas.join(', ') }}</span>
           </div>
         </div>
       </div>
@@ -68,9 +66,23 @@ interface ItemEstado {
   rotulo: string;
   valor: string;
   ok: boolean;
+  mono?: boolean;
 }
 
-const estado = ref<ItemEstado[]>([{ rotulo: 'api-oráculo', valor: 'verificando…', ok: false }]);
+const ROTULOS_CAPACIDADE: Record<string, string> = {
+  conhecimento: 'conhecimento curado',
+  codigo: 'código e configs',
+  banco: 'consulta ao banco',
+  estado: 'estado dos serviços',
+  shell: 'comando de shell',
+};
+
+function rotularCapacidade(chave: string): string {
+  return ROTULOS_CAPACIDADE[chave] ?? chave.replace(/_/g, ' ');
+}
+
+const estado = ref<ItemEstado[]>([{ rotulo: 'API respondendo', valor: 'verificando…', ok: false }]);
+const desligadas = ref<string[]>([]);
 
 onMounted(() => {
   void carregarEstado();
@@ -79,17 +91,25 @@ onMounted(() => {
 async function carregarEstado(): Promise<void> {
   try {
     const saude = await obterSaude();
-    const ligadas = Object.values(saude.capacidades).filter(Boolean).length;
-    const total = Object.values(saude.capacidades).length;
+    const entradas = Object.entries(saude.capacidades);
+    const ligadas = entradas.filter(([, valor]) => valor).length;
+
+    desligadas.value = entradas
+      .filter(([, valor]) => !valor)
+      .map(([chave]) => rotularCapacidade(chave));
 
     estado.value = [
-      { rotulo: 'api-oráculo', valor: `online · ${saude.status}`, ok: saude.status === 'ok' },
-      { rotulo: 'provedor de modelo', valor: saude.provedor, ok: true },
-      { rotulo: 'ambiente', valor: saude.ambiente, ok: true },
-      { rotulo: 'capacidades ligadas', valor: `${ligadas} de ${total}`, ok: ligadas > 0 },
+      { rotulo: 'API respondendo', valor: saude.status, ok: saude.status === 'ok' },
+      { rotulo: 'Provedor', valor: saude.provedor, ok: true, mono: true },
+      {
+        rotulo: 'Capacidades ligadas',
+        valor: `${ligadas} de ${entradas.length}`,
+        ok: ligadas > 0,
+      },
     ];
   } catch {
-    estado.value = [{ rotulo: 'api-oráculo', valor: 'indisponível', ok: false }];
+    estado.value = [{ rotulo: 'API respondendo', valor: 'indisponível', ok: false }];
+    desligadas.value = [];
   }
 }
 
@@ -114,63 +134,45 @@ async function entrar(): Promise<void> {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 28px;
   background: var(--bg);
 }
 
-.cartao {
+.grade {
   display: grid;
-  grid-template-columns: minmax(0, 360px) minmax(0, 340px);
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  overflow: hidden;
-  background: var(--panel);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
+  max-width: 760px;
+  width: 100%;
+}
 
-  @media (width <= 760px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.cartao {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 30px 28px;
+  box-shadow: var(--shadow);
 }
 
 .acesso {
-  padding: 32px 30px;
-  border-right: 1px solid var(--line);
-
-  &__marca {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    margin-bottom: 4px;
-  }
-
-  &__glifo {
-    width: 17px;
-    height: 17px;
-    border: 1.5px solid var(--acc);
-    border-radius: 2px;
-    position: relative;
-
-    i {
-      position: absolute;
-      inset: 3.5px;
-      background: var(--acc);
-      border-radius: 1px;
-    }
-  }
-
-  &__nome {
-    @include mono(15px, 600);
-    letter-spacing: 0.05em;
+  &__titulo {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
   }
 
   &__sub {
-    @include mono(12px, 400, 1.5);
-    margin: 0 0 26px;
-    color: var(--txt3);
+    margin: 0 0 24px;
+    color: var(--ink2);
+    font-size: 13.5px;
   }
 
   &__rotulo {
-    @include caps(var(--txt2));
     display: block;
+    font-size: 13px;
+    color: var(--ink2);
     margin-bottom: 6px;
   }
 
@@ -179,24 +181,24 @@ async function entrar(): Promise<void> {
   }
 
   &__erro {
-    @include mono(11.5px, 400, 1.4);
     margin: -8px 0 16px;
-    color: var(--err);
+    font-size: 13px;
+    color: var(--clay);
   }
 
   &__entrar {
-    @include mono(12px, 600);
     width: 100%;
-    background: var(--acc);
-    color: var(--acc-on);
+    background: var(--sage);
+    color: var(--onaccent);
     border: none;
-    border-radius: 3px;
-    padding: 10px;
-    letter-spacing: 0.06em;
+    border-radius: 9px;
+    padding: 11px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
 
     &:hover:not(:disabled) {
-      filter: brightness(1.1);
+      filter: brightness(1.07);
     }
 
     &:disabled {
@@ -204,58 +206,62 @@ async function entrar(): Promise<void> {
       cursor: default;
     }
   }
-
-  &__nota {
-    margin: 14px 0 0;
-    color: var(--txt3);
-    font-size: 11.5px;
-    text-wrap: pretty;
-  }
 }
 
 .estado {
-  padding: 32px 26px;
   background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px 22px;
+
+  &__titulo {
+    font-size: 12.5px;
+    color: var(--ink3);
+    margin-bottom: 14px;
+  }
 
   &__lista {
     display: flex;
     flex-direction: column;
-    gap: 1px;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 14px;
+    gap: 13px;
   }
 
   &__linha {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 9px 11px;
-    background: var(--panel);
+    gap: 10px;
+  }
+
+  &__ponto {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line2);
+    flex: none;
+
+    &--ok {
+      background: var(--sage);
+      border: none;
+    }
   }
 
   &__chave {
-    @include mono(12px, 400);
-    color: var(--txt2);
+    flex: 1;
+    font-size: 13.5px;
+    color: var(--ink);
+
+    &--fraco {
+      color: var(--ink2);
+    }
   }
 
   &__valor {
-    @include mono(11px, 400);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--txt3);
+    font-size: 12.5px;
+    color: var(--ink3);
 
-    &--ok {
-      color: var(--green);
-    }
-
-    i {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--green);
+    &.mono {
+      font: 400 12.5px/1 $mono;
+      color: var(--ink2);
     }
   }
 }

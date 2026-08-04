@@ -1,9 +1,7 @@
 <template>
   <aside class="lateral">
     <div class="lateral__topo">
-      <button class="nova" type="button" @click="chat.novaConversa()">
-        <span>+ nova conversa</span>
-      </button>
+      <button class="nova" type="button" @click="chat.novaConversa()">Nova conversa</button>
       <input v-model="chat.filtro" class="filtro" placeholder="filtrar conversas…" />
     </div>
 
@@ -58,8 +56,7 @@ const chat = useChatStore();
   overflow: hidden;
 
   &__topo {
-    padding: 10px;
-    border-bottom: 1px solid var(--line);
+    padding: 14px 14px 10px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -68,40 +65,33 @@ const chat = useChatStore();
   &__lista {
     flex: 1;
     overflow-y: auto;
-    padding: 8px 6px;
+    padding: 2px 8px 8px;
   }
 }
 
 .nova {
-  @include mono(12px, 500);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--panel2);
-  border: 1px solid var(--line2);
-  border-radius: 3px;
-  padding: 7px 9px;
-  color: var(--txt);
+  width: 100%;
+  background: var(--sage-s);
+  border: 1px solid var(--sage-l);
+  border-radius: 9px;
+  padding: 9px;
+  color: var(--sage);
+  font-size: 13.5px;
+  font-weight: 600;
   cursor: pointer;
 
   &:hover {
-    border-color: var(--acc);
-    color: var(--acc);
-  }
-
-  &__atalho {
-    color: var(--txt3);
-    font-size: 10px;
+    filter: brightness(0.97);
   }
 }
 
 .filtro {
-  @include mono(12px, 400, 1.2);
-  background: var(--bg);
+  background: var(--panel2);
   border: 1px solid var(--line);
-  border-radius: 3px;
-  padding: 6px 8px;
-  color: var(--txt);
+  border-radius: 8px;
+  padding: 7px 9px;
+  color: var(--ink);
+  font-size: 13px;
   outline: none;
 
   &:focus {
@@ -109,19 +99,20 @@ const chat = useChatStore();
   }
 
   &::placeholder {
-    color: var(--txt3);
+    color: var(--ink3);
   }
 }
 
 .aviso {
-  @include mono(11.5px, 400);
+  font-size: 12.5px;
   padding: 10px 8px;
-  color: var(--txt3);
+  color: var(--ink3);
 }
 
 .grupo {
-  @include caps;
-  padding: 12px 8px 6px;
+  font-size: 12px;
+  color: var(--ink3);
+  padding: 12px 8px 5px;
 
   &:first-child {
     padding-top: 6px;
@@ -134,9 +125,9 @@ const chat = useChatStore();
   text-align: left;
   background: none;
   border: none;
-  border-radius: 3px;
-  padding: 8px 9px;
-  margin-bottom: 2px;
+  border-radius: 9px;
+  padding: 9px 10px;
+  margin-bottom: 3px;
   cursor: pointer;
 
   &:hover {
@@ -145,33 +136,33 @@ const chat = useChatStore();
 
   &--ativo {
     background: var(--sel);
-    border-left: 2px solid var(--acc);
   }
 
   &__titulo {
     display: block;
-    color: var(--txt2);
-    font-size: 12.5px;
-    margin-bottom: 3px;
+    color: var(--ink2);
+    font-size: 13.5px;
+    margin-bottom: 2px;
 
     .item--ativo & {
-      color: var(--txt);
+      color: var(--ink);
+      font-weight: 500;
     }
   }
 
   &__meta {
-    @include mono(10.5px, 400);
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    color: var(--txt3);
+    font-size: 12px;
+    color: var(--ink3);
 
     &--aviso {
-      color: var(--warn);
+      color: var(--amber);
     }
 
     &--erro {
-      color: var(--err);
+      color: var(--clay);
     }
   }
 }

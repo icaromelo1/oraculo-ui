@@ -5,18 +5,18 @@
         <textarea
           v-model="chat.rascunho"
           rows="2"
-          placeholder="pergunte sobre documentação, código, banco ou estado dos serviços…"
+          placeholder="Pergunte sobre seus servidores, projetos e anotações…"
           :disabled="chat.enviando"
           @keydown.enter.exact.prevent="enviar"
         />
 
         <div class="caixa__acoes">
           <span class="caixa__info">
-            ferramentas: {{ sessao.ferramentasDisponiveis }} de {{ sessao.ferramentasTotais }}
+            capacidades: {{ sessao.ferramentasDisponiveis }} de {{ sessao.ferramentasTotais }}
           </span>
           <p v-if="chat.erro" class="caixa__erro">{{ chat.erro }}</p>
           <div class="caixa__espacador" />
-          <span class="caixa__atalho">⏎ envia · ⇧⏎ nova linha</span>
+          <span class="caixa__atalho">Enter envia</span>
           <button
             v-if="chat.enviando"
             class="o-btn o-btn--neutral"
@@ -32,7 +32,7 @@
             :disabled="!chat.rascunho.trim()"
             @click="enviar"
           >
-            enviar
+            Enviar
           </button>
         </div>
       </div>
@@ -59,18 +59,23 @@ function enviar(): void {
 .redator {
   border-top: 1px solid var(--line);
   background: var(--panel);
-  padding: 10px 24px 12px;
+  padding: 12px 20px 16px;
 
   &__coluna {
-    max-width: 820px;
+    max-width: 700px;
     margin: 0 auto;
   }
 }
 
 .caixa {
   border: 1px solid var(--line2);
-  border-radius: 4px;
-  background: var(--bg);
+  border-radius: 14px;
+  background: var(--panel2);
+  padding: 4px 6px 6px;
+
+  &:focus-within {
+    border-color: var(--sage);
+  }
 
   textarea {
     width: 100%;
@@ -78,12 +83,12 @@ function enviar(): void {
     border: none;
     resize: none;
     outline: none;
-    color: var(--txt);
-    font: 400 13.5px/1.5 $sans;
-    padding: 10px 12px 4px;
+    color: var(--ink);
+    font: 400 14.5px/1.5 $sans;
+    padding: 9px 10px 2px;
 
     &::placeholder {
-      color: var(--txt3);
+      color: var(--ink3);
     }
 
     &:disabled {
@@ -94,21 +99,21 @@ function enviar(): void {
   &__acoes {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 5px 9px 7px;
+    gap: 10px;
+    padding: 2px 4px 0;
     flex-wrap: wrap;
   }
 
   &__info,
   &__atalho {
-    @include mono(10.5px, 400);
-    color: var(--txt3);
+    font-size: 12px;
+    color: var(--ink3);
   }
 
   &__erro {
-    @include mono(10.5px, 400);
+    font-size: 12px;
     margin: 0;
-    color: var(--err);
+    color: var(--clay);
   }
 
   &__espacador {

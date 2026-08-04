@@ -6,18 +6,18 @@
       type="button"
       @click="chat.alternarListaConversas()"
     >
-      ☰ conversas
+      ☰
     </button>
 
-    <div class="modelo">
-      <i class="modelo__estado" aria-hidden="true" />
-      <span class="modelo__nome">{{ sessao.modelo.nome }}</span>
-      <span class="modelo__meta">{{ sessao.modelo.local ? 'local' : 'remoto' }}</span>
+    <div class="titulo">
+      <div class="titulo__texto">{{ chat.conversa?.titulo || 'Nova conversa' }}</div>
+      <div class="titulo__modelo">
+        <i class="titulo__estado" aria-hidden="true" />
+        <span>{{ sessao.modelo.nome }}</span>
+      </div>
     </div>
 
     <div class="espacador" />
-
-    <span class="titulo">{{ chat.conversa?.titulo }}</span>
 
     <button
       v-if="mostrarBotaoFontes"
@@ -51,51 +51,42 @@ const sessao = useSessaoStore();
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 12px;
-  height: 40px;
-  min-height: 40px;
+  padding: 11px 18px;
   border-bottom: 1px solid var(--line);
   background: var(--panel);
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
 }
 
-.modelo {
-  @include mono(11px, 400);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--txt2);
-  flex: none;
+.titulo {
+  min-width: 0;
+  flex: 1;
+
+  &__texto {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__modelo {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--ink3);
+  }
 
   &__estado {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--green);
+    background: var(--sage);
     flex: none;
-  }
-
-  &__nome {
-    color: var(--txt);
-  }
-
-  &__meta {
-    color: var(--txt3);
   }
 }
 
 .espacador {
-  flex: 1 0 12px;
-}
-
-.titulo {
-  @include mono(11px, 400);
-  color: var(--txt3);
-  flex: 0 1 auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  flex: 1;
 }
 </style>

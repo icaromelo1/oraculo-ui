@@ -3,8 +3,7 @@
     <header class="barra">
       <div class="marca">
         <span class="marca__glifo" aria-hidden="true"><i /></span>
-        <span class="marca__nome">ORÁCULO</span>
-        <span class="marca__tag">v0.1</span>
+        <span class="marca__nome">Oráculo</span>
       </div>
 
       <nav class="nav">
@@ -23,9 +22,9 @@
 
       <div class="espacador" />
 
-      <span class="usuario">{{ sessao.usuario }} · {{ sessao.perfil }}</span>
+      <span class="usuario">{{ sessao.usuario }}</span>
       <button class="o-btn" type="button" @click="sessao.alternarTema()">
-        tema: {{ sessao.tema }}
+        tema {{ tituloTema }}
       </button>
       <button class="o-btn" type="button" @click="sair">sair</button>
     </header>
@@ -35,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useSessaoStore } from '@/stores/sessao';
 
@@ -48,15 +47,16 @@ onMounted(() => {
   }
 });
 
+const tituloTema = computed(() => (sessao.tema === 'light' ? 'claro' : 'escuro'));
+
 function sair(): void {
   sessao.sair();
   void router.push({ name: 'login' });
 }
 
 const navegacao = [
-  { nome: 'chat', rotulo: 'chat', para: { name: 'chat' } },
-  { nome: 'auditoria', rotulo: 'auditoria', para: { name: 'auditoria' } },
-  { nome: 'perfis', rotulo: 'perfis', para: { name: 'perfis' } },
+  { nome: 'chat', rotulo: 'Conversa', para: { name: 'chat' } },
+  { nome: 'auditoria', rotulo: 'Histórico', para: { name: 'auditoria' } },
 ];
 </script>
 
@@ -68,17 +68,16 @@ const navegacao = [
   display: flex;
   flex-direction: column;
   background: var(--bg);
-  color: var(--txt);
+  color: var(--ink);
   overflow: hidden;
 }
 
 .barra {
   display: flex;
   align-items: center;
-  gap: 10px 14px;
+  gap: 14px;
   flex-wrap: wrap;
-  min-height: 42px;
-  padding: 6px 12px;
+  padding: 9px 16px;
   background: var(--panel);
   border-bottom: 1px solid var(--line);
   flex: none;
@@ -88,56 +87,58 @@ const navegacao = [
 .marca {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-right: 12px;
-  border-right: 1px solid var(--line);
+  gap: 9px;
 
   &__glifo {
-    width: 15px;
-    height: 15px;
-    border: 1.5px solid var(--acc);
-    border-radius: 2px;
-    position: relative;
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    background: var(--sage-s);
+    border: 1px solid var(--sage-l);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     i {
-      position: absolute;
-      inset: 3px;
-      background: var(--acc);
-      border-radius: 1px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--sage);
     }
   }
 
   &__nome {
-    @include mono(12px, 600);
-    letter-spacing: 0.06em;
-    color: var(--txt);
-  }
-
-  &__tag {
-    @include mono(10px, 400);
-    color: var(--txt3);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
   }
 }
 
 .nav {
   display: flex;
-  gap: 2px;
+  gap: 3px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 3px;
 }
 
 .aba {
-  @include mono(11px, 500);
   background: transparent;
-  color: var(--txt3);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  padding: 4px 9px;
+  color: var(--ink3);
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 400;
   cursor: pointer;
-  letter-spacing: 0.03em;
 
   &--ativa {
-    background: var(--acc-b);
-    color: var(--acc);
-    border-color: var(--acc-l);
+    background: var(--panel);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: var(--shadow);
   }
 }
 
@@ -146,8 +147,8 @@ const navegacao = [
 }
 
 .usuario {
-  @include mono(11px, 400);
-  color: var(--txt3);
+  font-size: 12.5px;
+  color: var(--ink3);
   white-space: nowrap;
 }
 </style>

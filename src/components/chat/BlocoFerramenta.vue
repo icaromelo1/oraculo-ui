@@ -1,36 +1,21 @@
 <template>
-  <div class="bloco" :class="classesBloco">
-    <div class="bloco__topo" :class="{ 'bloco__topo--separado': temCorpo }">
-      <i v-if="ferramenta.status === 'executando'" class="bloco__giro" aria-hidden="true" />
-      <span v-else class="bloco__marcador" :class="`bloco__marcador--${ferramenta.status}`">
-        {{ marcador }}
-      </span>
-
-      <span class="bloco__nome" :class="`bloco__nome--${ferramenta.nome}`">{{
-        ferramenta.nome
-      }}</span>
-      <span class="bloco__arg">{{ ferramenta.argumento }}</span>
-
-      <div class="bloco__espacador" />
-
-      <span v-if="ferramenta.aprovadaPor" class="bloco__aprovacao">
-        aprovado por {{ ferramenta.aprovadaPor }}
-      </span>
-      <span v-if="ferramenta.metrica" class="bloco__metrica" :class="metricaClasse">
-        {{ ferramenta.metrica }}
-      </span>
+  <div class="linha">
+    <div class="linha__principal">
+      <i class="linha__ponto" :class="`linha__ponto--${tom}`" aria-hidden="true" />
+      <div class="linha__texto">
+        <div class="linha__nome">{{ nomeAmigavel }}</div>
+        <div v-if="ferramenta.argumento" class="linha__arg">{{ ferramenta.argumento }}</div>
+        <div v-if="ferramenta.aprovadaPor" class="linha__aprovacao">
+          aprovado por {{ ferramenta.aprovadaPor }}
+        </div>
+      </div>
+      <div class="linha__metrica">{{ metricaExibida }}</div>
     </div>
-
-    <div v-if="ferramenta.status === 'executando'" class="bloco__progresso" aria-hidden="true">
-      <span />
-    </div>
-
-    <div v-if="ferramenta.progresso" class="bloco__detalhe">{{ ferramenta.progresso }}</div>
 
     <template v-if="ferramenta.resultadoSql">
-      <pre class="bloco__sql">{{ ferramenta.resultadoSql.sql }}</pre>
+      <pre class="linha__sql">{{ ferramenta.resultadoSql.sql }}</pre>
 
-      <div class="bloco__tabela">
+      <div class="linha__tabela">
         <table>
           <thead>
             <tr>
@@ -60,43 +45,39 @@
         </table>
       </div>
 
-      <div class="bloco__rodape">{{ ferramenta.resultadoSql.rodape }}</div>
+      <div class="linha__rodape">{{ ferramenta.resultadoSql.rodape }}</div>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { rotuloFerramenta } from '@/composables/useRotuloFerramenta';
 import type { Ferramenta } from '@/types/oraculo';
 
 const props = defineProps<{ ferramenta: Ferramenta }>();
 
-const temCorpo = computed(
-  () => Boolean(props.ferramenta.resultadoSql) || Boolean(props.ferramenta.progresso),
-);
+const nomeAmigavel = computed(() => rotuloFerramenta(props.ferramenta.nome));
 
-const marcador = computed(() => {
+const tom = computed(() => {
   switch (props.ferramenta.status) {
-    case 'concluida':
-      return props.ferramenta.resultadoSql ? '▾' : '▸';
+    case 'executando':
+      return 'ativo';
     case 'na_fila':
-      return '·';
+      return 'fila';
     case 'bloqueada':
-      return '✕';
+    case 'erro':
+      return 'alerta';
     default:
-      return '▸';
+      return 'ok';
   }
 });
 
-const classesBloco = computed(() => ({
-  'bloco--aviso': Boolean(props.ferramenta.aprovadaPor),
-  'bloco--ativo': props.ferramenta.status === 'executando',
-  'bloco--fila': props.ferramenta.status === 'na_fila',
-}));
-
-const metricaClasse = computed(() => ({
-  'bloco__metrica--ativo': props.ferramenta.status === 'executando',
-}));
+const metricaExibida = computed(() => {
+  if (props.ferramenta.status === 'executando') return 'em andamento…';
+  if (props.ferramenta.status === 'na_fila') return 'na fila';
+  return props.ferramenta.metrica;
+});
 
 function classeValor(campo: string, valor: string) {
   if (campo !== 'status') return '';
@@ -109,180 +90,133 @@ function classeValor(campo: string, valor: string) {
 <style scoped lang="scss">
 @use '@/css/tokens' as *;
 
-.bloco {
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  background: var(--panel);
-  overflow: hidden;
+.linha {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--line);
 
-  &--aviso {
-    border-color: var(--warn-l);
+  &:last-child {
+    border-bottom: none;
   }
 
-  &--ativo {
-    border-color: var(--acc-l);
-  }
-
-  &--fila {
-    border-style: dashed;
-    opacity: 0.55;
-  }
-
-  &__topo {
+  &__principal {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 9px;
-    cursor: pointer;
-
-    &--separado {
-      border-bottom: 1px solid var(--line);
-    }
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
-  &__marcador {
-    color: var(--txt3);
-    font-size: 10px;
-
-    &--concluida {
-      color: var(--txt3);
-    }
-  }
-
-  &__giro {
-    width: 10px;
-    height: 10px;
-    border: 1.5px solid var(--acc);
-    border-top-color: transparent;
+  &__ponto {
+    width: 6px;
+    height: 6px;
+    margin-top: 6px;
     border-radius: 50%;
-    animation: ospin 0.7s linear infinite;
     flex: none;
+    background: var(--line2);
+
+    &--ok {
+      background: var(--sage);
+    }
+
+    &--ativo {
+      background: var(--sage-l);
+      animation: opulse 1.2s infinite;
+    }
+
+    &--fila {
+      background: var(--line2);
+    }
+
+    &--alerta {
+      background: var(--clay);
+    }
+  }
+
+  &__texto {
+    flex: 1;
+    min-width: 220px;
   }
 
   &__nome {
-    @include mono(11.5px, 500);
-
-    &--buscar_conhecimento {
-      color: var(--blue);
-    }
-
-    &--buscar_codigo,
-    &--ler_arquivo {
-      color: var(--green);
-    }
-
-    &--consultar_banco {
-      color: var(--gold);
-    }
-
-    &--ler_documento {
-      color: var(--gray);
-    }
-
-    &--estado_servicos {
-      color: var(--warn);
-    }
+    font-size: 13.5px;
+    color: var(--ink);
+    margin-bottom: 3px;
   }
 
   &__arg {
-    @include mono(11.5px, 400);
-    color: var(--txt2);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &__espacador {
-    flex: 1;
+    font: 400 12.5px/1.5 $mono;
+    color: var(--ink2);
+    word-break: break-word;
   }
 
   &__aprovacao {
-    @include mono(10.5px, 400);
-    color: var(--warn);
+    font-size: 11.5px;
+    color: var(--amber);
+    margin-top: 3px;
   }
 
   &__metrica {
-    @include mono(10.5px, 400);
-    color: var(--txt3);
-
-    &--ativo {
-      color: var(--acc);
-    }
-  }
-
-  &__progresso {
-    height: 2px;
-    background: var(--panel3);
-    overflow: hidden;
-
-    span {
-      display: block;
-      width: 33%;
-      height: 100%;
-      background: var(--acc);
-      animation: obar 1.4s ease-in-out infinite;
-    }
-  }
-
-  &__detalhe {
-    @include mono(11px, 400, 1.7);
-    padding: 6px 9px;
-    color: var(--txt3);
+    font-size: 12.5px;
+    color: var(--ink3);
+    white-space: nowrap;
+    flex: none;
   }
 
   &__sql {
-    @include mono(11.5px, 400, 1.65);
-    margin: 0;
-    padding: 9px 11px;
-    background: var(--bg);
-    color: var(--txt2);
+    font: 400 12.5px/1.65 $mono;
+    margin: 9px 0 0;
+    padding: 10px 12px;
+    background: var(--panel2);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    color: var(--ink2);
     overflow-x: auto;
-    border-bottom: 1px solid var(--line);
     white-space: pre-wrap;
   }
 
   &__tabela {
     overflow-x: auto;
+    margin-top: 9px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
 
     table {
-      @include mono(11.5px, 400);
+      font: 400 12px/1.4 $mono;
       width: 100%;
       border-collapse: collapse;
     }
 
     th {
       text-align: left;
-      padding: 5px 11px;
-      color: var(--txt3);
+      padding: 6px 11px;
+      color: var(--ink3);
       font-weight: 500;
       border-bottom: 1px solid var(--line);
       background: var(--panel2);
     }
 
     td {
-      padding: 5px 11px;
-      color: var(--txt2);
+      padding: 6px 11px;
+      color: var(--ink2);
     }
 
     .ao-fim {
       text-align: right;
-      color: var(--txt);
+      color: var(--ink);
     }
 
     .tom-aviso {
-      color: var(--warn);
+      color: var(--amber);
     }
 
     .tom-erro {
-      color: var(--err);
+      color: var(--clay);
     }
   }
 
   &__rodape {
-    @include mono(10.5px, 400);
-    padding: 5px 11px;
-    color: var(--txt3);
-    background: var(--panel2);
+    font: 400 11.5px/1.4 $mono;
+    padding: 7px 2px 0;
+    color: var(--ink3);
   }
 }
 </style>

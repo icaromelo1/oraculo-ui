@@ -1,32 +1,38 @@
 <template>
-  <div>
-    <div class="autor">{{ sessao.usuario }} · {{ hora }}</div>
+  <div class="linha">
+    <div class="hora">{{ hora }}</div>
     <div class="balao">{{ texto }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useSessaoStore } from '@/stores/sessao';
-
 defineProps<{ hora: string; texto: string }>();
-
-const sessao = useSessaoStore();
 </script>
 
 <style scoped lang="scss">
 @use '@/css/tokens' as *;
 
-.autor {
-  @include caps;
-  margin-bottom: 6px;
+.linha {
+  align-self: flex-end;
+  max-width: 88%;
+}
+
+.hora {
+  font-size: 12px;
+  color: var(--ink3);
+  text-align: right;
+  margin-bottom: 5px;
 }
 
 .balao {
-  background: var(--panel2);
+  background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 3px;
-  padding: 10px 12px;
-  font-size: 14px;
-  color: var(--txt);
+  border-radius: 14px 14px 4px 14px;
+  padding: 11px 14px;
+  font-size: 14.5px;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 </style>

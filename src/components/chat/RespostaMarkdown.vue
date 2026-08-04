@@ -43,13 +43,13 @@ const blocos = computed(() => interpretarTexto(props.texto, props.fontes));
 @use '@/css/tokens' as *;
 
 .markdown {
-  font-size: 14px;
-  color: var(--txt);
-  max-width: 76ch;
+  font-size: 15px;
+  color: var(--ink);
+  max-width: 68ch;
   text-wrap: pretty;
 
   p {
-    margin: 0 0 11px;
+    margin: 0 0 12px;
   }
 
   b {
@@ -58,13 +58,13 @@ const blocos = computed(() => interpretarTexto(props.texto, props.fontes));
 }
 
 .titulo {
-  font: 600 14px/1.4 $sans;
+  font: 600 15px/1.4 $sans;
   margin: 0 0 9px;
-  color: var(--txt);
+  color: var(--ink);
 }
 
 .lista {
-  margin: 0 0 11px;
+  margin: 0 0 12px;
   padding-left: 20px;
   display: flex;
   flex-direction: column;
@@ -72,24 +72,24 @@ const blocos = computed(() => interpretarTexto(props.texto, props.fontes));
 }
 
 .codigo-bloco {
-  @include mono(12px, 400, 1.6);
-  margin: 0 0 11px;
-  padding: 9px 11px;
-  background: var(--panel2);
+  @include mono(13px, 400, 1.75);
+  margin: 0 0 12px;
+  padding: 13px 15px;
+  background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 3px;
-  color: var(--txt2);
+  border-radius: 11px;
+  color: var(--ink2);
   overflow-x: auto;
   white-space: pre;
 }
 
 .cursor {
   display: inline-block;
-  width: 7px;
-  height: 15px;
-  background: var(--acc);
+  width: 2px;
+  height: 17px;
+  background: var(--sage);
   vertical-align: -3px;
-  margin-left: 2px;
+  margin-left: 3px;
   animation: ocaret 1s step-end infinite;
 }
 </style>

@@ -1,0 +1,3408 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="./support.js"></script>
+  </head>
+  <body>
+    <x-dc>
+      <helmet>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+          rel="stylesheet"
+        />
+        <style>
+          :root,
+          [data-t='claro'] {
+            --bg: #f6f3ee;
+            --panel: #ffffff;
+            --panel2: #fbf8f3;
+            --panel3: #f1ece3;
+            --line: #e9e3d8;
+            --line2: #d9d1c3;
+            --ink: #2e2a25;
+            --ink2: #6a6358;
+            --ink3: #9c9488;
+            --sage: #57866f;
+            --sage-s: #e6efe9;
+            --sage-l: #c3dacd;
+            --amber: #a9762c;
+            --amber-s: #f8efdc;
+            --amber-l: #e4cfa6;
+            --slate: #5a7791;
+            --slate-s: #e7eef4;
+            --slate-l: #c4d5e2;
+            --clay: #a85440;
+            --clay-s: #f8e9e3;
+            --clay-l: #e4c4b7;
+            --sel: #f0ede6;
+            --shadow: 0 1px 2px rgba(46, 42, 37, 0.05), 0 8px 24px -16px rgba(46, 42, 37, 0.18);
+            --onaccent: #ffffff;
+          }
+          [data-t='escuro'] {
+            --bg: #1b1917;
+            --panel: #232120;
+            --panel2: #282524;
+            --panel3: #302d2b;
+            --line: #332f2c;
+            --line2: #443f3b;
+            --ink: #ede8df;
+            --ink2: #ada69b;
+            --ink3: #7d7669;
+            --sage: #8fbca6;
+            --sage-s: #22302b;
+            --sage-l: #3b5449;
+            --amber: #d8ac63;
+            --amber-s: #302818;
+            --amber-l: #57472a;
+            --slate: #93b3cd;
+            --slate-s: #1e2831;
+            --slate-l: #37485a;
+            --clay: #d68e78;
+            --clay-s: #31221d;
+            --clay-l: #5a3a30;
+            --sel: #2c2927;
+            --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -16px rgba(0, 0, 0, 0.7);
+            --onaccent: #12201a;
+          }
+          * {
+            box-sizing: border-box;
+          }
+          body {
+            margin: 0;
+            background: #f6f3ee;
+            font-family: 'Figtree', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+          }
+          a {
+            color: var(--sage);
+            text-decoration: none;
+          }
+          a:hover {
+            color: var(--sage);
+            text-decoration: underline;
+          }
+          input,
+          button,
+          textarea,
+          select {
+            font-family: inherit;
+          }
+          ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+          }
+          ::-webkit-scrollbar-thumb {
+            background: var(--line2);
+            border-radius: 6px;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+          }
+          ::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          @keyframes vcaret {
+            0%,
+            49% {
+              opacity: 1;
+            }
+            50%,
+            100% {
+              opacity: 0;
+            }
+          }
+          @keyframes vpulse {
+            0%,
+            100% {
+              opacity: 0.3;
+              transform: scale(0.85);
+            }
+            50% {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+          @keyframes vsweep {
+            0% {
+              transform: translateX(-100%);
+            }
+            100% {
+              transform: translateX(320%);
+            }
+          }
+        </style>
+      </helmet>
+
+      <div
+        data-t="{{ tema }}"
+        style="
+          min-height: 100vh;
+          background: var(--bg);
+          color: var(--ink);
+          font-size: 14px;
+          line-height: 1.55;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            padding: 9px 16px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+          "
+        >
+          <div style="display: flex; align-items: center; gap: 9px">
+            <div
+              style="
+                width: 22px;
+                height: 22px;
+                border-radius: 7px;
+                background: var(--sage-s);
+                border: 1px solid var(--sage-l);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <div
+                style="width: 7px; height: 7px; border-radius: 50%; background: var(--sage)"
+              ></div>
+            </div>
+            <span style="font-weight: 600; font-size: 15px; letter-spacing: -0.01em">Oráculo</span>
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 3px;
+              background: var(--panel2);
+              border: 1px solid var(--line);
+              border-radius: 9px;
+              padding: 3px;
+            "
+          >
+            <button
+              onClick="{{ nav.login }}"
+              style="background:{{ tb.login }};color:{{ tc.login }};border:none;border-radius:6px;padding:5px 12px;font-size:13px;font-weight:{{ tw.login }};cursor:pointer;box-shadow:{{ ts.login }}"
+            >
+              Login
+            </button>
+            <button
+              onClick="{{ nav.chat }}"
+              style="background:{{ tb.chat }};color:{{ tc.chat }};border:none;border-radius:6px;padding:5px 12px;font-size:13px;font-weight:{{ tw.chat }};cursor:pointer;box-shadow:{{ ts.chat }}"
+            >
+              Conversa
+            </button>
+            <button
+              onClick="{{ nav.audit }}"
+              style="background:{{ tb.audit }};color:{{ tc.audit }};border:none;border-radius:6px;padding:5px 12px;font-size:13px;font-weight:{{ tw.audit }};cursor:pointer;box-shadow:{{ ts.audit }}"
+            >
+              Histórico
+            </button>
+            <button
+              onClick="{{ nav.celular }}"
+              style="background:{{ tb.celular }};color:{{ tc.celular }};border:none;border-radius:6px;padding:5px 12px;font-size:13px;font-weight:{{ tw.celular }};cursor:pointer;box-shadow:{{ ts.celular }}"
+            >
+              Celular
+            </button>
+          </div>
+          <sc-if value="{{ isChat }}" hint-placeholder-val="{{ true }}">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                flex-wrap: wrap;
+                padding-left: 14px;
+                border-left: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 12px; color: var(--ink3)">estado</span>
+              <button
+                onClick="{{ st.pronta }}"
+                style="background:{{ sb.pronta }};color:{{ sc.pronta }};border:1px solid {{ sl.pronta }};border-radius:20px;padding:4px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap"
+              >
+                resposta pronta
+              </button>
+              <button
+                onClick="{{ st.buscando }}"
+                style="background:{{ sb.buscando }};color:{{ sc.buscando }};border:1px solid {{ sl.buscando }};border-radius:20px;padding:4px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap"
+              >
+                buscando
+              </button>
+              <button
+                onClick="{{ st.streaming }}"
+                style="background:{{ sb.streaming }};color:{{ sc.streaming }};border:1px solid {{ sl.streaming }};border-radius:20px;padding:4px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap"
+              >
+                streaming
+              </button>
+              <button
+                onClick="{{ st.vazio }}"
+                style="background:{{ sb.vazio }};color:{{ sc.vazio }};border:1px solid {{ sl.vazio }};border-radius:20px;padding:4px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap"
+              >
+                não encontrei
+              </button>
+              <button
+                onClick="{{ st.oculto }}"
+                style="background:{{ sb.oculto }};color:{{ sc.oculto }};border:1px solid {{ sl.oculto }};border-radius:20px;padding:4px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap"
+              >
+                trecho ocultado
+              </button>
+              <button
+                onClick="{{ st.bloqueado }}"
+                style="background:{{ sb.bloqueado }};color:{{ sc.bloqueado }};border:1px solid {{ sl.bloqueado }};border-radius:20px;padding:4px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap"
+              >
+                capacidade desligada
+              </button>
+              <button
+                onClick="{{ st.erro }}"
+                style="background:{{ sb.erro }};color:{{ sc.erro }};border:1px solid {{ sl.erro }};border-radius:20px;padding:4px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap"
+              >
+                modelo indisponível
+              </button>
+            </div>
+          </sc-if>
+          <div style="flex: 1"></div>
+          <button
+            onClick="{{ toggleTema }}"
+            style="
+              background: var(--panel2);
+              color: var(--ink2);
+              border: 1px solid var(--line);
+              border-radius: 8px;
+              padding: 5px 11px;
+              font-size: 12.5px;
+              cursor: pointer;
+              flex: none;
+              white-space: nowrap;
+            "
+            style-hover="border-color:var(--line2);color:var(--ink)"
+          >
+            tema {{ tema }}
+          </button>
+        </div>
+
+        <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              min-height: calc(100vh - 58px);
+              padding: 28px;
+            "
+          >
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 18px;
+                max-width: 760px;
+                width: 100%;
+              "
+            >
+              <div
+                style="
+                  background: var(--panel);
+                  border: 1px solid var(--line);
+                  border-radius: 14px;
+                  padding: 30px 28px;
+                  box-shadow: var(--shadow);
+                "
+              >
+                <h1
+                  style="
+                    margin: 0 0 4px;
+                    font-size: 22px;
+                    font-weight: 600;
+                    letter-spacing: -0.02em;
+                  "
+                >
+                  Bem-vinda de volta
+                </h1>
+                <p style="margin: 0 0 24px; color: var(--ink2); font-size: 13.5px">
+                  Seu assistente sobre a sua infraestrutura.
+                </p>
+                <label
+                  style="display: block; font-size: 13px; color: var(--ink2); margin-bottom: 6px"
+                  >Usuário</label
+                >
+                <input
+                  value="marina"
+                  style="
+                    width: 100%;
+                    background: var(--panel2);
+                    border: 1px solid var(--line2);
+                    border-radius: 9px;
+                    padding: 10px 12px;
+                    color: var(--ink);
+                    font-size: 14px;
+                    margin-bottom: 16px;
+                    outline: none;
+                  "
+                  style-focus="border-color:var(--sage);background:var(--panel)"
+                />
+                <label
+                  style="display: block; font-size: 13px; color: var(--ink2); margin-bottom: 6px"
+                  >Senha</label
+                >
+                <input
+                  type="password"
+                  value="123456789012"
+                  style="
+                    width: 100%;
+                    background: var(--panel2);
+                    border: 1px solid var(--line2);
+                    border-radius: 9px;
+                    padding: 10px 12px;
+                    color: var(--ink);
+                    font-size: 14px;
+                    margin-bottom: 18px;
+                    outline: none;
+                  "
+                  style-focus="border-color:var(--sage);background:var(--panel)"
+                />
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 13px;
+                    color: var(--ink2);
+                    cursor: pointer;
+                    margin-bottom: 20px;
+                  "
+                  ><input
+                    type="checkbox"
+                    checked="{{ true }}"
+                    style="accent-color: var(--sage); margin: 0"
+                  />Manter sessão neste computador</label
+                >
+                <button
+                  onClick="{{ nav.chat }}"
+                  style="
+                    width: 100%;
+                    background: var(--sage);
+                    color: var(--onaccent);
+                    border: none;
+                    border-radius: 9px;
+                    padding: 11px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                  "
+                  style-hover="filter:brightness(1.07)"
+                >
+                  Entrar
+                </button>
+              </div>
+              <div
+                style="
+                  background: var(--panel2);
+                  border: 1px solid var(--line);
+                  border-radius: 14px;
+                  padding: 24px 22px;
+                "
+              >
+                <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 14px">
+                  Estado da instalação
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 13px">
+                  <div style="display: flex; align-items: center; gap: 10px">
+                    <i
+                      style="
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        background: var(--sage);
+                        flex: none;
+                      "
+                    ></i>
+                    <span style="flex: 1; font-size: 13.5px">API respondendo</span>
+                    <span style="font-size: 12.5px; color: var(--ink3)">38 ms</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px">
+                    <i
+                      style="
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        background: var(--sage);
+                        flex: none;
+                      "
+                    ></i>
+                    <span style="flex: 1; font-size: 13.5px">Modelo</span>
+                    <span
+                      style="
+                        font:
+                          400 12.5px/1 'IBM Plex Mono',
+                          monospace;
+                        color: var(--ink2);
+                      "
+                      >{{ modelo }}</span
+                    >
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px">
+                    <i
+                      style="
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        background: var(--sage);
+                        flex: none;
+                      "
+                    ></i>
+                    <span style="flex: 1; font-size: 13.5px">Capacidades ligadas</span>
+                    <span style="font-size: 12.5px; color: var(--ink2)">4 de 6</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px">
+                    <i
+                      style="
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        border: 1.5px solid var(--line2);
+                        flex: none;
+                      "
+                    ></i>
+                    <span style="flex: 1; font-size: 13.5px; color: var(--ink2)">Desligadas</span>
+                    <span style="font-size: 12.5px; color: var(--ink3)">shell, banco</span>
+                  </div>
+                </div>
+                <div
+                  style="
+                    margin-top: 20px;
+                    padding-top: 16px;
+                    border-top: 1px solid var(--line);
+                    font-size: 12.5px;
+                    color: var(--ink3);
+                    line-height: 1.7;
+                  "
+                >
+                  <div>Conhecimento indexado há 11 min</div>
+                  <div>128 documentos · 1 842 trechos</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isChat }}" hint-placeholder-val="{{ true }}">
+          <div
+            style="display:grid;grid-template-columns:{{ cols }};height:calc(100vh - 58px);min-height:640px;position:relative"
+          >
+            <sc-if value="{{ leftOpen }}" hint-placeholder-val="{{ true }}">
+              <aside
+                style="
+                  border-right: 1px solid var(--line);
+                  background: var(--panel);
+                  display: flex;
+                  flex-direction: column;
+                  overflow: hidden;
+                "
+              >
+                <div style="padding: 14px 14px 10px">
+                  <button
+                    style="
+                      width: 100%;
+                      background: var(--sage-s);
+                      border: 1px solid var(--sage-l);
+                      border-radius: 9px;
+                      padding: 9px;
+                      color: var(--sage);
+                      font-size: 13.5px;
+                      font-weight: 600;
+                      cursor: pointer;
+                    "
+                    style-hover="filter:brightness(.97)"
+                  >
+                    Nova conversa
+                  </button>
+                </div>
+                <div style="flex: 1; overflow-y: auto; padding: 2px 8px 8px">
+                  <div style="font-size: 12px; color: var(--ink3); padding: 8px 8px 5px">Hoje</div>
+                  <div
+                    style="
+                      padding: 9px 10px;
+                      border-radius: 9px;
+                      background: var(--sel);
+                      margin-bottom: 3px;
+                      cursor: pointer;
+                    "
+                  >
+                    <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 2px">
+                      Serviço novo no Traefik sem DNS
+                    </div>
+                    <div style="font-size: 12px; color: var(--ink3)">14:22 · 4 fontes</div>
+                  </div>
+                  <div
+                    style="
+                      padding: 9px 10px;
+                      border-radius: 9px;
+                      margin-bottom: 3px;
+                      cursor: pointer;
+                    "
+                    style-hover="background:var(--panel2)"
+                  >
+                    <div style="font-size: 13.5px; color: var(--ink2); margin-bottom: 2px">
+                      Para que serve o Kairos
+                    </div>
+                    <div style="font-size: 12px; color: var(--ink3)">11:07 · 3 fontes</div>
+                  </div>
+                  <div
+                    style="
+                      padding: 9px 10px;
+                      border-radius: 9px;
+                      margin-bottom: 3px;
+                      cursor: pointer;
+                    "
+                    style-hover="background:var(--panel2)"
+                  >
+                    <div style="font-size: 13.5px; color: var(--ink2); margin-bottom: 2px">
+                      Onde ficam os volumes do Postgres
+                    </div>
+                    <div style="font-size: 12px; color: var(--ink3)">09:48 · 2 fontes</div>
+                  </div>
+                  <div style="font-size: 12px; color: var(--ink3); padding: 14px 8px 5px">
+                    Ontem
+                  </div>
+                  <div
+                    style="
+                      padding: 9px 10px;
+                      border-radius: 9px;
+                      margin-bottom: 3px;
+                      cursor: pointer;
+                    "
+                    style-hover="background:var(--panel2)"
+                  >
+                    <div style="font-size: 13.5px; color: var(--ink2); margin-bottom: 2px">
+                      Rotina de backup do claudicaro
+                    </div>
+                    <div style="font-size: 12px; color: var(--ink3)">18:31 · 5 fontes</div>
+                  </div>
+                  <div
+                    style="
+                      padding: 9px 10px;
+                      border-radius: 9px;
+                      margin-bottom: 3px;
+                      cursor: pointer;
+                    "
+                    style-hover="background:var(--panel2)"
+                  >
+                    <div style="font-size: 13.5px; color: var(--ink2); margin-bottom: 2px">
+                      Como o agente-servidor decide reiniciar
+                    </div>
+                    <div style="font-size: 12px; color: var(--ink3)">16:02 · 3 fontes</div>
+                  </div>
+                  <div style="font-size: 12px; color: var(--ink3); padding: 14px 8px 5px">
+                    Semana passada
+                  </div>
+                  <div
+                    style="
+                      padding: 9px 10px;
+                      border-radius: 9px;
+                      margin-bottom: 3px;
+                      cursor: pointer;
+                    "
+                    style-hover="background:var(--panel2)"
+                  >
+                    <div style="font-size: 13.5px; color: var(--ink2); margin-bottom: 2px">
+                      Rede docker compartilhada entre stacks
+                    </div>
+                    <div style="font-size: 12px; color: var(--ink3)">29 jul · 6 fontes</div>
+                  </div>
+                  <div
+                    style="padding: 9px 10px; border-radius: 9px; cursor: pointer"
+                    style-hover="background:var(--panel2)"
+                  >
+                    <div style="font-size: 13.5px; color: var(--ink2); margin-bottom: 2px">
+                      Certificado do Traefik renovando sozinho?
+                    </div>
+                    <div style="font-size: 12px; color: var(--ink3)">28 jul · 4 fontes</div>
+                  </div>
+                </div>
+                <div style="border-top: 1px solid var(--line); padding: 13px 14px">
+                  <div style="font-size: 12px; color: var(--ink3); margin-bottom: 10px">
+                    Capacidades
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 8px">
+                    <div style="display: flex; align-items: center; gap: 9px; font-size: 13px">
+                      <i
+                        style="
+                          width: 7px;
+                          height: 7px;
+                          border-radius: 50%;
+                          background: var(--sage);
+                          flex: none;
+                        "
+                      ></i
+                      ><span style="color: var(--ink2)">Conhecimento curado</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 9px; font-size: 13px">
+                      <i
+                        style="
+                          width: 7px;
+                          height: 7px;
+                          border-radius: 50%;
+                          background: var(--sage);
+                          flex: none;
+                        "
+                      ></i
+                      ><span style="color: var(--ink2)">Documentação</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 9px; font-size: 13px">
+                      <i
+                        style="
+                          width: 7px;
+                          height: 7px;
+                          border-radius: 50%;
+                          background: var(--sage);
+                          flex: none;
+                        "
+                      ></i
+                      ><span style="color: var(--ink2)">Código e configs</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 9px; font-size: 13px">
+                      <i
+                        style="
+                          width: 7px;
+                          height: 7px;
+                          border-radius: 50%;
+                          background: var(--sage);
+                          flex: none;
+                        "
+                      ></i
+                      ><span style="color: var(--ink2)">Estado dos serviços</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 9px; font-size: 13px">
+                      <i
+                        style="
+                          width: 7px;
+                          height: 7px;
+                          border-radius: 50%;
+                          border: 1.5px solid var(--line2);
+                          flex: none;
+                        "
+                      ></i
+                      ><span style="color: var(--ink3)">Comando de shell</span
+                      ><span style="font-size: 11.5px; color: var(--ink3); margin-left: auto"
+                        >desligada</span
+                      >
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 9px; font-size: 13px">
+                      <i
+                        style="
+                          width: 7px;
+                          height: 7px;
+                          border-radius: 50%;
+                          border: 1.5px solid var(--line2);
+                          flex: none;
+                        "
+                      ></i
+                      ><span style="color: var(--ink3)">Consulta ao banco</span
+                      ><span style="font-size: 11.5px; color: var(--ink3); margin-left: auto"
+                        >desligada</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            </sc-if>
+
+            <main
+              style="
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                background: var(--bg);
+                min-width: 0;
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  padding: 11px 18px;
+                  border-bottom: 1px solid var(--line);
+                  background: var(--panel);
+                "
+              >
+                <div style="min-width: 0; flex: 1">
+                  <div
+                    style="
+                      font-size: 14px;
+                      font-weight: 600;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                    "
+                  >
+                    Serviço novo no Traefik sem DNS
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 7px;
+                      font-size: 12px;
+                      color: var(--ink3);
+                    "
+                  >
+                    <i
+                      style="width: 6px; height: 6px; border-radius: 50%; background: var(--sage)"
+                    ></i
+                    ><span
+                      style="
+                        font:
+                          400 12px/1 'IBM Plex Mono',
+                          monospace;
+                      "
+                      >{{ modelo }}</span
+                    >
+                  </div>
+                </div>
+                <sc-if value="{{ mostraBotaoFontes }}" hint-placeholder-val="{{ true }}">
+                  <button
+                    onClick="{{ toggleRight }}"
+                    style="
+                      background: var(--panel2);
+                      border: 1px solid var(--line);
+                      border-radius: 8px;
+                      color: var(--ink2);
+                      padding: 6px 11px;
+                      font-size: 12.5px;
+                      cursor: pointer;
+                      flex: none;
+                      white-space: nowrap;
+                    "
+                    style-hover="border-color:var(--line2);color:var(--ink)"
+                  >
+                    {{ rotuloFontes }}
+                  </button>
+                </sc-if>
+              </div>
+
+              <div style="flex: 1; overflow-y: auto; padding: 24px 20px 10px">
+                <div
+                  style="
+                    max-width: 700px;
+                    margin: 0 auto;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 26px;
+                  "
+                >
+                  <div style="align-self: flex-end; max-width: 88%">
+                    <div
+                      style="
+                        font-size: 12px;
+                        color: var(--ink3);
+                        text-align: right;
+                        margin-bottom: 5px;
+                      "
+                    >
+                      14:22
+                    </div>
+                    <div
+                      style="
+                        background: var(--panel);
+                        border: 1px solid var(--line);
+                        border-radius: 14px 14px 4px 14px;
+                        padding: 11px 14px;
+                        font-size: 14.5px;
+                        box-shadow: var(--shadow);
+                      "
+                    >
+                      {{ pergunta }}
+                    </div>
+                  </div>
+
+                  <sc-if value="{{ isPronta }}" hint-placeholder-val="{{ true }}">
+                    <div>
+                      <div
+                        onClick="{{ toggleDetalhe }}"
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                          font-size: 12.5px;
+                          color: var(--ink3);
+                          cursor: pointer;
+                          margin-bottom: 14px;
+                          flex-wrap: wrap;
+                        "
+                        style-hover="color:var(--ink2)"
+                      >
+                        <i
+                          style="
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: var(--sage-l);
+                            flex: none;
+                          "
+                        ></i>
+                        <span
+                          >Busquei no conhecimento — 6 trechos encontrados, modo híbrido · 1,2
+                          s</span
+                        >
+                        <span style="color: var(--sage); text-decoration: underline"
+                          >{{ rotuloDetalhe }}</span
+                        >
+                      </div>
+                      <sc-if value="{{ detalheAberto }}" hint-placeholder-val="{{ false }}">
+                        <div
+                          style="
+                            border: 1px solid var(--line);
+                            border-radius: 12px;
+                            background: var(--panel);
+                            margin: -6px 0 16px;
+                            overflow: hidden;
+                          "
+                        >
+                          <div
+                            style="
+                              padding: 11px 14px;
+                              border-bottom: 1px solid var(--line);
+                              font-size: 12.5px;
+                              color: var(--ink3);
+                            "
+                          >
+                            O que eu fiz antes de responder
+                          </div>
+                          <div style="display: flex; flex-direction: column">
+                            <div
+                              style="
+                                display: flex;
+                                gap: 12px;
+                                padding: 11px 14px;
+                                border-bottom: 1px solid var(--line);
+                                flex-wrap: wrap;
+                              "
+                            >
+                              <div style="flex: 1; min-width: 220px">
+                                <div style="font-size: 13.5px; margin-bottom: 3px">
+                                  Busca híbrida no conhecimento
+                                </div>
+                                <div
+                                  style="
+                                    font:
+                                      400 12.5px/1.5 'IBM Plex Mono',
+                                      monospace;
+                                    color: var(--ink2);
+                                  "
+                                >
+                                  "traefik serviço novo sem dns entrypoint"
+                                </div>
+                              </div>
+                              <div
+                                style="font-size: 12.5px; color: var(--ink3); white-space: nowrap"
+                              >
+                                6 trechos · 780 ms
+                              </div>
+                            </div>
+                            <div
+                              style="
+                                display: flex;
+                                gap: 12px;
+                                padding: 11px 14px;
+                                border-bottom: 1px solid var(--line);
+                                flex-wrap: wrap;
+                              "
+                            >
+                              <div style="flex: 1; min-width: 220px">
+                                <div style="font-size: 13.5px; margin-bottom: 3px">
+                                  Leitura de arquivo
+                                </div>
+                                <div
+                                  style="
+                                    font:
+                                      400 12.5px/1.5 'IBM Plex Mono',
+                                      monospace;
+                                    color: var(--ink2);
+                                    word-break: break-all;
+                                  "
+                                >
+                                  /home/ubuntu/oraculo-workspace/stacks/traefik/docker-compose.yml
+                                </div>
+                              </div>
+                              <div
+                                style="font-size: 12.5px; color: var(--ink3); white-space: nowrap"
+                              >
+                                34 linhas · 96 ms
+                              </div>
+                            </div>
+                            <div
+                              style="display: flex; gap: 12px; padding: 11px 14px; flex-wrap: wrap"
+                            >
+                              <div style="flex: 1; min-width: 220px">
+                                <div style="font-size: 13.5px; margin-bottom: 3px">
+                                  Estado dos serviços
+                                </div>
+                                <div
+                                  style="
+                                    font:
+                                      400 12.5px/1.5 'IBM Plex Mono',
+                                      monospace;
+                                    color: var(--ink2);
+                                  "
+                                >
+                                  containers do stack traefik
+                                </div>
+                              </div>
+                              <div
+                                style="font-size: 12.5px; color: var(--ink3); white-space: nowrap"
+                              >
+                                3 ativos · 210 ms
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </sc-if>
+
+                      <div style="font-size: 15px; color: var(--ink); max-width: 68ch">
+                        <p style="margin: 0 0 12px">
+                          Não precisa criar DNS: o Traefik já resolve subdomínio pelo curinga
+                          <code
+                            style="
+                              font:
+                                400 13.5px/1 'IBM Plex Mono',
+                                monospace;
+                              background: var(--panel3);
+                              border-radius: 5px;
+                              padding: 2px 5px;
+                            "
+                            >*.claudicaro.dev</code
+                          >
+                          que aponta para o servidor, então basta subir o container na rede
+                          compartilhada e declarar as labels.
+                        </p>
+                        <p style="margin: 0 0 12px">
+                          O roteamento é por label, não por arquivo de configuração
+                          <button
+                            onClick="{{ ct.c2 }}"
+                            style="
+                              background: none;
+                              border: none;
+                              padding: 0;
+                              font: inherit;
+                              color: var(--slate);
+                              cursor: pointer;
+                              border-bottom: 1px dotted var(--slate-l);
+                            "
+                            style-hover="background:var(--slate-s)"
+                          >
+                            <i
+                              style="
+                                display: inline-block;
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 50%;
+                                background: var(--slate);
+                                margin-right: 5px;
+                                vertical-align: 1px;
+                              "
+                            ></i
+                            >AGENTE-SERVIDOR.md</button
+                          >, e todo serviço precisa entrar na rede externa
+                          <code
+                            style="
+                              font:
+                                400 13.5px/1 'IBM Plex Mono',
+                                monospace;
+                              background: var(--panel3);
+                              border-radius: 5px;
+                              padding: 2px 5px;
+                            "
+                            >proxy</code
+                          >
+                          — sem isso o Traefik não enxerga o container
+                          <button
+                            onClick="{{ ct.c3 }}"
+                            style="
+                              background: none;
+                              border: none;
+                              padding: 0;
+                              font: inherit;
+                              color: var(--slate);
+                              cursor: pointer;
+                              border-bottom: 1px dotted var(--slate-l);
+                            "
+                            style-hover="background:var(--slate-s)"
+                          >
+                            <i
+                              style="
+                                display: inline-block;
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 50%;
+                                background: var(--slate);
+                                margin-right: 5px;
+                                vertical-align: 1px;
+                              "
+                            ></i
+                            >docker-compose.yml</button
+                          >.
+                        </p>
+                        <p style="margin: 0 0 9px; color: var(--ink2)">
+                          O bloco mínimo que você usa nos outros serviços:
+                        </p>
+                        <pre
+                          style="
+                            margin: 0 0 12px;
+                            padding: 13px 15px;
+                            background: var(--panel);
+                            border: 1px solid var(--line);
+                            border-radius: 11px;
+                            font:
+                              400 13px/1.75 'IBM Plex Mono',
+                              monospace;
+                            color: var(--ink2);
+                            overflow-x: auto;
+                          "
+                        >labels:
+  - traefik.enable=<span style="color:var(--sage)">true</span>
+  - traefik.http.routers.kairos.rule=Host(<span style="color:var(--amber)">`kairos.claudicaro.dev`</span>)
+  - traefik.http.routers.kairos.entrypoints=websecure
+  - traefik.http.services.kairos.loadbalancer.server.port=<span style="color:var(--amber)">8080</span>
+networks: [proxy]</pre>
+                        <p style="margin: 0">
+                          Você anotou que prefere sempre fixar a porta interna em vez de deixar o
+                          Traefik adivinhar, porque já deu confusão com container que expõe duas
+                          portas
+                          <button
+                            onClick="{{ ct.c1 }}"
+                            style="
+                              background: none;
+                              border: none;
+                              padding: 0;
+                              font: inherit;
+                              color: var(--amber);
+                              cursor: pointer;
+                              border-bottom: 1px dotted var(--amber-l);
+                            "
+                            style-hover="background:var(--amber-s)"
+                          >
+                            <i
+                              style="
+                                display: inline-block;
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 50%;
+                                background: var(--amber);
+                                margin-right: 5px;
+                                vertical-align: 1px;
+                              "
+                            ></i
+                            >sua nota</button
+                          >.
+                        </p>
+                      </div>
+
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: 14px;
+                          margin-top: 16px;
+                          font-size: 12.5px;
+                          color: var(--ink3);
+                          flex-wrap: wrap;
+                        "
+                      >
+                        <span>4 fontes citadas</span>
+                        <button
+                          style="
+                            background: none;
+                            border: none;
+                            color: var(--ink3);
+                            cursor: pointer;
+                            font: inherit;
+                            text-decoration: underline;
+                          "
+                          style-hover="color:var(--ink)"
+                        >
+                          copiar
+                        </button>
+                        <button
+                          style="
+                            background: none;
+                            border: none;
+                            color: var(--ink3);
+                            cursor: pointer;
+                            font: inherit;
+                            text-decoration: underline;
+                          "
+                          style-hover="color:var(--ink)"
+                        >
+                          salvar como nota
+                        </button>
+                      </div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ isBuscando }}" hint-placeholder-val="{{ false }}">
+                    <div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: 9px;
+                          font-size: 13px;
+                          color: var(--ink2);
+                          margin-bottom: 12px;
+                        "
+                      >
+                        <i
+                          style="
+                            width: 7px;
+                            height: 7px;
+                            border-radius: 50%;
+                            background: var(--sage);
+                            animation: vpulse 1.2s infinite;
+                            flex: none;
+                          "
+                        ></i>
+                        <span>Buscando no conhecimento…</span>
+                        <button
+                          style="
+                            margin-left: 6px;
+                            background: none;
+                            border: 1px solid var(--line);
+                            border-radius: 7px;
+                            color: var(--ink3);
+                            padding: 3px 9px;
+                            font-size: 12px;
+                            cursor: pointer;
+                          "
+                          style-hover="color:var(--clay);border-color:var(--clay-l)"
+                        >
+                          parar
+                        </button>
+                      </div>
+                      <div
+                        style="
+                          border: 1px solid var(--line);
+                          border-radius: 12px;
+                          background: var(--panel);
+                          overflow: hidden;
+                          max-width: 520px;
+                        "
+                      >
+                        <div
+                          style="
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            padding: 11px 14px;
+                            border-bottom: 1px solid var(--line);
+                          "
+                        >
+                          <i
+                            style="
+                              width: 6px;
+                              height: 6px;
+                              border-radius: 50%;
+                              background: var(--sage);
+                              flex: none;
+                            "
+                          ></i>
+                          <span style="flex: 1; font-size: 13.5px"
+                            >Busca híbrida —
+                            <span
+                              style="
+                                font:
+                                  400 12.5px/1 'IBM Plex Mono',
+                                  monospace;
+                                color: var(--ink2);
+                              "
+                              >"kairos para que serve uso"</span
+                            ></span
+                          >
+                          <span style="font-size: 12.5px; color: var(--ink3)">4 trechos</span>
+                        </div>
+                        <div
+                          style="display: flex; align-items: center; gap: 10px; padding: 11px 14px"
+                        >
+                          <i
+                            style="
+                              width: 6px;
+                              height: 6px;
+                              border-radius: 50%;
+                              background: var(--sage-l);
+                              flex: none;
+                            "
+                          ></i>
+                          <span style="flex: 1; font-size: 13.5px; color: var(--ink2)"
+                            >Lendo
+                            <span
+                              style="
+                                font:
+                                  400 12.5px/1 'IBM Plex Mono',
+                                  monospace;
+                              "
+                              >project_kairos_visao.md</span
+                            ></span
+                          >
+                          <span style="font-size: 12.5px; color: var(--ink3)">0,8 s</span>
+                        </div>
+                        <div style="height: 3px; background: var(--panel3); overflow: hidden">
+                          <div
+                            style="
+                              width: 30%;
+                              height: 100%;
+                              background: var(--sage);
+                              animation: vsweep 1.5s ease-in-out infinite;
+                            "
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ isStreaming }}" hint-placeholder-val="{{ false }}">
+                    <div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                          font-size: 12.5px;
+                          color: var(--ink3);
+                          margin-bottom: 14px;
+                          flex-wrap: wrap;
+                        "
+                      >
+                        <i
+                          style="
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: var(--sage-l);
+                            flex: none;
+                          "
+                        ></i>
+                        <span
+                          >Busquei no conhecimento — 4 trechos encontrados, modo híbrido · 0,9
+                          s</span
+                        >
+                        <button
+                          style="
+                            background: none;
+                            border: 1px solid var(--line);
+                            border-radius: 7px;
+                            color: var(--ink3);
+                            padding: 3px 9px;
+                            font-size: 12px;
+                            cursor: pointer;
+                          "
+                          style-hover="color:var(--clay);border-color:var(--clay-l)"
+                        >
+                          parar
+                        </button>
+                      </div>
+                      <div style="font-size: 15px; color: var(--ink); max-width: 68ch">
+                        <p style="margin: 0 0 12px">
+                          O Kairos é o seu agendador de rotinas do servidor: ele lê as tarefas
+                          declaradas em YAML e dispara containers em horários fixos, no lugar de
+                          espalhar crontab por máquina
+                          <button
+                            onClick="{{ ct.c4 }}"
+                            style="
+                              background: none;
+                              border: none;
+                              padding: 0;
+                              font: inherit;
+                              color: var(--slate);
+                              cursor: pointer;
+                              border-bottom: 1px dotted var(--slate-l);
+                            "
+                          >
+                            <i
+                              style="
+                                display: inline-block;
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 50%;
+                                background: var(--slate);
+                                margin-right: 5px;
+                                vertical-align: 1px;
+                              "
+                            ></i
+                            >project_kairos_visao.md</button
+                          >.
+                        </p>
+                        <p style="margin: 0">
+                          Na prática, o uso do dia a dia é declarar a tarefa no arquivo de rotinas e
+                          recarregar o serviço<span
+                            style="
+                              display: inline-block;
+                              width: 2px;
+                              height: 17px;
+                              background: var(--sage);
+                              vertical-align: -3px;
+                              margin-left: 3px;
+                              animation: vcaret 1s step-end infinite;
+                            "
+                          ></span>
+                        </p>
+                      </div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ isVazio }}" hint-placeholder-val="{{ false }}">
+                    <div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                          font-size: 12.5px;
+                          color: var(--ink3);
+                          margin-bottom: 14px;
+                        "
+                      >
+                        <i
+                          style="
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: var(--line2);
+                            flex: none;
+                          "
+                        ></i>
+                        <span
+                          >Busquei no conhecimento — nenhum trecho relevante, modo híbrido · 1,1
+                          s</span
+                        >
+                      </div>
+                      <div
+                        style="
+                          font-size: 15px;
+                          color: var(--ink);
+                          max-width: 68ch;
+                          margin-bottom: 16px;
+                        "
+                      >
+                        <p style="margin: 0 0 8px">Não encontrei nada sobre isso na sua base.</p>
+                        <p style="margin: 0; color: var(--ink2)">
+                          Preferi dizer isso a montar um procedimento por dedução — é o seu
+                          servidor, o palpite sairia caro.
+                        </p>
+                      </div>
+                      <div
+                        style="
+                          border: 1px solid var(--line);
+                          border-radius: 12px;
+                          background: var(--panel);
+                          overflow: hidden;
+                          max-width: 560px;
+                        "
+                      >
+                        <div
+                          style="
+                            padding: 11px 14px;
+                            border-bottom: 1px solid var(--line);
+                            font-size: 12.5px;
+                            color: var(--ink3);
+                          "
+                        >
+                          Onde eu procurei
+                        </div>
+                        <div
+                          style="
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            padding: 10px 14px;
+                            border-bottom: 1px solid var(--line);
+                            font-size: 13.5px;
+                          "
+                        >
+                          <span style="flex: 1; color: var(--ink2)">Suas notas curadas</span
+                          ><span style="font-size: 12.5px; color: var(--ink3)">0 de 46</span>
+                        </div>
+                        <div
+                          style="
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            padding: 10px 14px;
+                            border-bottom: 1px solid var(--line);
+                            font-size: 13.5px;
+                          "
+                        >
+                          <span style="flex: 1; color: var(--ink2)">Documentação do workspace</span
+                          ><span style="font-size: 12.5px; color: var(--ink3)">0 de 128</span>
+                        </div>
+                        <div
+                          style="
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            padding: 10px 14px;
+                            font-size: 13.5px;
+                          "
+                        >
+                          <span style="flex: 1; color: var(--ink2)"
+                            >Código e configs dos stacks</span
+                          ><span style="font-size: 12.5px; color: var(--ink3)"
+                            >2 falsos positivos</span
+                          >
+                        </div>
+                        <div
+                          style="
+                            padding: 13px 14px;
+                            background: var(--panel2);
+                            border-top: 1px solid var(--line);
+                          "
+                        >
+                          <div style="font-size: 13.5px; color: var(--ink2); margin-bottom: 10px">
+                            O mais próximo que existe indexado é
+                            <a href="#">rotação de logs do agente-servidor</a> — dois trechos,
+                            nenhum fala de retenção no S3.
+                          </div>
+                          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                            <button
+                              style="
+                                background: var(--sage-s);
+                                border: 1px solid var(--sage-l);
+                                border-radius: 8px;
+                                color: var(--sage);
+                                padding: 7px 12px;
+                                font-size: 13px;
+                                font-weight: 500;
+                                cursor: pointer;
+                              "
+                              style-hover="filter:brightness(.97)"
+                            >
+                              Escrever uma nota sobre isso
+                            </button>
+                            <button
+                              style="
+                                background: var(--panel);
+                                border: 1px solid var(--line2);
+                                border-radius: 8px;
+                                color: var(--ink2);
+                                padding: 7px 12px;
+                                font-size: 13px;
+                                cursor: pointer;
+                              "
+                              style-hover="color:var(--ink)"
+                            >
+                              Buscar só nos configs
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ isOculto }}" hint-placeholder-val="{{ false }}">
+                    <div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                          font-size: 12.5px;
+                          color: var(--ink3);
+                          margin-bottom: 14px;
+                          flex-wrap: wrap;
+                        "
+                      >
+                        <i
+                          style="
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: var(--sage-l);
+                            flex: none;
+                          "
+                        ></i>
+                        <span
+                          >Busquei no conhecimento — 3 trechos encontrados, modo híbrido · 0,8
+                          s</span
+                        >
+                        <span style="color: var(--amber)">· 1 valor ocultado</span>
+                      </div>
+                      <div style="font-size: 15px; color: var(--ink); max-width: 68ch">
+                        <p style="margin: 0 0 12px">
+                          O Kairos autentica na API do servidor com um token lido do arquivo de
+                          ambiente do stack, montado como
+                          <code
+                            style="
+                              font:
+                                400 13.5px/1 'IBM Plex Mono',
+                                monospace;
+                              background: var(--panel3);
+                              border-radius: 5px;
+                              padding: 2px 5px;
+                            "
+                            >env_file</code
+                          >
+                          no compose
+                          <button
+                            onClick="{{ ct.c3 }}"
+                            style="
+                              background: none;
+                              border: none;
+                              padding: 0;
+                              font: inherit;
+                              color: var(--slate);
+                              cursor: pointer;
+                              border-bottom: 1px dotted var(--slate-l);
+                            "
+                          >
+                            <i
+                              style="
+                                display: inline-block;
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 50%;
+                                background: var(--slate);
+                                margin-right: 5px;
+                                vertical-align: 1px;
+                              "
+                            ></i
+                            >docker-compose.yml</button
+                          >.
+                        </p>
+                        <div
+                          style="
+                            border: 1px solid var(--amber-l);
+                            border-radius: 11px;
+                            overflow: hidden;
+                            margin-bottom: 12px;
+                          "
+                        >
+                          <pre
+                            style="
+                              margin: 0;
+                              padding: 13px 15px;
+                              background: var(--panel);
+                              font:
+                                400 13px/1.8 'IBM Plex Mono',
+                                monospace;
+                              color: var(--ink2);
+                              overflow-x: auto;
+                            "
+                          >KAIROS_API_URL=http://agente-servidor:9000
+KAIROS_API_TOKEN=<span style="background:var(--amber-s);border:1px solid var(--amber-l);border-radius:5px;color:var(--amber);padding:1px 8px;letter-spacing:.12em">ocultado</span>
+KAIROS_TZ=America/Sao_Paulo</pre>
+                          <div
+                            style="
+                              display: flex;
+                              align-items: center;
+                              gap: 10px;
+                              padding: 9px 14px;
+                              background: var(--amber-s);
+                              border-top: 1px solid var(--amber-l);
+                              font-size: 12.5px;
+                              color: var(--amber);
+                              flex-wrap: wrap;
+                            "
+                          >
+                            <span>Ocultei o token — parece uma credencial ativa.</span>
+                            <button
+                              style="
+                                background: none;
+                                border: 1px solid var(--amber-l);
+                                border-radius: 7px;
+                                color: var(--amber);
+                                padding: 4px 10px;
+                                font: inherit;
+                                cursor: pointer;
+                                margin-left: auto;
+                              "
+                              style-hover="filter:brightness(.97)"
+                            >
+                              Mostrar mesmo assim
+                            </button>
+                          </div>
+                        </div>
+                        <p style="margin: 0">
+                          O token é o mesmo do
+                          <code
+                            style="
+                              font:
+                                400 13.5px/1 'IBM Plex Mono',
+                                monospace;
+                              background: var(--panel3);
+                              border-radius: 5px;
+                              padding: 2px 5px;
+                            "
+                            >agente-servidor</code
+                          >, então rotacionar um exige reiniciar os dois
+                          <button
+                            onClick="{{ ct.c2 }}"
+                            style="
+                              background: none;
+                              border: none;
+                              padding: 0;
+                              font: inherit;
+                              color: var(--slate);
+                              cursor: pointer;
+                              border-bottom: 1px dotted var(--slate-l);
+                            "
+                          >
+                            <i
+                              style="
+                                display: inline-block;
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 50%;
+                                background: var(--slate);
+                                margin-right: 5px;
+                                vertical-align: 1px;
+                              "
+                            ></i
+                            >AGENTE-SERVIDOR.md</button
+                          >.
+                        </p>
+                      </div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ isBloqueado }}" hint-placeholder-val="{{ false }}">
+                    <div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                          font-size: 12.5px;
+                          color: var(--ink3);
+                          margin-bottom: 14px;
+                        "
+                      >
+                        <i
+                          style="
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: var(--line2);
+                            flex: none;
+                          "
+                        ></i>
+                        <span>Precisei de uma capacidade que está desligada · 0,2 s</span>
+                      </div>
+                      <div
+                        style="
+                          font-size: 15px;
+                          color: var(--ink);
+                          max-width: 68ch;
+                          margin-bottom: 14px;
+                        "
+                      >
+                        Para dizer se o container reiniciou eu teria que rodar um comando no
+                        servidor, e a execução de shell está desligada nesta instalação.
+                      </div>
+                      <div
+                        style="
+                          border: 1px solid var(--line2);
+                          border-radius: 12px;
+                          background: var(--panel2);
+                          padding: 14px;
+                          max-width: 520px;
+                          margin-bottom: 16px;
+                        "
+                      >
+                        <div
+                          style="display: flex; align-items: center; gap: 9px; margin-bottom: 9px"
+                        >
+                          <i
+                            style="
+                              width: 7px;
+                              height: 7px;
+                              border-radius: 50%;
+                              border: 1.5px solid var(--line2);
+                              flex: none;
+                            "
+                          ></i>
+                          <span style="font-size: 13.5px; font-weight: 600"
+                            >Comando de shell — desligada</span
+                          >
+                        </div>
+                        <div
+                          style="
+                            font:
+                              400 12.5px/1.7 'IBM Plex Mono',
+                              monospace;
+                            color: var(--ink2);
+                            background: var(--panel);
+                            border: 1px solid var(--line);
+                            border-radius: 8px;
+                            padding: 9px 11px;
+                            margin-bottom: 11px;
+                            overflow-x: auto;
+                          "
+                        >
+                          docker ps --filter name=kairos --format '{{ chaves }}'
+                        </div>
+                        <div style="font-size: 13px; color: var(--ink2); margin-bottom: 11px">
+                          Este é o comando que eu teria rodado. Nada foi executado.
+                        </div>
+                        <button
+                          style="
+                            background: var(--panel);
+                            border: 1px solid var(--line2);
+                            border-radius: 8px;
+                            color: var(--ink);
+                            padding: 7px 12px;
+                            font-size: 13px;
+                            font-weight: 500;
+                            cursor: pointer;
+                          "
+                          style-hover="border-color:var(--sage);color:var(--sage)"
+                        >
+                          Ligar nas configurações
+                        </button>
+                      </div>
+                      <div style="font-size: 15px; color: var(--ink); max-width: 68ch">
+                        O que eu <b style="font-weight: 600">consigo</b> dizer pelo que está
+                        indexado: a política de reinício do stack é
+                        <code
+                          style="
+                            font:
+                              400 13.5px/1 'IBM Plex Mono',
+                              monospace;
+                            background: var(--panel3);
+                            border-radius: 5px;
+                            padding: 2px 5px;
+                          "
+                          >restart: unless-stopped</code
+                        >, então uma queda por OOM sobe o container de novo sozinha
+                        <button
+                          onClick="{{ ct.c3 }}"
+                          style="
+                            background: none;
+                            border: none;
+                            padding: 0;
+                            font: inherit;
+                            color: var(--slate);
+                            cursor: pointer;
+                            border-bottom: 1px dotted var(--slate-l);
+                          "
+                        >
+                          <i
+                            style="
+                              display: inline-block;
+                              width: 6px;
+                              height: 6px;
+                              border-radius: 50%;
+                              background: var(--slate);
+                              margin-right: 5px;
+                              vertical-align: 1px;
+                            "
+                          ></i
+                          >docker-compose.yml</button
+                        >.
+                      </div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ isErro }}" hint-placeholder-val="{{ false }}">
+                    <div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                          font-size: 12.5px;
+                          color: var(--ink3);
+                          margin-bottom: 14px;
+                        "
+                      >
+                        <i
+                          style="
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: var(--sage-l);
+                            flex: none;
+                          "
+                        ></i>
+                        <span
+                          >Busquei no conhecimento — 5 trechos encontrados, modo híbrido · 1,0
+                          s</span
+                        >
+                      </div>
+                      <div
+                        style="
+                          border: 1px solid var(--clay-l);
+                          border-radius: 12px;
+                          background: var(--panel);
+                          overflow: hidden;
+                          max-width: 560px;
+                        "
+                      >
+                        <div
+                          style="
+                            padding: 12px 14px;
+                            background: var(--clay-s);
+                            border-bottom: 1px solid var(--clay-l);
+                            display: flex;
+                            align-items: center;
+                            gap: 9px;
+                            flex-wrap: wrap;
+                          "
+                        >
+                          <i
+                            style="
+                              width: 7px;
+                              height: 7px;
+                              border-radius: 50%;
+                              background: var(--clay);
+                              flex: none;
+                            "
+                          ></i>
+                          <span style="font-size: 13.5px; font-weight: 600; color: var(--clay)"
+                            >O modelo não respondeu</span
+                          >
+                          <span
+                            style="
+                              font:
+                                400 12.5px/1 'IBM Plex Mono',
+                                monospace;
+                              color: var(--ink3);
+                              margin-left: auto;
+                            "
+                            >{{ modelo }}</span
+                          >
+                        </div>
+                        <div style="padding: 14px">
+                          <div style="font-size: 14px; color: var(--ink); margin-bottom: 6px">
+                            A busca terminou e as fontes estão guardadas — só a redação da resposta
+                            caiu no meio.
+                          </div>
+                          <div
+                            style="
+                              font:
+                                400 12.5px/1.6 'IBM Plex Mono',
+                                monospace;
+                              color: var(--ink3);
+                              margin-bottom: 14px;
+                            "
+                          >
+                            503 · serviço indisponível · tentativa 2 de 2
+                          </div>
+                          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                            <button
+                              style="
+                                background: var(--sage);
+                                border: none;
+                                border-radius: 8px;
+                                color: var(--onaccent);
+                                padding: 8px 14px;
+                                font-size: 13px;
+                                font-weight: 600;
+                                cursor: pointer;
+                              "
+                              style-hover="filter:brightness(1.07)"
+                            >
+                              Tentar de novo
+                            </button>
+                            <button
+                              style="
+                                background: var(--panel2);
+                                border: 1px solid var(--line2);
+                                border-radius: 8px;
+                                color: var(--ink2);
+                                padding: 8px 14px;
+                                font-size: 13px;
+                                cursor: pointer;
+                              "
+                              style-hover="color:var(--ink)"
+                            >
+                              Ver as 5 fontes encontradas
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-if>
+
+                  <div style="height: 2px"></div>
+                </div>
+              </div>
+
+              <div
+                style="
+                  border-top: 1px solid var(--line);
+                  background: var(--panel);
+                  padding: 12px 20px 16px;
+                "
+              >
+                <div style="max-width: 700px; margin: 0 auto">
+                  <div
+                    style="
+                      border: 1px solid var(--line2);
+                      border-radius: 14px;
+                      background: var(--panel2);
+                      padding: 4px 6px 6px;
+                    "
+                    style-focus-within="border-color:var(--sage)"
+                  >
+                    <textarea
+                      rows="2"
+                      placeholder="Pergunte sobre seus servidores, projetos e anotações…"
+                      style="
+                        width: 100%;
+                        background: none;
+                        border: none;
+                        resize: none;
+                        outline: none;
+                        color: var(--ink);
+                        font-size: 14.5px;
+                        line-height: 1.5;
+                        padding: 9px 10px 2px;
+                      "
+                    ></textarea>
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        padding: 2px 4px 0;
+                        flex-wrap: wrap;
+                      "
+                    >
+                      <span style="font-size: 12px; color: var(--ink3)"
+                        >Busca híbrida em 128 documentos</span
+                      >
+                      <div style="flex: 1"></div>
+                      <span style="font-size: 12px; color: var(--ink3)">Enter envia</span>
+                      <button
+                        style="
+                          background: var(--sage);
+                          color: var(--onaccent);
+                          border: none;
+                          border-radius: 9px;
+                          padding: 7px 15px;
+                          font-size: 13px;
+                          font-weight: 600;
+                          cursor: pointer;
+                        "
+                        style-hover="filter:brightness(1.07)"
+                      >
+                        Enviar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+
+            <sc-if value="{{ escurecerFundo }}" hint-placeholder-val="{{ false }}">
+              <div
+                onClick="{{ toggleRight }}"
+                style="
+                  position: absolute;
+                  inset: 0;
+                  background: rgba(30, 26, 22, 0.32);
+                  z-index: 15;
+                "
+              ></div>
+            </sc-if>
+
+            <sc-if value="{{ rightOpen }}" hint-placeholder-val="{{ true }}">
+              <aside style="{{ estiloPainel }}">
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 9px;
+                    padding: 12px 14px;
+                    border-bottom: 1px solid var(--line);
+                  "
+                >
+                  <span style="font-size: 13.5px; font-weight: 600; flex: 1"
+                    >{{ tituloPainel }}</span
+                  >
+                  <sc-if value="{{ temSel }}" hint-placeholder-val="{{ false }}">
+                    <button
+                      onClick="{{ limparSel }}"
+                      style="
+                        background: none;
+                        border: 1px solid var(--line);
+                        border-radius: 7px;
+                        color: var(--ink2);
+                        padding: 4px 9px;
+                        font-size: 12px;
+                        cursor: pointer;
+                      "
+                      style-hover="color:var(--ink)"
+                    >
+                      todas as fontes
+                    </button>
+                  </sc-if>
+                  <button
+                    onClick="{{ toggleRight }}"
+                    style="
+                      background: none;
+                      border: none;
+                      color: var(--ink3);
+                      font-size: 17px;
+                      cursor: pointer;
+                      line-height: 1;
+                      padding: 0 2px;
+                    "
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <sc-if value="{{ temSel }}" hint-placeholder-val="{{ false }}">
+                  <div style="flex: 1; overflow-y: auto">
+                    <div style="padding: 14px; border-bottom: 1px solid var(--line)">
+                      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px">
+                        <i
+                          style="width:7px;height:7px;border-radius:50%;background:{{ sel.cor }};flex:none"
+                        ></i>
+                        <span style="font-size:12.5px;color:{{ sel.cor }}">{{ sel.nivel }}</span>
+                      </div>
+                      <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px">
+                        {{ sel.titulo }}
+                      </div>
+                      <div
+                        style="
+                          font:
+                            400 12px/1.6 'IBM Plex Mono',
+                            monospace;
+                          color: var(--ink3);
+                          word-break: break-all;
+                        "
+                      >
+                        {{ sel.caminho }}
+                      </div>
+                      <div style="font-size: 12.5px; color: var(--ink3); margin-top: 7px">
+                        {{ sel.meta }}
+                      </div>
+                    </div>
+                    <div style="padding: 14px; border-bottom: 1px solid var(--line)">
+                      <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 9px">
+                        Trecho exato
+                      </div>
+                      <div
+                        style="
+                          border: 1px solid var(--line);
+                          border-radius: 10px;
+                          background: var(--panel2);
+                          overflow: hidden;
+                        "
+                      >
+                        <sc-for list="{{ sel.linhas }}" as="l" hint-placeholder-count="6">
+                          <div style="display:flex;background:{{ l.bg }}">
+                            <span
+                              style="
+                                width: 34px;
+                                flex: none;
+                                text-align: right;
+                                padding: 2px 9px 2px 0;
+                                font:
+                                  400 11.5px/1.75 'IBM Plex Mono',
+                                  monospace;
+                                color: var(--ink3);
+                                user-select: none;
+                              "
+                              >{{ l.n }}</span
+                            >
+                            <span
+                              style="padding:2px 10px 2px 0;font:400 12.5px/1.75 'IBM Plex Mono',monospace;color:{{ l.cor }};white-space:pre-wrap;word-break:break-word"
+                              >{{ l.t }}</span
+                            >
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div style="padding: 14px; display: flex; flex-direction: column; gap: 9px">
+                      <div style="font-size: 12.5px; color: var(--ink3)">
+                        Por que isso entrou na resposta
+                      </div>
+                      <div style="font-size: 13.5px; color: var(--ink2)">{{ sel.porque }}</div>
+                      <div style="display: flex; gap: 7px; flex-wrap: wrap; margin-top: 2px">
+                        <button
+                          style="
+                            background: var(--panel2);
+                            border: 1px solid var(--line2);
+                            border-radius: 8px;
+                            color: var(--ink2);
+                            padding: 6px 11px;
+                            font-size: 12.5px;
+                            cursor: pointer;
+                          "
+                          style-hover="color:var(--ink)"
+                        >
+                          Abrir arquivo
+                        </button>
+                        <button
+                          style="
+                            background: none;
+                            border: 1px solid var(--line);
+                            border-radius: 8px;
+                            color: var(--ink3);
+                            padding: 6px 11px;
+                            font-size: 12.5px;
+                            cursor: pointer;
+                          "
+                          style-hover="color:var(--ink)"
+                        >
+                          Copiar caminho
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ semSel }}" hint-placeholder-val="{{ true }}">
+                  <div style="flex: 1; overflow-y: auto">
+                    <div style="padding: 13px 14px; border-bottom: 1px solid var(--line)">
+                      <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 9px">
+                        Quanto vale cada fonte
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 7px; font-size: 13px">
+                        <div style="display: flex; align-items: center; gap: 9px">
+                          <i
+                            style="
+                              width: 7px;
+                              height: 7px;
+                              border-radius: 50%;
+                              background: var(--amber);
+                              flex: none;
+                            "
+                          ></i
+                          ><span style="color: var(--ink2)"
+                            >Suas notas — o que você mesma escreveu</span
+                          >
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 9px">
+                          <i
+                            style="
+                              width: 7px;
+                              height: 7px;
+                              border-radius: 50%;
+                              background: var(--slate);
+                              flex: none;
+                            "
+                          ></i
+                          ><span style="color: var(--ink2)"
+                            >Documentação e configs do workspace</span
+                          >
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 9px">
+                          <i
+                            style="
+                              width: 7px;
+                              height: 7px;
+                              border-radius: 50%;
+                              background: var(--line2);
+                              flex: none;
+                            "
+                          ></i
+                          ><span style="color: var(--ink3)">Dedução do modelo — sem fonte</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div style="padding: 13px 14px 6px; font-size: 12.5px; color: var(--ink3)">
+                      Fontes desta resposta · 4
+                    </div>
+                    <div
+                      style="padding: 0 10px 12px; display: flex; flex-direction: column; gap: 7px"
+                    >
+                      <button
+                        onClick="{{ ct.c1 }}"
+                        style="
+                          text-align: left;
+                          background: var(--panel2);
+                          border: 1px solid var(--line);
+                          border-radius: 11px;
+                          padding: 11px 12px;
+                          cursor: pointer;
+                        "
+                        style-hover="border-color:var(--amber-l);background:var(--amber-s)"
+                      >
+                        <div
+                          style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px"
+                        >
+                          <i
+                            style="
+                              width: 6px;
+                              height: 6px;
+                              border-radius: 50%;
+                              background: var(--amber);
+                              flex: none;
+                            "
+                          ></i
+                          ><span style="font-size: 12px; color: var(--amber)">sua nota</span
+                          ><span style="font-size: 12px; color: var(--ink3); margin-left: auto"
+                            >12 jun</span
+                          >
+                        </div>
+                        <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 3px">
+                          Porta interna sempre explícita no Traefik
+                        </div>
+                        <div
+                          style="
+                            font:
+                              400 11.5px/1.5 'IBM Plex Mono',
+                              monospace;
+                            color: var(--ink3);
+                            word-break: break-all;
+                          "
+                        >
+                          docs/notas/traefik-armadilhas.md
+                        </div>
+                      </button>
+                      <button
+                        onClick="{{ ct.c2 }}"
+                        style="
+                          text-align: left;
+                          background: var(--panel2);
+                          border: 1px solid var(--line);
+                          border-radius: 11px;
+                          padding: 11px 12px;
+                          cursor: pointer;
+                        "
+                        style-hover="border-color:var(--slate-l);background:var(--slate-s)"
+                      >
+                        <div
+                          style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px"
+                        >
+                          <i
+                            style="
+                              width: 6px;
+                              height: 6px;
+                              border-radius: 50%;
+                              background: var(--slate);
+                              flex: none;
+                            "
+                          ></i
+                          ><span style="font-size: 12px; color: var(--slate)">documentação</span
+                          ><span style="font-size: 12px; color: var(--ink3); margin-left: auto"
+                            >§ Roteamento</span
+                          >
+                        </div>
+                        <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 3px">
+                          AGENTE-SERVIDOR.md
+                        </div>
+                        <div
+                          style="
+                            font:
+                              400 11.5px/1.5 'IBM Plex Mono',
+                              monospace;
+                            color: var(--ink3);
+                            word-break: break-all;
+                          "
+                        >
+                          /home/ubuntu/oraculo-workspace/docs/
+                        </div>
+                      </button>
+                      <button
+                        onClick="{{ ct.c3 }}"
+                        style="
+                          text-align: left;
+                          background: var(--panel2);
+                          border: 1px solid var(--line);
+                          border-radius: 11px;
+                          padding: 11px 12px;
+                          cursor: pointer;
+                        "
+                        style-hover="border-color:var(--slate-l);background:var(--slate-s)"
+                      >
+                        <div
+                          style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px"
+                        >
+                          <i
+                            style="
+                              width: 6px;
+                              height: 6px;
+                              border-radius: 50%;
+                              background: var(--slate);
+                              flex: none;
+                            "
+                          ></i
+                          ><span style="font-size: 12px; color: var(--slate)">config</span
+                          ><span style="font-size: 12px; color: var(--ink3); margin-left: auto"
+                            >linhas 14-22</span
+                          >
+                        </div>
+                        <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 3px">
+                          docker-compose.yml
+                        </div>
+                        <div
+                          style="
+                            font:
+                              400 11.5px/1.5 'IBM Plex Mono',
+                              monospace;
+                            color: var(--ink3);
+                            word-break: break-all;
+                          "
+                        >
+                          stacks/traefik/
+                        </div>
+                      </button>
+                      <button
+                        onClick="{{ ct.c4 }}"
+                        style="
+                          text-align: left;
+                          background: var(--panel2);
+                          border: 1px solid var(--line);
+                          border-radius: 11px;
+                          padding: 11px 12px;
+                          cursor: pointer;
+                        "
+                        style-hover="border-color:var(--slate-l);background:var(--slate-s)"
+                      >
+                        <div
+                          style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px"
+                        >
+                          <i
+                            style="
+                              width: 6px;
+                              height: 6px;
+                              border-radius: 50%;
+                              background: var(--slate);
+                              flex: none;
+                            "
+                          ></i
+                          ><span style="font-size: 12px; color: var(--slate)">documentação</span
+                          ><span style="font-size: 12px; color: var(--ink3); margin-left: auto"
+                            >§ Visão</span
+                          >
+                        </div>
+                        <div style="font-size: 13.5px; font-weight: 500; margin-bottom: 3px">
+                          project_kairos_visao.md
+                        </div>
+                        <div
+                          style="
+                            font:
+                              400 11.5px/1.5 'IBM Plex Mono',
+                              monospace;
+                            color: var(--ink3);
+                            word-break: break-all;
+                          "
+                        >
+                          /home/ubuntu/oraculo-workspace/docs/
+                        </div>
+                      </button>
+                    </div>
+                    <div style="padding: 13px 14px; border-top: 1px solid var(--line)">
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          justify-content: space-between;
+                          font-size: 13px;
+                          color: var(--ink2);
+                          margin-bottom: 8px;
+                        "
+                      >
+                        <span>Afirmações com fonte</span
+                        ><span style="color: var(--ink)">4 de 5</span>
+                      </div>
+                      <div
+                        style="
+                          height: 5px;
+                          background: var(--panel3);
+                          border-radius: 3px;
+                          overflow: hidden;
+                        "
+                      >
+                        <div
+                          style="
+                            width: 80%;
+                            height: 100%;
+                            background: var(--sage);
+                            border-radius: 3px;
+                          "
+                        ></div>
+                      </div>
+                      <div style="font-size: 12.5px; color: var(--ink3); margin-top: 8px">
+                        Uma frase é dedução minha: que a confusão de portas se repetiria aqui.
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+              </aside>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAudit }}" hint-placeholder-val="{{ false }}">
+          <div style="height: calc(100vh - 58px); overflow-y: auto; padding: 26px 22px 40px">
+            <div style="max-width: 840px; margin: 0 auto">
+              <h1
+                style="margin: 0 0 4px; font-size: 20px; font-weight: 600; letter-spacing: -0.02em"
+              >
+                Histórico
+              </h1>
+              <p style="margin: 0 0 20px; color: var(--ink2); font-size: 13.5px">
+                O que você perguntou, o que eu busquei e o que ficou de fora.
+              </p>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px">
+                <input
+                  placeholder="Buscar no histórico…"
+                  style="
+                    flex: 1;
+                    min-width: 220px;
+                    background: var(--panel);
+                    border: 1px solid var(--line2);
+                    border-radius: 10px;
+                    padding: 9px 12px;
+                    color: var(--ink);
+                    font-size: 13.5px;
+                    outline: none;
+                  "
+                  style-focus="border-color:var(--sage)"
+                />
+                <button
+                  style="
+                    background: var(--panel);
+                    border: 1px solid var(--line);
+                    border-radius: 10px;
+                    color: var(--ink2);
+                    padding: 9px 13px;
+                    font-size: 13px;
+                    cursor: pointer;
+                  "
+                  style-hover="border-color:var(--line2);color:var(--ink)"
+                >
+                  Últimos 7 dias
+                </button>
+                <button
+                  style="
+                    background: var(--panel);
+                    border: 1px solid var(--line);
+                    border-radius: 10px;
+                    color: var(--ink2);
+                    padding: 9px 13px;
+                    font-size: 13px;
+                    cursor: pointer;
+                  "
+                  style-hover="border-color:var(--line2);color:var(--ink)"
+                >
+                  Só com pendência
+                </button>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: 26px;
+                  flex-wrap: wrap;
+                  padding: 14px 18px;
+                  background: var(--panel);
+                  border: 1px solid var(--line);
+                  border-radius: 12px;
+                  margin-bottom: 20px;
+                "
+              >
+                <div>
+                  <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 3px">
+                    Perguntas na semana
+                  </div>
+                  <div style="font-size: 20px; font-weight: 600">64</div>
+                </div>
+                <div>
+                  <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 3px">
+                    Tempo médio
+                  </div>
+                  <div style="font-size: 20px; font-weight: 600">2,4 s</div>
+                </div>
+                <div>
+                  <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 3px">
+                    Sem resposta na base
+                  </div>
+                  <div style="font-size: 20px; font-weight: 600; color: var(--amber)">5</div>
+                </div>
+                <div>
+                  <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 3px">
+                    Capacidade desligada
+                  </div>
+                  <div style="font-size: 20px; font-weight: 600; color: var(--ink2)">3</div>
+                </div>
+              </div>
+
+              <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 9px">Hoje</div>
+              <div style="display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px">
+                <div
+                  style="
+                    background: var(--panel);
+                    border: 1px solid var(--line);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      gap: 12px;
+                      align-items: baseline;
+                      flex-wrap: wrap;
+                      margin-bottom: 7px;
+                    "
+                  >
+                    <span style="font-size: 14px; font-weight: 500; flex: 1; min-width: 200px"
+                      >Como eu subo um serviço novo no Traefik sem criar DNS?</span
+                    >
+                    <span style="font-size: 12.5px; color: var(--ink3)">14:22 · 1,2 s</span>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 14px;
+                      flex-wrap: wrap;
+                      font-size: 12.5px;
+                      color: var(--ink2);
+                      align-items: center;
+                    "
+                  >
+                    <span>busca híbrida · 6 trechos</span>
+                    <span style="display: flex; align-items: center; gap: 6px"
+                      ><i
+                        style="
+                          width: 6px;
+                          height: 6px;
+                          border-radius: 50%;
+                          background: var(--amber);
+                        "
+                      ></i
+                      >1 nota</span
+                    >
+                    <span style="display: flex; align-items: center; gap: 6px"
+                      ><i
+                        style="
+                          width: 6px;
+                          height: 6px;
+                          border-radius: 50%;
+                          background: var(--slate);
+                        "
+                      ></i
+                      >3 docs e configs</span
+                    >
+                    <button
+                      style="
+                        background: none;
+                        border: none;
+                        color: var(--sage);
+                        font: inherit;
+                        cursor: pointer;
+                        text-decoration: underline;
+                        margin-left: auto;
+                      "
+                    >
+                      abrir conversa
+                    </button>
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: var(--panel);
+                    border: 1px solid var(--line);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      gap: 12px;
+                      align-items: baseline;
+                      flex-wrap: wrap;
+                      margin-bottom: 7px;
+                    "
+                  >
+                    <span style="font-size: 14px; font-weight: 500; flex: 1; min-width: 200px"
+                      >Qual o token que o Kairos usa para chamar o agente?</span
+                    >
+                    <span style="font-size: 12.5px; color: var(--ink3)">13:58 · 0,8 s</span>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 14px;
+                      flex-wrap: wrap;
+                      font-size: 12.5px;
+                      color: var(--ink2);
+                      align-items: center;
+                    "
+                  >
+                    <span>busca híbrida · 3 trechos</span>
+                    <span style="display: flex; align-items: center; gap: 6px; color: var(--amber)"
+                      ><i
+                        style="
+                          width: 6px;
+                          height: 6px;
+                          border-radius: 50%;
+                          background: var(--amber);
+                        "
+                      ></i
+                      >1 valor ocultado</span
+                    >
+                    <button
+                      style="
+                        background: none;
+                        border: none;
+                        color: var(--sage);
+                        font: inherit;
+                        cursor: pointer;
+                        text-decoration: underline;
+                        margin-left: auto;
+                      "
+                    >
+                      abrir conversa
+                    </button>
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: var(--panel);
+                    border: 1px solid var(--line);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      gap: 12px;
+                      align-items: baseline;
+                      flex-wrap: wrap;
+                      margin-bottom: 7px;
+                    "
+                  >
+                    <span style="font-size: 14px; font-weight: 500; flex: 1; min-width: 200px"
+                      >O container do Kairos reiniciou de madrugada?</span
+                    >
+                    <span style="font-size: 12.5px; color: var(--ink3)">11:07 · 0,2 s</span>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 14px;
+                      flex-wrap: wrap;
+                      font-size: 12.5px;
+                      color: var(--ink2);
+                      align-items: center;
+                    "
+                  >
+                    <span style="display: flex; align-items: center; gap: 6px"
+                      ><i
+                        style="
+                          width: 6px;
+                          height: 6px;
+                          border-radius: 50%;
+                          border: 1.5px solid var(--line2);
+                        "
+                      ></i
+                      >shell desligada — nada executado</span
+                    >
+                    <button
+                      style="
+                        background: none;
+                        border: none;
+                        color: var(--sage);
+                        font: inherit;
+                        cursor: pointer;
+                        text-decoration: underline;
+                        margin-left: auto;
+                      "
+                    >
+                      abrir conversa
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 9px">Ontem</div>
+              <div style="display: flex; flex-direction: column; gap: 9px; margin-bottom: 26px">
+                <div
+                  style="
+                    background: var(--panel);
+                    border: 1px solid var(--line);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      gap: 12px;
+                      align-items: baseline;
+                      flex-wrap: wrap;
+                      margin-bottom: 7px;
+                    "
+                  >
+                    <span style="font-size: 14px; font-weight: 500; flex: 1; min-width: 200px"
+                      >Qual a retenção dos backups no S3?</span
+                    >
+                    <span style="font-size: 12.5px; color: var(--ink3)">18:31 · 1,1 s</span>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 14px;
+                      flex-wrap: wrap;
+                      font-size: 12.5px;
+                      color: var(--ink2);
+                      align-items: center;
+                    "
+                  >
+                    <span style="color: var(--amber)">não encontrei na base</span>
+                    <span>procurou em notas, docs e configs</span>
+                    <button
+                      style="
+                        background: none;
+                        border: none;
+                        color: var(--sage);
+                        font: inherit;
+                        cursor: pointer;
+                        text-decoration: underline;
+                        margin-left: auto;
+                      "
+                    >
+                      abrir conversa
+                    </button>
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: var(--panel);
+                    border: 1px solid var(--line);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      gap: 12px;
+                      align-items: baseline;
+                      flex-wrap: wrap;
+                      margin-bottom: 7px;
+                    "
+                  >
+                    <span style="font-size: 14px; font-weight: 500; flex: 1; min-width: 200px"
+                      >Para que serve o Kairos e como eu uso?</span
+                    >
+                    <span style="font-size: 12.5px; color: var(--ink3)">16:02 · 2,9 s</span>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 14px;
+                      flex-wrap: wrap;
+                      font-size: 12.5px;
+                      color: var(--ink2);
+                      align-items: center;
+                    "
+                  >
+                    <span>busca híbrida · 4 trechos</span>
+                    <span style="display: flex; align-items: center; gap: 6px"
+                      ><i
+                        style="
+                          width: 6px;
+                          height: 6px;
+                          border-radius: 50%;
+                          background: var(--slate);
+                        "
+                      ></i
+                      >2 docs</span
+                    >
+                    <button
+                      style="
+                        background: none;
+                        border: none;
+                        color: var(--sage);
+                        font: inherit;
+                        cursor: pointer;
+                        text-decoration: underline;
+                        margin-left: auto;
+                      "
+                    >
+                      abrir conversa
+                    </button>
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: var(--panel);
+                    border: 1px solid var(--line);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      gap: 12px;
+                      align-items: baseline;
+                      flex-wrap: wrap;
+                      margin-bottom: 7px;
+                    "
+                  >
+                    <span style="font-size: 14px; font-weight: 500; flex: 1; min-width: 200px"
+                      >Resumo do que mudou no claudicaro-servidor esta semana</span
+                    >
+                    <span style="font-size: 12.5px; color: var(--ink3)">15:40 · —</span>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 14px;
+                      flex-wrap: wrap;
+                      font-size: 12.5px;
+                      color: var(--ink2);
+                      align-items: center;
+                    "
+                  >
+                    <span style="display: flex; align-items: center; gap: 6px; color: var(--clay)"
+                      ><i
+                        style="width: 6px; height: 6px; border-radius: 50%; background: var(--clay)"
+                      ></i
+                      >modelo indisponível</span
+                    >
+                    <span>5 fontes guardadas</span>
+                    <button
+                      style="
+                        background: none;
+                        border: none;
+                        color: var(--sage);
+                        font: inherit;
+                        cursor: pointer;
+                        text-decoration: underline;
+                        margin-left: auto;
+                      "
+                    >
+                      tentar de novo
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style="
+                  background: var(--panel2);
+                  border: 1px dashed var(--line2);
+                  border-radius: 12px;
+                  padding: 16px 18px;
+                "
+              >
+                <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 10px">
+                  <span style="font-size: 13.5px; font-weight: 600"
+                    >Capacidades desta instalação</span
+                  >
+                  <span
+                    style="
+                      font-size: 11.5px;
+                      color: var(--ink3);
+                      border: 1px solid var(--line2);
+                      border-radius: 20px;
+                      padding: 2px 9px;
+                    "
+                    >informativo · valores fixos</span
+                  >
+                </div>
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 10px 20px;
+                    font-size: 13px;
+                  "
+                >
+                  <div style="display: flex; align-items: center; gap: 9px">
+                    <i
+                      style="
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background: var(--sage);
+                        flex: none;
+                      "
+                    ></i
+                    ><span style="color: var(--ink2)">Conhecimento curado</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 9px">
+                    <i
+                      style="
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background: var(--sage);
+                        flex: none;
+                      "
+                    ></i
+                    ><span style="color: var(--ink2)">Documentação</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 9px">
+                    <i
+                      style="
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background: var(--sage);
+                        flex: none;
+                      "
+                    ></i
+                    ><span style="color: var(--ink2)">Código e configs</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 9px">
+                    <i
+                      style="
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background: var(--sage);
+                        flex: none;
+                      "
+                    ></i
+                    ><span style="color: var(--ink2)">Estado dos serviços</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 9px">
+                    <i
+                      style="
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        border: 1.5px solid var(--line2);
+                        flex: none;
+                      "
+                    ></i
+                    ><span style="color: var(--ink3)">Comando de shell — desligada</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 9px">
+                    <i
+                      style="
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        border: 1.5px solid var(--line2);
+                        flex: none;
+                      "
+                    ></i
+                    ><span style="color: var(--ink3)">Consulta ao banco — desligada</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCelular }}" hint-placeholder-val="{{ false }}">
+          <div
+            style="
+              min-height: calc(100vh - 58px);
+              display: flex;
+              align-items: flex-start;
+              justify-content: center;
+              gap: 26px;
+              flex-wrap: wrap;
+              padding: 28px;
+              background: var(--panel2);
+            "
+          >
+            <div
+              style="
+                width: 380px;
+                flex: none;
+                height: 760px;
+                border: 1px solid var(--line2);
+                border-radius: 22px;
+                overflow: hidden;
+                background: var(--bg);
+                display: flex;
+                flex-direction: column;
+                box-shadow: var(--shadow);
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  padding: 12px 14px;
+                  background: var(--panel);
+                  border-bottom: 1px solid var(--line);
+                "
+              >
+                <button
+                  style="
+                    background: none;
+                    border: none;
+                    color: var(--ink2);
+                    font-size: 16px;
+                    cursor: pointer;
+                    padding: 0;
+                    line-height: 1;
+                  "
+                >
+                  ☰
+                </button>
+                <div style="flex: 1; min-width: 0">
+                  <div
+                    style="
+                      font-size: 13.5px;
+                      font-weight: 600;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                    "
+                  >
+                    Para que serve o Kairos
+                  </div>
+                  <div
+                    style="
+                      font:
+                        400 11.5px/1.4 'IBM Plex Mono',
+                        monospace;
+                      color: var(--ink3);
+                    "
+                  >
+                    {{ modelo }}
+                  </div>
+                </div>
+                <button
+                  style="
+                    background: var(--panel2);
+                    border: 1px solid var(--line);
+                    border-radius: 20px;
+                    color: var(--ink2);
+                    padding: 5px 11px;
+                    font-size: 12px;
+                    cursor: pointer;
+                    flex: none;
+                  "
+                >
+                  3 fontes
+                </button>
+              </div>
+              <div
+                style="
+                  flex: 1;
+                  overflow-y: auto;
+                  padding: 16px 14px;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 20px;
+                "
+              >
+                <div style="align-self: flex-end; max-width: 88%">
+                  <div
+                    style="
+                      background: var(--panel);
+                      border: 1px solid var(--line);
+                      border-radius: 14px 14px 4px 14px;
+                      padding: 10px 13px;
+                      font-size: 14px;
+                    "
+                  >
+                    Para que serve o Kairos e como eu uso?
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 7px;
+                      font-size: 12px;
+                      color: var(--ink3);
+                      margin-bottom: 11px;
+                    "
+                  >
+                    <i
+                      style="
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        background: var(--sage-l);
+                        flex: none;
+                      "
+                    ></i>
+                    <span>4 trechos encontrados · 0,9 s</span>
+                    <span style="color: var(--sage); text-decoration: underline">detalhe</span>
+                  </div>
+                  <div style="font-size: 14.5px; line-height: 1.6">
+                    <p style="margin: 0 0 11px">
+                      É o seu agendador de rotinas: lê as tarefas em YAML e dispara containers em
+                      horário fixo, em vez de crontab espalhado
+                      <span style="color: var(--slate); border-bottom: 1px dotted var(--slate-l)"
+                        ><i
+                          style="
+                            display: inline-block;
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: var(--slate);
+                            margin-right: 4px;
+                            vertical-align: 1px;
+                          "
+                        ></i
+                        >project_kairos_visao.md</span
+                      >.
+                    </p>
+                    <p style="margin: 0">
+                      Você já usa ele para o backup noturno e para o reindex do Oráculo
+                      <span style="color: var(--amber); border-bottom: 1px dotted var(--amber-l)"
+                        ><i
+                          style="
+                            display: inline-block;
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: var(--amber);
+                            margin-right: 4px;
+                            vertical-align: 1px;
+                          "
+                        ></i
+                        >sua nota</span
+                      >.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div
+                style="
+                  background: var(--panel);
+                  border-top: 1px solid var(--line);
+                  padding: 11px 12px 14px;
+                "
+              >
+                <div
+                  style="
+                    display: flex;
+                    align-items: flex-end;
+                    gap: 8px;
+                    border: 1px solid var(--line2);
+                    border-radius: 14px;
+                    background: var(--panel2);
+                    padding: 9px 10px;
+                  "
+                >
+                  <span style="flex: 1; color: var(--ink3); font-size: 14px"
+                    >Pergunte sobre seus servidores…</span
+                  >
+                  <button
+                    style="
+                      background: var(--sage);
+                      color: var(--onaccent);
+                      border: none;
+                      border-radius: 10px;
+                      width: 32px;
+                      height: 32px;
+                      font-size: 14px;
+                      cursor: pointer;
+                      flex: none;
+                    "
+                  >
+                    ↑
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div style="max-width: 280px; font-size: 13.5px; color: var(--ink2); padding-top: 8px">
+              <div style="font-size: 12.5px; color: var(--ink3); margin-bottom: 10px">
+                No celular
+              </div>
+              <p style="margin: 0 0 11px">
+                Só a conversa. As conversas anteriores viram gaveta no ☰, e o painel de fontes abre
+                em folha por cima, pelo contador de fontes.
+              </p>
+              <p style="margin: 0 0 11px">
+                A legenda da busca continua, em uma linha; o detalhe expande no lugar.
+              </p>
+              <p style="margin: 0">
+                Citações seguem clicáveis: abrem o trecho em folha inferior, com o caminho do
+                arquivo por extenso.
+              </p>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </x-dc>
+    <script
+      type="text/x-dc"
+      data-dc-script
+      data-props='{"$preview":{"width":1440,"height":900},"tema":{"editor":"enum","options":["claro","escuro"],"default":"claro","tsType":"&apos;claro&apos;|&apos;escuro&apos;","section":"Aparência"},"telaInicial":{"editor":"enum","options":["login","chat","audit","celular"],"default":"chat","tsType":"string","section":"Navegação"},"estadoInicial":{"editor":"enum","options":["pronta","buscando","streaming","vazio","oculto","bloqueado","erro"],"default":"pronta","tsType":"string","section":"Navegação"},"painelFontes":{"editor":"boolean","default":true,"tsType":"boolean","section":"Navegação"}}'
+    >
+      const FONTES = {
+        c1: {
+          nivel: 'sua nota · escrita por você', cor: 'var(--amber)',
+          titulo: 'Porta interna sempre explícita no Traefik',
+          caminho: '/home/ubuntu/oraculo-workspace/docs/notas/traefik-armadilhas.md',
+          meta: 'escrita 12 jun 2026 · revisada 1× · usada em 3 conversas',
+          porque: 'Nível mais alto de autoridade: é conhecimento seu, não do modelo. A recomendação de fixar a porta veio literalmente daqui.',
+          linhas: [
+            { n: 12, t: '## Traefik — armadilhas' },
+            { n: 13, t: '' },
+            { n: 14, t: 'Sempre declarar loadbalancer.server.port.', hl: true },
+            { n: 15, t: 'Container com duas portas expostas faz o Traefik' },
+            { n: 16, t: 'escolher a errada e o roteador responde 502.' },
+            { n: 17, t: 'Perdi uma tarde nisso com o kairos-web.' }
+          ]
+        },
+        c2: {
+          nivel: 'documentação do workspace', cor: 'var(--slate)',
+          titulo: 'AGENTE-SERVIDOR.md — § Roteamento',
+          caminho: '/home/ubuntu/oraculo-workspace/docs/AGENTE-SERVIDOR.md',
+          meta: 'atualizado 28 jul 2026 · 3 trechos indexados',
+          porque: 'Documento de referência do servidor. Sustenta que o roteamento é por label e que o curinga de DNS já cobre novos subdomínios.',
+          linhas: [
+            { n: 41, t: '### Roteamento' },
+            { n: 42, t: '' },
+            { n: 43, t: 'O DNS é curinga: *.claudicaro.dev → IP do host.', hl: true },
+            { n: 44, t: 'Nenhum registro novo é necessário por serviço.' },
+            { n: 45, t: '' },
+            { n: 46, t: 'O Traefik descobre serviços pelas labels do docker;' },
+            { n: 47, t: 'não existe arquivo de rotas mantido à mão.' }
+          ]
+        },
+        c3: {
+          nivel: 'config do stack', cor: 'var(--slate)',
+          titulo: 'docker-compose.yml — linhas 14-22',
+          caminho: '/home/ubuntu/oraculo-workspace/stacks/traefik/docker-compose.yml',
+          meta: 'lido 14:22 · 34 linhas · sem alteração há 9 dias',
+          porque: 'Arquivo lido na hora. Confirma o nome da rede externa (proxy) e o entrypoint websecure usados no exemplo.',
+          linhas: [
+            { n: 14, t: 'networks:' },
+            { n: 15, t: '  proxy:' },
+            { n: 16, t: '    external: true', hl: true },
+            { n: 17, t: '' },
+            { n: 18, t: 'services:' },
+            { n: 19, t: '  traefik:' },
+            { n: 20, t: '    restart: unless-stopped' },
+            { n: 21, t: '    command:' },
+            { n: 22, t: '      - --entrypoints.websecure.address=:443' }
+          ]
+        },
+        c4: {
+          nivel: 'documentação do workspace', cor: 'var(--slate)',
+          titulo: 'project_kairos_visao.md — § Visão',
+          caminho: '/home/ubuntu/oraculo-workspace/docs/project_kairos_visao.md',
+          meta: 'atualizado 19 jul 2026 · 5 trechos indexados',
+          porque: 'Define o que o Kairos é e o formato das rotinas. A explicação do produto vem daqui, sem paráfrase inventada.',
+          linhas: [
+            { n: 3, t: '# Kairos — visão' },
+            { n: 4, t: '' },
+            { n: 5, t: 'Agendador de rotinas do servidor pessoal.', hl: true },
+            { n: 6, t: 'Tarefas declaradas em rotinas.yml; cada tarefa' },
+            { n: 7, t: 'sobe um container efêmero no horário previsto.' },
+            { n: 8, t: '' },
+            { n: 9, t: 'Substitui o crontab espalhado entre máquinas.' }
+          ]
+        }
+      };
+
+      const TELAS = ['login', 'chat', 'audit', 'celular'];
+      const ESTADOS = ['pronta', 'buscando', 'streaming', 'vazio', 'oculto', 'bloqueado', 'erro'];
+
+      const PERGUNTAS = {
+        pronta: 'Como eu subo um serviço novo no Traefik sem criar DNS?',
+        buscando: 'Para que serve o Kairos e como eu uso?',
+        streaming: 'Para que serve o Kairos e como eu uso?',
+        vazio: 'Qual a retenção dos backups no S3?',
+        oculto: 'Qual token o Kairos usa para chamar o agente-servidor?',
+        bloqueado: 'O container do Kairos reiniciou de madrugada?',
+        erro: 'Resumo do que mudou no claudicaro-servidor esta semana'
+      };
+
+      class Component extends DCLogic {
+        constructor(props) {
+          super(props);
+          this.state = {
+            tela: props.telaInicial || 'chat',
+            estado: props.estadoInicial || 'pronta',
+            tema: props.tema || 'claro',
+            sel: null,
+            right: props.painelFontes === false ? false : 'auto',
+            detalhe: false,
+            w: 1440
+          };
+          this.medir = this.medir.bind(this);
+        }
+        medir() { this.setState({ w: window.innerWidth }); }
+        componentDidMount() { this.medir(); window.addEventListener('resize', this.medir); }
+        componentWillUnmount() { window.removeEventListener('resize', this.medir); }
+
+        renderVals() {
+          const s = this.state;
+          const nav = {}, tb = {}, tc = {}, tw = {}, ts = {};
+          TELAS.forEach(k => {
+            nav[k] = () => this.setState({ tela: k });
+            const on = s.tela === k;
+            tb[k] = on ? 'var(--panel)' : 'transparent';
+            tc[k] = on ? 'var(--ink)' : 'var(--ink3)';
+            tw[k] = on ? '600' : '400';
+            ts[k] = on ? 'var(--shadow)' : 'none';
+          });
+          const st = {}, sb = {}, sc = {}, sl = {};
+          ESTADOS.forEach(k => {
+            st[k] = () => this.setState({ estado: k, sel: null });
+            const on = s.estado === k;
+            sb[k] = on ? 'var(--sage-s)' : 'transparent';
+            sc[k] = on ? 'var(--sage)' : 'var(--ink3)';
+            sl[k] = on ? 'var(--sage-l)' : 'var(--line)';
+          });
+          const ct = {};
+          Object.keys(FONTES).forEach(k => { ct[k] = () => this.setState({ sel: k, right: true }); });
+
+          const bruto = s.sel ? FONTES[s.sel] : null;
+          const sel = bruto ? Object.assign({}, bruto, {
+            linhas: bruto.linhas.map(l => ({
+              n: l.n, t: l.t,
+              bg: l.hl ? 'var(--sel)' : 'transparent',
+              cor: l.hl ? 'var(--ink)' : 'var(--ink2)'
+            }))
+          }) : null;
+
+          const estreito = s.w < 1180;
+          const semEsquerda = s.w < 900;
+          const rightOpen = s.right === 'auto' ? !estreito : !!s.right;
+          const overlay = rightOpen && estreito;
+
+          let cols = semEsquerda ? 'minmax(0,1fr)' : '236px minmax(0,1fr)';
+          if (rightOpen && !overlay) cols += ' 320px';
+
+          const painelBase = 'background:var(--panel);display:flex;flex-direction:column;overflow:hidden;';
+          const estiloPainel = overlay
+            ? painelBase + 'position:absolute;top:0;right:0;bottom:0;width:min(340px,86vw);z-index:20;border-left:1px solid var(--line);box-shadow:-12px 0 32px -20px rgba(30,26,22,.5)'
+            : painelBase + 'border-left:1px solid var(--line)';
+
+          return {
+            tema: s.tema,
+            toggleTema: () => this.setState({ tema: s.tema === 'claro' ? 'escuro' : 'claro' }),
+            modelo: 'claude-sonnet-4.5',
+            nav, tb, tc, tw, ts, st, sb, sc, sl, ct,
+            isLogin: s.tela === 'login', isChat: s.tela === 'chat', isAudit: s.tela === 'audit', isCelular: s.tela === 'celular',
+            isPronta: s.estado === 'pronta', isBuscando: s.estado === 'buscando', isStreaming: s.estado === 'streaming',
+            isVazio: s.estado === 'vazio', isOculto: s.estado === 'oculto', isBloqueado: s.estado === 'bloqueado',
+            isErro: s.estado === 'erro',
+            pergunta: PERGUNTAS[s.estado],
+            chaves: '{{.Names}}: {{.Status}}',
+            cols, leftOpen: !semEsquerda,
+            rightOpen, escurecerFundo: overlay, estiloPainel,
+            mostraBotaoFontes: !overlay,
+            rotuloFontes: rightOpen ? 'fechar fontes' : 'fontes · 4',
+            toggleRight: () => this.setState({ right: !rightOpen }),
+            detalheAberto: s.detalhe,
+            rotuloDetalhe: s.detalhe ? 'ocultar detalhe' : 'ver detalhe',
+            toggleDetalhe: () => this.setState({ detalhe: !s.detalhe }),
+            temSel: !!sel, semSel: !sel, sel,
+            limparSel: () => this.setState({ sel: null }),
+            tituloPainel: sel ? 'Trecho citado' : 'Fontes desta resposta'
+          };
+        }
+      }
+    </script>
+  </body>
+</html>

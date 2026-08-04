@@ -1,19 +1,20 @@
 <template>
   <div>
-    <CabecalhoResposta :meta="meta" />
+    <CabecalhoResposta tom="neutro" :meta="meta" />
 
     <div v-for="ferramenta in bloqueadas" :key="ferramenta.id" class="cartao">
       <div class="cartao__topo">
-        <span class="cartao__selo">ação bloqueada</span>
-        <span class="cartao__alvo">{{ ferramenta.nome }} · {{ ferramenta.argumento }}</span>
-        <div class="cartao__espacador" />
-        <span class="cartao__estado">não executada</span>
+        <i class="cartao__ponto" aria-hidden="true" />
+        <span class="cartao__nome">{{ rotuloFerramenta(ferramenta.nome) }} — desligada</span>
       </div>
 
-      <div class="cartao__corpo">
-        <div class="explicacao">
-          {{ ferramenta.resultado || 'bloqueada pela política de acesso do perfil.' }}
-        </div>
+      <div v-if="ferramenta.argumento" class="cartao__comando">{{ ferramenta.argumento }}</div>
+
+      <div class="cartao__explicacao">
+        {{
+          ferramenta.resultado ||
+          'Esta ação foi bloqueada pela política de acesso desta instalação.'
+        }}
       </div>
     </div>
 
@@ -26,6 +27,7 @@ import { computed } from 'vue';
 import CabecalhoResposta from '@/components/chat/CabecalhoResposta.vue';
 import RespostaMarkdown from '@/components/chat/RespostaMarkdown.vue';
 import { formatarSegundos } from '@/composables/useFormato';
+import { rotuloFerramenta } from '@/composables/useRotuloFerramenta';
 import type { MensagemAssistenteChat } from '@/stores/chat';
 
 const props = defineProps<{ mensagem: MensagemAssistenteChat }>();
@@ -36,7 +38,7 @@ const bloqueadas = computed(() =>
 
 const meta = computed(
   () =>
-    `${bloqueadas.value.length} ferramenta(s) bloqueada(s) · ${formatarSegundos(props.mensagem.duracaoMs)}`,
+    `precisei de uma capacidade que está desligada · ${formatarSegundos(props.mensagem.duracaoMs)}`,
 );
 </script>
 
@@ -44,50 +46,48 @@ const meta = computed(
 @use '@/css/tokens' as *;
 
 .cartao {
-  border: 1px solid var(--err-l);
-  border-radius: 4px;
-  background: var(--panel);
-  overflow: hidden;
-  margin-bottom: 14px;
+  border: 1px solid var(--line2);
+  border-radius: 12px;
+  background: var(--panel2);
+  padding: 14px;
+  max-width: 520px;
+  margin-bottom: 16px;
 
   &__topo {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    padding: 8px 11px;
-    background: var(--err-b);
-    border-bottom: 1px solid var(--err-l);
+    gap: 9px;
+    margin-bottom: 9px;
   }
 
-  &__selo {
-    @include mono(10.5px, 600);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--err);
+  &__ponto {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line2);
+    flex: none;
   }
 
-  &__alvo {
-    @include mono(11px, 400);
-    color: var(--txt2);
+  &__nome {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
   }
 
-  &__espacador {
-    flex: 1;
+  &__comando {
+    font: 400 12.5px/1.7 $mono;
+    color: var(--ink2);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 11px;
+    margin-bottom: 11px;
+    overflow-x: auto;
   }
 
-  &__estado {
-    @include mono(11px, 400);
-    color: var(--txt3);
+  &__explicacao {
+    font-size: 13px;
+    color: var(--ink2);
   }
-
-  &__corpo {
-    padding: 11px;
-  }
-}
-
-.explicacao {
-  @include mono(11.5px, 400, 1.6);
-  color: var(--txt2);
 }
 </style>

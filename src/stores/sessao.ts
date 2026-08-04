@@ -31,7 +31,7 @@ function paraCapacidade(item: { capacidade: string; status: StatusCapacidade }):
 }
 
 export const useSessaoStore = defineStore('sessao', () => {
-  const tema = ref<Tema>((localStorage.getItem(CHAVE_TEMA) as Tema | null) ?? 'dark');
+  const tema = ref<Tema>((localStorage.getItem(CHAVE_TEMA) as Tema | null) ?? 'light');
   const usuario = ref('');
   const perfil = ref('');
   const autenticado = ref(Boolean(obterToken()));

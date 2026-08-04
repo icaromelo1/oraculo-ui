@@ -1,90 +1,70 @@
 :root,
-[data-theme='dark'] {
-  --bg: #0a0c0e;
-  --panel: #0f1317;
-  --panel2: #141a1f;
-  --panel3: #1a2127;
-  --line: #212a31;
-  --line2: #2d3842;
-  --txt: #dbe3ea;
-  --txt2: #95a1ad;
-  --txt3: #66727e;
-  --acc: #3fb6a8;
-  --acc-b: #0f2b2a;
-  --acc-l: #1e4f4b;
-  --acc-on: #04100f;
-  --gold: #d5a12b;
-  --gold-b: #2a2110;
-  --gold-l: #54421a;
-  --blue: #4d9bf0;
-  --blue-b: #0f1f31;
-  --blue-l: #1e3d5c;
-  --green: #4dbd80;
-  --green-b: #0f2419;
-  --green-l: #1e4630;
-  --gray: #8b96a1;
-  --gray-b: #191f24;
-  --gray-l: #2c353d;
-  --warn: #e0872d;
-  --warn-b: #2a1c0d;
-  --warn-l: #5a3b16;
-  --warn-on: #1a1004;
-  --err: #e0574f;
-  --err-b: #2a1211;
-  --err-l: #5a2422;
-  --sel: #16202a;
-}
-
 [data-theme='light'] {
-  --bg: #f1f3f5;
+  --bg: #f6f3ee;
   --panel: #ffffff;
-  --panel2: #f6f7f9;
-  --panel3: #eceff2;
-  --line: #dde2e7;
-  --line2: #c6ced6;
-  --txt: #101820;
-  --txt2: #57626d;
-  --txt3: #7f8b96;
-  --acc: #0f7a70;
-  --acc-b: #e2f4f2;
-  --acc-l: #a9d9d4;
-  --acc-on: #ffffff;
-  --gold: #8a6410;
-  --gold-b: #faf1dc;
-  --gold-l: #e0cb98;
-  --blue: #1a5fa8;
-  --blue-b: #e6f0fb;
-  --blue-l: #b3cdea;
-  --green: #1c7a4c;
-  --green-b: #e5f5ec;
-  --green-l: #aedbc3;
-  --gray: #5d6873;
-  --gray-b: #eef0f2;
-  --gray-l: #ccd3d9;
-  --warn: #9a5a09;
-  --warn-b: #fcf0e0;
-  --warn-l: #e6c799;
-  --warn-on: #ffffff;
-  --err: #a52f28;
-  --err-b: #fdeceb;
-  --err-l: #eebcb8;
-  --sel: #e8eef4;
+  --panel2: #fbf8f3;
+  --panel3: #f1ece3;
+  --line: #e9e3d8;
+  --line2: #d9d1c3;
+  --ink: #2e2a25;
+  --ink2: #6a6358;
+  --ink3: #9c9488;
+  --sage: #57866f;
+  --sage-s: #e6efe9;
+  --sage-l: #c3dacd;
+  --amber: #a9762c;
+  --amber-s: #f8efdc;
+  --amber-l: #e4cfa6;
+  --slate: #5a7791;
+  --slate-s: #e7eef4;
+  --slate-l: #c4d5e2;
+  --clay: #a85440;
+  --clay-s: #f8e9e3;
+  --clay-l: #e4c4b7;
+  --sel: #f0ede6;
+  --shadow: 0 1px 2px rgba(46, 42, 37, 0.05), 0 8px 24px -16px rgba(46, 42, 37, 0.18);
+  --onaccent: #ffffff;
 }
 
-$mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+[data-theme='dark'] {
+  --bg: #1b1917;
+  --panel: #232120;
+  --panel2: #282524;
+  --panel3: #302d2b;
+  --line: #332f2c;
+  --line2: #443f3b;
+  --ink: #ede8df;
+  --ink2: #ada69b;
+  --ink3: #7d7669;
+  --sage: #8fbca6;
+  --sage-s: #22302b;
+  --sage-l: #3b5449;
+  --amber: #d8ac63;
+  --amber-s: #302818;
+  --amber-l: #57472a;
+  --slate: #93b3cd;
+  --slate-s: #1e2831;
+  --slate-l: #37485a;
+  --clay: #d68e78;
+  --clay-s: #31221d;
+  --clay-l: #5a3a30;
+  --sel: #2c2927;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -16px rgba(0, 0, 0, 0.7);
+  --onaccent: #12201a;
+}
+
+$mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 $sans:
-  'IBM Plex Sans',
+  'Figtree',
   system-ui,
   -apple-system,
   sans-serif;
 
-@mixin mono($size: 11px, $weight: 400, $lh: 1) {
+@mixin mono($size: 12.5px, $weight: 400, $lh: 1.5) {
   font: #{$weight} #{$size}/#{$lh} $mono;
 }
 
-@mixin caps($color: var(--txt3)) {
-  @include mono(10px, 500);
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+@mixin caps($color: var(--ink3)) {
+  font: 400 12.5px/1.4 $sans;
   color: $color;
 }

@@ -84,7 +84,7 @@ const estiloPainel = computed(() =>
     ? {
         position: 'absolute' as const,
         width: '340px',
-        boxShadow: '-14px 0 28px rgba(0, 0, 0, 0.42)',
+        boxShadow: '-12px 0 32px -20px rgba(30, 26, 22, 0.5)',
       }
     : {},
 );
@@ -132,22 +132,22 @@ onMounted(() => {
   &__rolagem {
     flex: 1;
     overflow-y: auto;
-    padding: 20px 24px 8px;
+    padding: 24px 20px 10px;
   }
 
   &__coluna {
-    max-width: 820px;
+    max-width: 700px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 26px;
     padding-bottom: 4px;
   }
 
   &__cortina {
     position: absolute;
     inset: 0;
-    background: rgb(0 0 0 / 45%);
+    background: rgb(30 26 22 / 32%);
     z-index: 15;
   }
 
@@ -157,12 +157,13 @@ onMounted(() => {
     bottom: 0;
     max-width: 100%;
     z-index: 20;
+    box-shadow: -12px 0 32px -20px rgba(30, 26, 22, 0.5);
   }
 }
 
 .aviso {
-  @include mono(12px, 400);
-  color: var(--txt3);
+  font-size: 13px;
+  color: var(--ink3);
   text-align: center;
   padding: 24px 0;
 }

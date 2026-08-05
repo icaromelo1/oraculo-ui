@@ -5,6 +5,7 @@
       <ListaFerramentas :ferramentas="mensagem.ferramentas" />
       <RespostaMarkdown v-if="mensagem.texto" :texto="mensagem.texto" :fontes="mensagem.fontes" />
       <RodapeResposta
+        :mensagem-id="mensagem.id"
         :tokens="mensagem.tokens"
         :duracao-ms="mensagem.duracaoMs"
         :fontes="mensagem.fontes"

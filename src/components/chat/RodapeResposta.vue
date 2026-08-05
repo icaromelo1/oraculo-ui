@@ -4,16 +4,20 @@
     <span v-if="fontes.length">fontes: {{ resumoFontes }}</span>
     <div class="rodape__espacador" />
     <button type="button" @click="copiar">{{ copiado ? 'copiado!' : 'copiar' }}</button>
+    <AcaoSalvarNota :mensagem-id="mensagemId" :texto="texto" :fontes="fontes" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import AcaoSalvarNota from '@/components/chat/AcaoSalvarNota.vue';
 import { formatarSegundos, formatarTokens } from '@/composables/useFormato';
 import { rotuloTipoFonte } from '@/composables/useRotuloFonte';
 import type { Fonte, TipoFonte } from '@/types/oraculo';
+import { textoVisivelDaResposta } from './notaDaResposta';
 
 const props = defineProps<{
+  mensagemId: string;
   tokens: number | null;
   duracaoMs: number | null;
   fontes: Fonte[];
@@ -36,7 +40,9 @@ const resumoFontes = computed(() => {
 
 async function copiar(): Promise<void> {
   try {
-    await navigator.clipboard.writeText(props.texto);
+    await navigator.clipboard.writeText(
+      textoVisivelDaResposta(props.texto, props.fontes),
+    );
     copiado.value = true;
     setTimeout(() => {
       copiado.value = false;

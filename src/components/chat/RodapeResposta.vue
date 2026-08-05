@@ -40,9 +40,7 @@ const resumoFontes = computed(() => {
 
 async function copiar(): Promise<void> {
   try {
-    await navigator.clipboard.writeText(
-      textoVisivelDaResposta(props.texto, props.fontes),
-    );
+    await navigator.clipboard.writeText(textoVisivelDaResposta(props.texto, props.fontes));
     copiado.value = true;
     setTimeout(() => {
       copiado.value = false;

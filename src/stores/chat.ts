@@ -265,6 +265,10 @@ export const useChatStore = defineStore('chat', () => {
     listaConversasAberta.value = !listaConversasAberta.value;
   }
 
+  function fecharListaConversas(): void {
+    listaConversasAberta.value = false;
+  }
+
   function processarEvento(mensagem: MensagemAssistenteChat, evento: EventoOraculo): void {
     switch (evento.tipo) {
       case 'mensagem.inicio':
@@ -440,6 +444,7 @@ export const useChatStore = defineStore('chat', () => {
     limparFonte,
     alternarPainelFontes,
     alternarListaConversas,
+    fecharListaConversas,
     enviar,
     interromper,
     reenviarUltima,

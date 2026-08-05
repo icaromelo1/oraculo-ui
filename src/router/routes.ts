@@ -12,6 +12,11 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '', name: 'chat', component: () => import('@/pages/ChatPage.vue') },
       {
+        path: 'conversa/:id',
+        name: 'conversa',
+        component: () => import('@/pages/ChatPage.vue'),
+      },
+      {
         path: 'auditoria',
         name: 'auditoria',
         component: () => import('@/pages/AuditoriaPage.vue'),

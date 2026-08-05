@@ -1,7 +1,7 @@
 <template>
   <aside class="lateral">
     <div class="lateral__topo">
-      <button class="nova" type="button" @click="chat.novaConversa()">Nova conversa</button>
+      <button class="nova" type="button" @click="void irParaNova()">Nova conversa</button>
       <input v-model="chat.filtro" class="filtro" placeholder="filtrar conversas…" />
     </div>
 
@@ -16,7 +16,7 @@
           class="item"
           :class="{ 'item--ativo': item.id === chat.conversaAtiva }"
           type="button"
-          @click="void chat.selecionarConversa(item.id)"
+          @click="void irParaConversa(item.id)"
         >
           <span class="item__titulo">{{ item.titulo }}</span>
           <span class="item__meta">
@@ -39,10 +39,34 @@
 </template>
 
 <script setup lang="ts">
+import { useRoute, useRouter } from 'vue-router';
 import PainelCapacidades from '@/components/chat/PainelCapacidades.vue';
 import { useChatStore } from '@/stores/chat';
 
 const chat = useChatStore();
+
+const roteador = useRouter();
+const rota = useRoute();
+
+async function irParaConversa(id: string): Promise<void> {
+  chat.fecharListaConversas();
+
+  if (rota.name === 'conversa' && rota.params.id === id) return;
+
+  await roteador.push({ name: 'conversa', params: { id } });
+}
+
+async function irParaNova(): Promise<void> {
+  chat.fecharListaConversas();
+
+  if (rota.name === 'chat') {
+    chat.novaConversa();
+
+    return;
+  }
+
+  await roteador.push({ name: 'chat' });
+}
 </script>
 
 <style scoped lang="scss">

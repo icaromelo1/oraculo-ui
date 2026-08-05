@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import BarraConversa from '@/components/chat/BarraConversa.vue';
 import ListaConversas from '@/components/chat/ListaConversas.vue';
 import MensagemUsuario from '@/components/chat/MensagemUsuario.vue';
@@ -104,11 +105,43 @@ watch(
   },
 );
 
+const rota = useRoute();
+const roteador = useRouter();
+
+const idDaRota = computed(() => {
+  const bruto = rota.params.id;
+
+  return typeof bruto === 'string' && bruto ? bruto : null;
+});
+
+async function sincronizarComRota(id: string | null): Promise<void> {
+  if (!id) {
+    chat.novaConversa();
+
+    return;
+  }
+
+  if (chat.conversaAtiva === id) return;
+
+  await chat.selecionarConversa(id);
+}
+
+watch(idDaRota, (id) => {
+  void sincronizarComRota(id);
+});
+
+watch(
+  () => chat.conversaAtiva,
+  (id) => {
+    if (id && id !== idDaRota.value) {
+      void roteador.replace({ name: 'conversa', params: { id } });
+    }
+  },
+);
+
 onMounted(() => {
-  void chat.carregarConversas().then(() => {
-    const primeira = chat.conversas[0];
-    if (primeira) void chat.selecionarConversa(primeira.id);
-  });
+  void chat.carregarConversas();
+  void sincronizarComRota(idDaRota.value);
 });
 </script>
 

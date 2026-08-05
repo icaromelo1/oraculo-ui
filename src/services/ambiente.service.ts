@@ -39,12 +39,21 @@ export interface PreviaDeFonte {
   truncada?: boolean;
 }
 
+export interface ResumoConexao {
+  host: string;
+  porta: string | null;
+  base: string;
+  usuario: string;
+}
+
 export interface AlvoBancoResumido {
   id: string;
   nome: string;
   schemas: string[];
   colunasMascaradas: string[];
   ativo: boolean;
+  criadoEm: string;
+  conexao: ResumoConexao;
 }
 
 export interface ServicoResumido {
@@ -52,6 +61,7 @@ export interface ServicoResumido {
   nome: string;
   rotulo: string;
   ativo: boolean;
+  criadoEm: string;
 }
 
 export interface ContagemCorpus {
@@ -112,14 +122,14 @@ export function criarServico(nome: string, rotulo: string): Promise<ServicoResum
 }
 
 export function removerServico(id: string): Promise<void> {
-  return apiFetch(`/ambiente/servicos/${id}`, { metodo: 'DELETE' });
+  return apiFetch(`/ambiente/servicos/${encodeURIComponent(id)}`, { metodo: 'DELETE' });
 }
 
 export interface NovoAlvoBanco {
   nome: string;
   url: string;
-  schemas: string[];
-  colunasMascaradas: string[];
+  schemas?: string[];
+  colunasMascaradas?: string[];
 }
 
 export function criarAlvoBanco(alvo: NovoAlvoBanco): Promise<AlvoBancoResumido> {
@@ -127,5 +137,35 @@ export function criarAlvoBanco(alvo: NovoAlvoBanco): Promise<AlvoBancoResumido> 
 }
 
 export function removerAlvoBanco(id: string): Promise<void> {
-  return apiFetch(`/ambiente/alvos-banco/${id}`, { metodo: 'DELETE' });
+  return apiFetch(`/ambiente/alvos-banco/${encodeURIComponent(id)}`, { metodo: 'DELETE' });
+}
+
+export interface ArgumentoDoCatalogo {
+  nome: string;
+  tipo: string;
+  obrigatorio: boolean;
+  descricao: string;
+  minimo: number | null;
+  maximo: number | null;
+  padrao: number | null;
+}
+
+export interface EntradaDoCatalogoExibida {
+  id: string;
+  descricao: string;
+  liberadaNoEnv: boolean;
+  comandos: string[];
+  argumentos: ArgumentoDoCatalogo[];
+}
+
+export interface CatalogoExibido {
+  ferramenta: string;
+  tetoDoEnv: boolean;
+  ligada: boolean;
+  liberadosNoEnv: string[];
+  entradas: EntradaDoCatalogoExibida[];
+}
+
+export function obterCatalogoDeDiagnostico(): Promise<CatalogoExibido> {
+  return apiFetch('/ambiente/diagnostico/catalogo');
 }

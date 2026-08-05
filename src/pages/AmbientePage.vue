@@ -131,6 +131,31 @@
 
         <section class="secao">
           <div class="secao__cabecalho">
+            <h2 class="secao__titulo">Acessos</h2>
+            <span class="secao__nota">o que eu alcanço além do conhecimento indexado</span>
+          </div>
+
+          <ServicosObservaveis
+            :servicos="estado.servicos"
+            :ligada="capacidadeLigada('estado')"
+            @mudou="void atualizar()"
+          />
+
+          <div class="divisor" />
+
+          <AlvosDeBanco
+            :alvos="estado.alvosBanco"
+            :ligada="capacidadeLigada('banco')"
+            @mudou="void atualizar()"
+          />
+
+          <div class="divisor" />
+
+          <CatalogoDeDiagnostico />
+        </section>
+
+        <section class="secao">
+          <div class="secao__cabecalho">
             <h2 class="secao__titulo">Modelo</h2>
             <span class="secao__nota">somente leitura — muda no <code>.env</code> do servidor</span>
           </div>
@@ -151,10 +176,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import AlvosDeBanco from '@/components/ambiente/AlvosDeBanco.vue';
 import CadastroDeFonte from '@/components/ambiente/CadastroDeFonte.vue';
+import CatalogoDeDiagnostico from '@/components/ambiente/CatalogoDeDiagnostico.vue';
 import EnvioDeArquivo from '@/components/ambiente/EnvioDeArquivo.vue';
 import EscritorDeNota from '@/components/ambiente/EscritorDeNota.vue';
 import NotasAnexadas from '@/components/ambiente/NotasAnexadas.vue';
+import ServicosObservaveis from '@/components/ambiente/ServicosObservaveis.vue';
 import {
   definirCapacidade,
   obterAmbiente,
@@ -213,6 +241,12 @@ function rotuloCapacidade(nome: NomeCapacidade): string {
 
 function descricaoCapacidade(nome: NomeCapacidade): string {
   return DESCRICOES[nome] ?? '';
+}
+
+function capacidadeLigada(nome: NomeCapacidade): boolean {
+  const encontrada = estado.value?.capacidades.find((item) => item.capacidade === nome);
+
+  return encontrada?.tetoDoEnv === true && encontrada.ligada;
 }
 
 const porAutoridade = computed(() => {
@@ -435,6 +469,12 @@ onMounted(() => {
   font-size: 12.5px;
   color: var(--ink3);
   margin-bottom: 6px;
+}
+
+.divisor {
+  height: 1px;
+  background: var(--line);
+  margin: 2px 0;
 }
 
 .cartoes {

@@ -30,3 +30,20 @@ nvm use            # Node 24 (.nvmrc)
 npm install
 npm run dev
 ```
+
+
+## Deploy na VM
+
+O front é servido em `icaromelodev.com.br/oraculo/`, **não na raiz**. O build precisa do
+caminho público, senão o `index.html` pede `/assets/...`, toma 404 e a tela fica branca:
+
+```bash
+PUBLIC_PATH=/oraculo/ npm run build
+cd dist/spa && tar czf - . | ssh oracle-vm 'tar -C ~/projects/oraculo/site -xzf -'
+```
+
+Conferir o deploy pelos **assets**, não só pelo HTML — 200 no `index.html` não prova nada:
+
+```bash
+curl -su icaro:SENHA https://icaromelodev.com.br/oraculo/ | grep -o '/oraculo/assets/[^"]*'
+```

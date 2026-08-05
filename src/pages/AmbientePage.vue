@@ -114,6 +114,9 @@
                 <span v-if="!capacidade.tetoDoEnv" class="capacidade__motivo">
                   indisponível nesta instalação — {{ capacidade.motivoIndisponivel }}
                 </span>
+                <span v-else-if="capacidade.aviso" class="capacidade__motivo">
+                  {{ capacidade.aviso }}
+                </span>
               </div>
 
               <button

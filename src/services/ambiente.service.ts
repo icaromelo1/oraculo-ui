@@ -7,6 +7,7 @@ export interface CapacidadeEfetiva {
   ligada: boolean;
   tetoDoEnv: boolean;
   motivoIndisponivel?: string;
+  aviso?: string;
 }
 
 export interface FonteEfetiva {

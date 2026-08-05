@@ -24,11 +24,6 @@ export function tomTipoFonte(tipo: TipoFonte): 'amber' | 'slate' | 'neutro' {
   return TONS_TIPO[tipo];
 }
 
-export function rotuloCitacao(fonte: Fonte): string {
-  const detalhe = fonte.detalhe || fonte.etiqueta || fonte.titulo;
-  return `${rotuloTipoFonte(fonte.tipo)} · ${detalhe}`;
-}
-
 export function nomeArquivoFonte(fonte: Fonte): string {
   if (fonte.tipo === 'curado') return 'sua nota';
 

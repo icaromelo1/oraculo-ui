@@ -1,7 +1,7 @@
 import { apiFetch, cabecalhosAutenticados, ErroApi, tratarNaoAutorizado, urlBase } from './http';
 
 export const TAMANHO_MAXIMO_BYTES = 2 * 1024 * 1024;
-export const EXTENSOES_ACEITAS: readonly string[] = ['.md', '.txt'];
+const EXTENSOES_ACEITAS: readonly string[] = ['.md', '.txt'];
 
 export interface NotaListada {
   slug: string;

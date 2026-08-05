@@ -10,7 +10,7 @@ export const AUTORIDADES: readonly NivelDeAutoridade[] = [
   { autoridade: 3, tom: 'neutro', rotulo: 'código e configuração' },
 ];
 
-export function nivelDaAutoridade(valor: number): NivelDeAutoridade | undefined {
+function nivelDaAutoridade(valor: number): NivelDeAutoridade | undefined {
   return AUTORIDADES.find((nivel) => nivel.autoridade === valor);
 }
 

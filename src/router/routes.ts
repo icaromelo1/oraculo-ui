@@ -16,7 +16,11 @@ const routes: RouteRecordRaw[] = [
         name: 'auditoria',
         component: () => import('@/pages/AuditoriaPage.vue'),
       },
-      { path: 'perfis', name: 'perfis', component: () => import('@/pages/PerfisPage.vue') },
+      {
+        path: 'ambiente',
+        name: 'ambiente',
+        component: () => import('@/pages/AmbientePage.vue'),
+      },
     ],
   },
   {

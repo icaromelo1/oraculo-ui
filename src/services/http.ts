@@ -27,6 +27,44 @@ export function cabecalhosAutenticados(comCorpo: boolean): HeadersInit {
   return cabecalho;
 }
 
+interface CorpoDeErro {
+  message?: unknown;
+}
+
+function textoLegivel(bruto: string): string | null {
+  const texto = bruto.trim();
+
+  if (!texto) return null;
+  if (!texto.startsWith('{')) return texto;
+
+  try {
+    const corpo = JSON.parse(texto) as CorpoDeErro;
+
+    if (typeof corpo.message === 'string' && corpo.message.trim()) return corpo.message;
+
+    if (Array.isArray(corpo.message)) {
+      const linhas = corpo.message.filter((item): item is string => typeof item === 'string');
+      if (linhas.length > 0) return linhas.join(' · ');
+    }
+
+    return texto;
+  } catch {
+    return texto;
+  }
+}
+
+export function mensagemDoErro(falha: unknown, alternativa: string): string {
+  if (falha instanceof ErroApi) {
+    return textoLegivel(falha.message) ?? alternativa;
+  }
+
+  if (falha instanceof Error && falha.message) {
+    return falha.message;
+  }
+
+  return alternativa;
+}
+
 export function tratarNaoAutorizado(): void {
   limparToken();
   window.dispatchEvent(new Event(EVENTO_SESSAO_EXPIRADA));

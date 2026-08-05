@@ -58,6 +58,7 @@ function sair(): void {
 const navegacao = [
   { nome: 'chat', rotulo: 'Conversa', para: { name: 'chat' } },
   { nome: 'auditoria', rotulo: 'Histórico', para: { name: 'auditoria' } },
+  { nome: 'ambiente', rotulo: 'Ambiente', para: { name: 'ambiente' } },
 ];
 </script>
 

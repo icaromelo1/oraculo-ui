@@ -28,6 +28,52 @@
       </select>
     </div>
 
+    <nav class="migalhas" aria-label="Pastas do conhecimento">
+      <button
+        class="migalhas__item"
+        type="button"
+        :aria-current="pasta === null ? 'true' : undefined"
+        @click="irParaPasta(null)"
+      >
+        todos os documentos
+      </button>
+      <template v-for="(migalha, indice) in migalhas" :key="migalha.caminho">
+        <span class="migalhas__seta" aria-hidden="true">›</span>
+        <button
+          class="migalhas__item"
+          type="button"
+          :aria-current="indice === migalhas.length - 1 ? 'true' : undefined"
+          @click="irParaPasta(migalha.caminho)"
+        >
+          {{ migalha.rotulo }}
+        </button>
+      </template>
+    </nav>
+
+    <p v-if="erroPastas" class="mensagem mensagem--erro" role="alert">{{ erroPastas }}</p>
+
+    <div v-if="subpastas.length > 0" class="pastas">
+      <button
+        v-for="subpasta in subpastas"
+        :key="subpasta.caminho"
+        class="pastas__item"
+        type="button"
+        @click="irParaPasta(subpasta.caminho)"
+      >
+        <span class="pastas__seta" aria-hidden="true">▸</span>
+        <span class="pastas__nome">{{ subpasta.rotulo }}</span>
+        <span class="pastas__total">
+          {{ subpasta.total }} {{ subpasta.total === 1 ? 'documento' : 'documentos' }}
+          <template v-if="subpasta.subpastas > 0">
+            · {{ subpasta.subpastas }}
+            {{ subpasta.subpastas === 1 ? 'subpasta' : 'subpastas' }}
+          </template>
+        </span>
+      </button>
+    </div>
+
+    <p v-if="pasta !== null" class="mensagem">{{ resumoDaPasta }}</p>
+
     <div class="legenda">
       <span v-for="nivel in AUTORIDADES" :key="nivel.autoridade" class="legenda__item">
         <i class="ponto" :class="`ponto--${nivel.tom}`" aria-hidden="true" />
@@ -41,13 +87,7 @@
 
     <div v-else class="documentos">
       <div v-for="documento in documentos" :key="documento.id" class="documento">
-        <button
-          class="documento__linha"
-          type="button"
-          :class="{ 'documento__linha--aberta': documento.id === aberto }"
-          :aria-expanded="documento.id === aberto"
-          @click="alternar(documento.id)"
-        >
+        <button class="documento__linha" type="button" @click="abrir(documento)">
           <span class="documento__topo">
             <i
               class="ponto"
@@ -64,13 +104,6 @@
             <template v-if="!documento.editavel"> · somente leitura</template>
           </span>
         </button>
-
-        <VisualizadorDocumento
-          v-if="documento.id === aberto"
-          :key="documento.id"
-          :documento="documento"
-          @salvo="void aoSalvar($event)"
-        />
       </div>
     </div>
 
@@ -96,18 +129,28 @@
         próximos →
       </button>
     </div>
+
+    <ModalDocumento
+      :documento="selecionado"
+      @fechar="selecionado = null"
+      @salvo="void aoSalvar($event)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { colapsar, construirArvore, migalhasDaPasta } from './arvoreDePastas';
+import { AUTORIDADES, tomDaAutoridade } from './autoridade';
 import { formatarBytes, formatarQuando } from './formato';
-import VisualizadorDocumento from './VisualizadorDocumento.vue';
+import ModalDocumento from './ModalDocumento.vue';
 import {
   listarDocumentos,
+  listarPastas,
   type DocumentoIndexado,
   type FiltroDeDocumentos,
   type FonteDocumento,
+  type PastaIndexada,
 } from '@/services/conhecimento.service';
 import { mensagemDoErro } from '@/services/http';
 
@@ -133,35 +176,80 @@ const ROTULOS_DE_FONTE: Record<FonteDocumento, string> = {
   codigo: 'código',
 };
 
-const AUTORIDADES = [
-  { autoridade: 1, tom: 'amber', rotulo: 'suas notas, memória e agentes' },
-  { autoridade: 2, tom: 'slate', rotulo: 'documentação' },
-  { autoridade: 3, tom: 'neutro', rotulo: 'código e configuração' },
-] as const;
-
 const documentos = ref<DocumentoIndexado[]>([]);
 const total = ref(0);
 const pagina = ref(1);
 const busca = ref('');
 const fonte = ref<FonteDocumento | ''>('');
 const autoridade = ref(0);
-const aberto = ref<string | null>(null);
+const pasta = ref<string | null>(null);
+const pastas = ref<PastaIndexada[]>([]);
+const selecionado = ref<DocumentoIndexado | null>(null);
 const carregando = ref(true);
 const erroLista = ref('');
+const erroPastas = ref('');
 const feito = ref('');
 
 let referencia = 0;
 let temporizador: ReturnType<typeof setTimeout> | undefined;
 
+const arvore = computed(() => construirArvore(pastas.value));
+
+const noAtual = computed(() =>
+  pasta.value === null ? null : (arvore.value.porCaminho.get(pasta.value) ?? null),
+);
+
+const migalhas = computed(() =>
+  pasta.value === null ? [] : migalhasDaPasta(pasta.value, arvore.value.porCaminho),
+);
+
+const subpastas = computed(() => {
+  const nos = pasta.value === null ? arvore.value.raizes : (noAtual.value?.filhos ?? []);
+
+  return nos.map(colapsar);
+});
+
+const resumoDaPasta = computed(() => {
+  const no = noAtual.value;
+
+  if (!no) return 'esta pasta não aparece no índice de pastas — a lista abaixo veio direto da api.';
+
+  const diretos = no.diretos === 1 ? '1 arquivo nesta pasta' : `${no.diretos} arquivos nesta pasta`;
+
+  if (temFiltro.value) {
+    return `busca ativa — procurando nesta pasta e nas ${no.filhos.length} subpastas.`;
+  }
+
+  if (no.filhos.length === 0) return `${diretos}.`;
+
+  const abaixo = no.total - no.diretos;
+
+  return `${diretos} · ${abaixo} em subpastas, abra a subpasta para ver.`;
+});
+
 const temFiltro = computed(
   () => busca.value.trim().length > 0 || fonte.value !== '' || autoridade.value !== 0,
 );
 
-const mensagemVazia = computed(() =>
-  temFiltro.value
-    ? 'nenhum documento casa com esse filtro — tente outro termo ou limpe os filtros.'
-    : 'nada indexado ainda — escreva uma nota, envie um arquivo ou cadastre uma pasta do servidor.',
-);
+const mensagemVazia = computed(() => {
+  if (temFiltro.value) {
+    return pasta.value === null
+      ? 'nenhum documento casa com esse filtro — tente outro termo ou limpe os filtros.'
+      : 'nenhum documento casa com esse filtro dentro desta pasta — tente outro termo ou volte para todos os documentos.';
+  }
+
+  if (pasta.value !== null) {
+    const no = noAtual.value;
+
+    if (no && no.diretos === 0 && no.filhos.length > 0) {
+      return 'esta pasta não guarda arquivo nenhum direto — o que existe está nas subpastas acima.';
+    }
+
+    return 'esta pasta não tem nenhum documento indexado.';
+  }
+
+  return 'nada indexado ainda — escreva uma nota, envie um arquivo ou cadastre uma pasta do servidor.';
+});
 
 const intervaloExibido = computed(() => {
   const primeiro = (pagina.value - 1) * POR_PAGINA + 1;
@@ -174,14 +262,6 @@ function rotuloDaFonte(chave: FonteDocumento): string {
   return ROTULOS_DE_FONTE[chave] ?? chave;
 }
 
-function nivelDaAutoridade(valor: number): (typeof AUTORIDADES)[number] | undefined {
-  return AUTORIDADES.find((item) => item.autoridade === valor);
-}
-
-function tomDaAutoridade(valor: number): string {
-  return nivelDaAutoridade(valor)?.tom ?? 'neutro';
-}
-
 function filtroAtual(): FiltroDeDocumentos {
   const termo = busca.value.trim();
 
@@ -191,6 +271,8 @@ function filtroAtual(): FiltroDeDocumentos {
     ...(termo ? { busca: termo } : {}),
     ...(fonte.value ? { fonte: fonte.value } : {}),
     ...(autoridade.value ? { autoridade: autoridade.value } : {}),
+    ...(pasta.value ? { pasta: pasta.value } : {}),
+    ...(pasta.value && !temFiltro.value ? { recursivo: false } : {}),
   };
 }
 
@@ -221,9 +303,30 @@ async function carregar(silencioso = false): Promise<void> {
   }
 }
 
-function alternar(id: string): void {
+async function carregarPastas(): Promise<void> {
+  erroPastas.value = '';
+
+  try {
+    pastas.value = await listarPastas();
+  } catch (falha) {
+    pastas.value = [];
+    erroPastas.value = mensagemDoErro(
+      falha,
+      'não consegui montar a árvore de pastas — a lista abaixo continua completa',
+    );
+  }
+}
+
+function abrir(documento: DocumentoIndexado): void {
   feito.value = '';
-  aberto.value = aberto.value === id ? null : id;
+  selecionado.value = documento;
+}
+
+function irParaPasta(caminho: string | null): void {
+  if (pasta.value === caminho) return;
+
+  feito.value = '';
+  pasta.value = caminho;
 }
 
 function irParaPagina(alvo: number): void {
@@ -245,25 +348,23 @@ async function aoSalvar(trechos: number): Promise<void> {
 watch(busca, () => {
   clearTimeout(temporizador);
   temporizador = setTimeout(() => {
-    aberto.value = null;
     pagina.value = 1;
     void carregar();
   }, 300);
 });
 
-watch([fonte, autoridade], () => {
-  aberto.value = null;
+watch([fonte, autoridade, pasta], () => {
   pagina.value = 1;
   void carregar();
 });
 
 watch(pagina, () => {
-  aberto.value = null;
   void carregar();
 });
 
 onMounted(() => {
   void carregar();
+  void carregarPastas();
 });
 
 onUnmounted(() => {
@@ -301,6 +402,87 @@ onUnmounted(() => {
     width: auto;
     min-width: 150px;
     cursor: pointer;
+  }
+}
+
+.migalhas {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+
+  &__item {
+    font: 400 11.5px/1.5 $mono;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    color: var(--ink3);
+    padding: 2px 5px;
+    cursor: pointer;
+    word-break: break-all;
+    text-align: left;
+
+    &:hover {
+      color: var(--ink);
+      background: var(--panel2);
+    }
+
+    &[aria-current='true'] {
+      color: var(--ink);
+      background: var(--sel);
+    }
+  }
+
+  &__seta {
+    color: var(--ink3);
+    font-size: 12px;
+  }
+}
+
+.pastas {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+
+  &__item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    background: var(--panel2);
+    border: none;
+    padding: 8px 11px;
+    cursor: pointer;
+
+    &:not(:first-child) {
+      border-top: 1px solid var(--line);
+    }
+
+    &:hover {
+      background: var(--sel);
+    }
+  }
+
+  &__seta {
+    color: var(--ink3);
+    font-size: 10px;
+    flex: none;
+  }
+
+  &__nome {
+    font: 400 12.5px/1.5 $mono;
+    color: var(--ink);
+    flex: 1;
+    word-break: break-all;
+  }
+
+  &__total {
+    font-size: 11.5px;
+    color: var(--ink3);
+    white-space: nowrap;
   }
 }
 
@@ -362,10 +544,6 @@ onUnmounted(() => {
 
     &:hover {
       background: var(--panel2);
-    }
-
-    &--aberta {
-      background: var(--sel);
     }
   }
 

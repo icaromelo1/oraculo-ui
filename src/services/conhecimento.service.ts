@@ -47,8 +47,8 @@ export interface DocumentoIndexado {
 
 export interface DocumentoAberto extends DocumentoIndexado {
   conteudo: string | null;
-  truncado?: boolean;
-  aviso?: string;
+  truncado: boolean;
+  aviso: string | null;
 }
 
 export interface PaginaDeDocumentos {
@@ -58,10 +58,18 @@ export interface PaginaDeDocumentos {
   porPagina: number;
 }
 
+export interface PastaIndexada {
+  caminho: string;
+  caminhoReal: string;
+  documentos: number;
+}
+
 export interface FiltroDeDocumentos {
   busca?: string;
   fonte?: FonteDocumento;
   autoridade?: number;
+  pasta?: string;
+  recursivo?: boolean;
   pagina?: number;
   porPagina?: number;
 }
@@ -72,6 +80,8 @@ function queryDeDocumentos(filtro: FiltroDeDocumentos): string {
   if (filtro.busca) parametros.set('busca', filtro.busca);
   if (filtro.fonte) parametros.set('fonte', filtro.fonte);
   if (filtro.autoridade) parametros.set('autoridade', String(filtro.autoridade));
+  if (filtro.pasta) parametros.set('pasta', filtro.pasta);
+  if (filtro.recursivo === false) parametros.set('recursivo', 'false');
   if (filtro.pagina) parametros.set('pagina', String(filtro.pagina));
   if (filtro.porPagina) parametros.set('porPagina', String(filtro.porPagina));
 
@@ -82,6 +92,10 @@ function queryDeDocumentos(filtro: FiltroDeDocumentos): string {
 
 export function listarDocumentos(filtro: FiltroDeDocumentos = {}): Promise<PaginaDeDocumentos> {
   return apiFetch(`/conhecimento/documentos${queryDeDocumentos(filtro)}`);
+}
+
+export function listarPastas(): Promise<PastaIndexada[]> {
+  return apiFetch('/conhecimento/pastas');
 }
 
 export function obterDocumento(id: string): Promise<DocumentoAberto> {

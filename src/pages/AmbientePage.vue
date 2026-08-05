@@ -59,6 +59,8 @@
             <p v-if="erroFonte" class="aviso aviso--erro" role="alert">{{ erroFonte }}</p>
           </div>
 
+          <BibliotecaConhecimento @atualizado="void aoMudarConhecimento()" />
+
           <div class="anexar">
             <div class="rotulo-secao">anexar conhecimento</div>
 
@@ -177,6 +179,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import AlvosDeBanco from '@/components/ambiente/AlvosDeBanco.vue';
+import BibliotecaConhecimento from '@/components/ambiente/BibliotecaConhecimento.vue';
 import CadastroDeFonte from '@/components/ambiente/CadastroDeFonte.vue';
 import CatalogoDeDiagnostico from '@/components/ambiente/CatalogoDeDiagnostico.vue';
 import EnvioDeArquivo from '@/components/ambiente/EnvioDeArquivo.vue';

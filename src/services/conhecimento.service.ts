@@ -30,6 +30,77 @@ export function removerNota(slug: string): Promise<void> {
   return apiFetch(`/conhecimento/notas/${encodeURIComponent(slug)}`, { metodo: 'DELETE' });
 }
 
+export type FonteDocumento = 'nota' | 'memoria' | 'agente' | 'doc' | 'config' | 'codigo';
+
+export interface DocumentoIndexado {
+  id: string;
+  caminho: string;
+  caminhoReal: string;
+  titulo: string;
+  fonte: FonteDocumento;
+  autoridade: number;
+  atualizadoEm: string;
+  trechos: number;
+  bytes: number;
+  editavel: boolean;
+}
+
+export interface DocumentoAberto extends DocumentoIndexado {
+  conteudo: string | null;
+  truncado?: boolean;
+  aviso?: string;
+}
+
+export interface PaginaDeDocumentos {
+  documentos: DocumentoIndexado[];
+  total: number;
+  pagina: number;
+  porPagina: number;
+}
+
+export interface FiltroDeDocumentos {
+  busca?: string;
+  fonte?: FonteDocumento;
+  autoridade?: number;
+  pagina?: number;
+  porPagina?: number;
+}
+
+function queryDeDocumentos(filtro: FiltroDeDocumentos): string {
+  const parametros = new URLSearchParams();
+
+  if (filtro.busca) parametros.set('busca', filtro.busca);
+  if (filtro.fonte) parametros.set('fonte', filtro.fonte);
+  if (filtro.autoridade) parametros.set('autoridade', String(filtro.autoridade));
+  if (filtro.pagina) parametros.set('pagina', String(filtro.pagina));
+  if (filtro.porPagina) parametros.set('porPagina', String(filtro.porPagina));
+
+  const texto = parametros.toString();
+
+  return texto ? `?${texto}` : '';
+}
+
+export function listarDocumentos(filtro: FiltroDeDocumentos = {}): Promise<PaginaDeDocumentos> {
+  return apiFetch(`/conhecimento/documentos${queryDeDocumentos(filtro)}`);
+}
+
+export function obterDocumento(id: string): Promise<DocumentoAberto> {
+  return apiFetch(`/conhecimento/documentos/${encodeURIComponent(id)}`);
+}
+
+export function salvarNota(slug: string, conteudo: string): Promise<NotaGravada> {
+  return apiFetch(`/conhecimento/notas/${encodeURIComponent(slug)}`, {
+    metodo: 'PUT',
+    corpo: { conteudo },
+  });
+}
+
+export function slugDoCaminho(caminho: string): string {
+  const nome = caminho.split('/').filter(Boolean).at(-1) ?? '';
+
+  return nome.replace(/\.md$/i, '');
+}
+
 function extensaoDe(nome: string): string {
   const ponto = nome.lastIndexOf('.');
 

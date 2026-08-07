@@ -141,6 +141,88 @@ export function removerAlvoBanco(id: string): Promise<void> {
   return apiFetch(`/ambiente/alvos-banco/${encodeURIComponent(id)}`, { metodo: 'DELETE' });
 }
 
+export type TipoDeProvedor = 'openai-compat' | 'anthropic' | 'cli';
+
+export interface ChaveDoProvedor {
+  definida: boolean;
+  dica: string | null;
+}
+
+export interface ProvedorResumido {
+  id: string;
+  nome: string;
+  tipo: TipoDeProvedor;
+  baseUrl: string | null;
+  modelo: string | null;
+  comando: string | null;
+  dialeto: string | null;
+  chave: ChaveDoProvedor;
+  cabecalhosExtras: string[] | null;
+  ativo: boolean;
+  criadoEm: string;
+}
+
+export interface ListaDeProvedores {
+  provedores: ProvedorResumido[];
+  tiposPermitidos: string[];
+}
+
+export interface PresetDeProvedor {
+  id: string;
+  rotulo: string;
+  baseUrl: string | null;
+  exigeChave: boolean;
+  modelosSugeridos: string[];
+  observacao: string | null;
+}
+
+export interface NovoProvedor {
+  nome: string;
+  tipo: TipoDeProvedor;
+  preset?: string;
+  baseUrl?: string;
+  modelo?: string;
+  chave?: string;
+  comando?: string;
+  dialeto?: string;
+  cabecalhosExtras?: Record<string, string>;
+  parametros?: Record<string, unknown>;
+}
+
+export interface ResultadoDoTeste {
+  ok: boolean;
+  latenciaMs: number | null;
+  modelo: string | null;
+  amostra: string | null;
+  tokensEntrada: number | null;
+  tokensSaida: number | null;
+  erro: string | null;
+}
+
+export function listarProvedores(): Promise<ListaDeProvedores> {
+  return apiFetch('/ambiente/provedores');
+}
+
+export function listarPresetsDeProvedor(): Promise<PresetDeProvedor[]> {
+  return apiFetch('/ambiente/provedores/presets');
+}
+
+export function criarProvedor(provedor: NovoProvedor): Promise<ProvedorResumido> {
+  return apiFetch('/ambiente/provedores', { metodo: 'POST', corpo: provedor });
+}
+
+export function ativarProvedor(id: string): Promise<void> {
+  return apiFetch(`/ambiente/provedores/${encodeURIComponent(id)}/ativar`, { metodo: 'POST' });
+}
+
+export function removerProvedor(id: string): Promise<void> {
+  return apiFetch(`/ambiente/provedores/${encodeURIComponent(id)}`, { metodo: 'DELETE' });
+}
+
+export function testarProvedor(id: string): Promise<ResultadoDoTeste> {
+  return apiFetch(`/ambiente/provedores/${encodeURIComponent(id)}/testar`, { metodo: 'POST' });
+}
+
 export interface ArgumentoDoCatalogo {
   nome: string;
   tipo: string;

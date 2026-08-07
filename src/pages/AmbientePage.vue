@@ -162,17 +162,13 @@
         <section class="secao">
           <div class="secao__cabecalho">
             <h2 class="secao__titulo">Modelo</h2>
-            <span class="secao__nota">somente leitura — muda no <code>.env</code> do servidor</span>
+            <span class="secao__nota">
+              o <code>.env</code> define quais tipos de provedor são permitidos — aqui você cadastra
+              e escolhe qual responde
+            </span>
           </div>
 
-          <div class="linha linha--simples">
-            <span class="linha__nome">provedor</span>
-            <span class="linha__caminho">{{ estado.provedor.tipo }}</span>
-          </div>
-          <div class="linha linha--simples">
-            <span class="linha__nome">modelo</span>
-            <span class="linha__caminho">{{ estado.provedor.modelo }}</span>
-          </div>
+          <ProvedoresDeModelo :provedor-do-env="estado.provedor" @mudou="void atualizar()" />
         </section>
       </template>
     </div>
@@ -188,6 +184,7 @@ import CatalogoDeDiagnostico from '@/components/ambiente/CatalogoDeDiagnostico.v
 import EnvioDeArquivo from '@/components/ambiente/EnvioDeArquivo.vue';
 import EscritorDeNota from '@/components/ambiente/EscritorDeNota.vue';
 import NotasAnexadas from '@/components/ambiente/NotasAnexadas.vue';
+import ProvedoresDeModelo from '@/components/ambiente/ProvedoresDeModelo.vue';
 import ServicosObservaveis from '@/components/ambiente/ServicosObservaveis.vue';
 import {
   definirCapacidade,

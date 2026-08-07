@@ -22,7 +22,12 @@ function trocarCitacoes(linha: string): string {
     ultimoIndice = indice + casamento[0].length;
   }
 
+  const RETICENCIAS = '\u0000R\u0000';
+
   return (resultado + linha.slice(ultimoIndice))
+    .replace(/\.\.\./g, RETICENCIAS)
+    .replace(/(?:\s*[,;:.]){2,}/g, (trecho) => trecho.trim().slice(-1))
+    .replace(new RegExp(RETICENCIAS, 'g'), '...')
     .replace(/[ \t]{2,}/g, ' ')
     .replace(/ +([,.;:!?)\]])/g, '$1')
     .trimEnd();

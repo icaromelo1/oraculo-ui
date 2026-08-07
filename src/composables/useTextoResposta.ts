@@ -43,6 +43,17 @@ function interpretarLinha(linha: string): ParteTexto[] {
   return ajustarEspacos(partes);
 }
 
+const RETICENCIAS = '\u0000R\u0000';
+
+function normalizarTexto(bruto: string): string {
+  return bruto
+    .replace(/\.\.\./g, RETICENCIAS)
+    .replace(/(?:\s*[,;:.]){2,}/g, (trecho) => trecho.trim().slice(-1))
+    .replace(new RegExp(RETICENCIAS, 'g'), '...')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/ +([,.;:!?)\]])/g, '$1');
+}
+
 function ajustarEspacos(partes: ParteTexto[]): ParteTexto[] {
   const juntas: ParteTexto[] = [];
 
@@ -62,12 +73,7 @@ function ajustarEspacos(partes: ParteTexto[]): ParteTexto[] {
   }
 
   const limpas = juntas.map((parte) =>
-    parte.tipo === 'texto'
-      ? {
-          ...parte,
-          valor: parte.valor.replace(/[ \t]{2,}/g, ' ').replace(/ +([,.;:!?)\]])/g, '$1'),
-        }
-      : parte,
+    parte.tipo === 'texto' ? { ...parte, valor: normalizarTexto(parte.valor) } : parte,
   );
 
   const primeira = limpas[0];

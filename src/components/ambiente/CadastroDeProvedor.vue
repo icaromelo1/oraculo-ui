@@ -128,13 +128,38 @@
           </button>
         </div>
 
-        <textarea
-          v-model="cabecalhos"
-          class="o-field formulario__mono formulario__area"
-          rows="2"
-          placeholder="cabeçalhos extras, um por linha (opcional) — ex.: X-Portal: interno"
-          :disabled="cadastrando"
-        ></textarea>
+        <div class="avancado">
+          <button
+            class="avancado__topo"
+            type="button"
+            :aria-expanded="avancadoAberto"
+            :disabled="cadastrando"
+            @click="avancadoAberto = !avancadoAberto"
+          >
+            <span aria-hidden="true">{{ avancadoAberto ? '▾' : '▸' }}</span>
+            Opções avançadas
+            <span class="avancado__dica">quase nunca é necessário</span>
+          </button>
+
+          <div v-if="avancadoAberto" class="avancado__corpo">
+            <p class="avancado__texto">
+              Alguns serviços pedem uma informação a mais além da chave — o OpenRouter, por exemplo,
+              quer saber de qual aplicação veio o pedido. Quando o serviço escolhido já traz isso
+              pronto, você não precisa preencher nada aqui.
+            </p>
+            <p class="avancado__texto">
+              Só use se a documentação do serviço pedir explicitamente. Um por linha, no formato
+              <code>Nome: valor</code>.
+            </p>
+            <textarea
+              v-model="cabecalhos"
+              class="o-field formulario__mono formulario__area"
+              rows="2"
+              placeholder="X-Portal: interno"
+              :disabled="cadastrando"
+            ></textarea>
+          </div>
+        </div>
       </template>
 
       <div class="formulario__rodape">
@@ -193,6 +218,7 @@ const chave = ref('');
 const comando = ref('');
 const dialeto = ref('');
 const cabecalhos = ref('');
+const avancadoAberto = ref(false);
 const cadastrando = ref(false);
 const erroCadastro = ref('');
 const feito = ref('');
@@ -271,6 +297,7 @@ function limpar(): void {
   comando.value = '';
   dialeto.value = '';
   cabecalhos.value = '';
+  avancadoAberto.value = false;
 }
 
 function montarPayload(escolhido: TipoDeProvedor): NovoProvedor {
@@ -350,6 +377,57 @@ watch(tipo, () => {
 
 <style scoped lang="scss">
 @use '@/css/tokens' as *;
+
+.avancado {
+  border-top: 1px dashed var(--line2);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+
+.avancado__topo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--ink2);
+}
+
+.avancado__topo:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.avancado__dica {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--ink3);
+}
+
+.avancado__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.avancado__texto {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink3);
+  max-width: 60ch;
+}
+
+.avancado__texto code {
+  font-size: 11.5px;
+  background: var(--panel3);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
 
 .formulario {
   display: flex;

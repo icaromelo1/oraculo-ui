@@ -170,8 +170,10 @@ export interface ListaDeProvedores {
 export interface PresetDeProvedor {
   id: string;
   rotulo: string;
+  tipo: TipoDeProvedor;
   baseUrl: string | null;
   exigeChave: boolean;
+  cabecalhos: Record<string, string>;
   modelosSugeridos: string[];
   observacao: string | null;
 }
@@ -203,8 +205,10 @@ export function listarProvedores(): Promise<ListaDeProvedores> {
   return apiFetch('/ambiente/provedores');
 }
 
-export function listarPresetsDeProvedor(): Promise<PresetDeProvedor[]> {
-  return apiFetch('/ambiente/provedores/presets');
+export async function listarPresetsDeProvedor(): Promise<PresetDeProvedor[]> {
+  const resposta = await apiFetch<{ presets: PresetDeProvedor[] }>('/ambiente/provedores/presets');
+
+  return resposta.presets;
 }
 
 export function criarProvedor(provedor: NovoProvedor): Promise<ProvedorResumido> {

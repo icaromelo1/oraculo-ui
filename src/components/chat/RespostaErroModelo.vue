@@ -1,11 +1,13 @@
 <template>
   <div>
-    <CabecalhoResposta tom="sage-suave" :meta="resumo" />
+    <CabecalhoResposta v-if="!compacto" tom="sage-suave" :meta="resumo" />
 
     <div class="cartao">
       <div class="cartao__topo">
         <i class="cartao__ponto" aria-hidden="true" />
-        <span class="cartao__selo">O modelo não respondeu</span>
+        <span class="cartao__selo">{{
+          compacto ? 'A resposta ficou incompleta' : 'O modelo não respondeu'
+        }}</span>
         <span class="cartao__modelo">{{ mensagem.modelo || '—' }}</span>
       </div>
 
@@ -46,7 +48,10 @@ import { resumoBusca } from '@/composables/useResumoFerramentas';
 import { useChatStore } from '@/stores/chat';
 import type { MensagemAssistenteChat } from '@/stores/chat';
 
-const props = defineProps<{ mensagem: MensagemAssistenteChat }>();
+const props = withDefaults(
+  defineProps<{ mensagem: MensagemAssistenteChat; compacto?: boolean }>(),
+  { compacto: false },
+);
 defineEmits<{ 'tentar-novamente': [] }>();
 
 const chat = useChatStore();

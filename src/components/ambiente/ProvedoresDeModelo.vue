@@ -119,12 +119,15 @@
       :erro-presets="erroPresets"
       @cadastrado="void aoMudar()"
     />
+
+    <GuiaDeProvedores v-if="presets.length > 0" :presets="presets" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import CadastroDeProvedor from './CadastroDeProvedor.vue';
+import GuiaDeProvedores from './GuiaDeProvedores.vue';
 import { formatarQuando } from './formato';
 import {
   ativarProvedor,

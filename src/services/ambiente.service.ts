@@ -176,6 +176,8 @@ export interface PresetDeProvedor {
   cabecalhos: Record<string, string>;
   modelosSugeridos: string[];
   observacao: string | null;
+  ondeObterChave: string | null;
+  gratuito: boolean;
 }
 
 export interface NovoProvedor {

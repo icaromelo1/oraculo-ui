@@ -12,23 +12,23 @@ export interface DadosDaNota {
   fontes: Fonte[];
 }
 
-function trocarCitacoes(linha: string, fontes: Map<string, Fonte>): string {
+function trocarCitacoes(linha: string): string {
   let resultado = '';
   let ultimoIndice = 0;
 
   for (const casamento of linha.matchAll(PADRAO_CITACAO)) {
     const indice = casamento.index ?? 0;
-    const fonte = fontes.get(casamento[1] ?? '');
-
-    resultado += linha.slice(ultimoIndice, indice) + (fonte ? nomeArquivoFonte(fonte) : '');
+    resultado += linha.slice(ultimoIndice, indice);
     ultimoIndice = indice + casamento[0].length;
   }
 
-  return resultado + linha.slice(ultimoIndice);
+  return (resultado + linha.slice(ultimoIndice))
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/ +([,.;:!?)\]])/g, '$1')
+    .trimEnd();
 }
 
-export function textoVisivelDaResposta(texto: string, fontesLista: Fonte[]): string {
-  const fontes = new Map(fontesLista.map((fonte) => [fonte.id, fonte]));
+export function textoVisivelDaResposta(texto: string): string {
   let dentroDeCodigo = false;
 
   const linhas = texto.split('\n').map((linha) => {
@@ -37,7 +37,7 @@ export function textoVisivelDaResposta(texto: string, fontesLista: Fonte[]): str
       return linha;
     }
 
-    return dentroDeCodigo ? linha : trocarCitacoes(linha, fontes);
+    return dentroDeCodigo ? linha : trocarCitacoes(linha);
   });
 
   return linhas.join('\n').trim();

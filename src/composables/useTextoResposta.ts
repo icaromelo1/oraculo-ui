@@ -1,10 +1,7 @@
-import type { Fonte } from '@/types/oraculo';
-
 export type ParteTexto =
   | { tipo: 'texto'; valor: string }
   | { tipo: 'codigo'; valor: string }
-  | { tipo: 'negrito'; valor: string }
-  | { tipo: 'citacao'; fonte: Fonte };
+  | { tipo: 'negrito'; valor: string };
 
 export type BlocoTexto =
   | { tipo: 'paragrafo'; chave: string; partes: ParteTexto[] }
@@ -17,7 +14,7 @@ const PADRAO_LISTA = /^(\s*)([-*]|\d+[.)])\s+(.*)$/;
 const PADRAO_TITULO = /^(#{1,3})\s+(.*)$/;
 const PADRAO_FENCE = /^```(\w*)\s*$/;
 
-function interpretarLinha(linha: string, fontes: Map<string, Fonte>): ParteTexto[] {
+function interpretarLinha(linha: string): ParteTexto[] {
   const partes: ParteTexto[] = [];
   let ultimoIndice = 0;
 
@@ -30,12 +27,9 @@ function interpretarLinha(linha: string, fontes: Map<string, Fonte>): ParteTexto
 
     const [, idCitacao, codigo, negrito] = casamento;
 
-    if (idCitacao !== undefined) {
-      const fonte = fontes.get(idCitacao);
-      if (fonte) partes.push({ tipo: 'citacao', fonte });
-    } else if (codigo !== undefined) {
+    if (idCitacao === undefined && codigo !== undefined) {
       partes.push({ tipo: 'codigo', valor: codigo });
-    } else if (negrito !== undefined) {
+    } else if (idCitacao === undefined && negrito !== undefined) {
       partes.push({ tipo: 'negrito', valor: negrito });
     }
 
@@ -46,11 +40,55 @@ function interpretarLinha(linha: string, fontes: Map<string, Fonte>): ParteTexto
     partes.push({ tipo: 'texto', valor: linha.slice(ultimoIndice) });
   }
 
-  return partes;
+  return ajustarEspacos(partes);
 }
 
-export function interpretarTexto(texto: string, fontesLista: Fonte[]): BlocoTexto[] {
-  const fontes = new Map(fontesLista.map((fonte) => [fonte.id, fonte]));
+function ajustarEspacos(partes: ParteTexto[]): ParteTexto[] {
+  const juntas: ParteTexto[] = [];
+
+  for (const parte of partes) {
+    const anterior = juntas[juntas.length - 1];
+
+    if (parte.tipo === 'texto' && anterior && anterior.tipo === 'texto') {
+      juntas[juntas.length - 1] = {
+        tipo: 'texto',
+        valor: anterior.valor + parte.valor,
+      };
+
+      continue;
+    }
+
+    juntas.push(parte);
+  }
+
+  const limpas = juntas.map((parte) =>
+    parte.tipo === 'texto'
+      ? {
+          ...parte,
+          valor: parte.valor.replace(/[ \t]{2,}/g, ' ').replace(/ +([,.;:!?)\]])/g, '$1'),
+        }
+      : parte,
+  );
+
+  const primeira = limpas[0];
+
+  if (primeira && primeira.tipo === 'texto') {
+    limpas[0] = { ...primeira, valor: primeira.valor.replace(/^ +/, '') };
+  }
+
+  const ultima = limpas[limpas.length - 1];
+
+  if (ultima && ultima.tipo === 'texto') {
+    limpas[limpas.length - 1] = {
+      ...ultima,
+      valor: ultima.valor.replace(/ +$/, ''),
+    };
+  }
+
+  return limpas.filter((parte) => parte.tipo !== 'texto' || parte.valor.length > 0);
+}
+
+export function interpretarTexto(texto: string): BlocoTexto[] {
   const linhas = texto.split('\n');
   const blocos: BlocoTexto[] = [];
 
@@ -68,7 +106,7 @@ export function interpretarTexto(texto: string, fontesLista: Fonte[]): BlocoText
       blocos.push({
         tipo: 'paragrafo',
         chave: `p-${indiceBloco}`,
-        partes: interpretarLinha(conteudo, fontes),
+        partes: interpretarLinha(conteudo),
       });
     }
 
@@ -83,7 +121,7 @@ export function interpretarTexto(texto: string, fontesLista: Fonte[]): BlocoText
       tipo: 'lista',
       chave: `l-${indiceBloco}`,
       ordenada: listaAtual.ordenada,
-      itens: listaAtual.itens.map((item) => interpretarLinha(item, fontes)),
+      itens: listaAtual.itens.map((item) => interpretarLinha(item)),
     });
 
     listaAtual = null;
@@ -134,7 +172,7 @@ export function interpretarTexto(texto: string, fontesLista: Fonte[]): BlocoText
         tipo: 'titulo',
         chave: `t-${indiceBloco}`,
         nivel,
-        partes: interpretarLinha(casamentoTitulo[2] ?? '', fontes),
+        partes: interpretarLinha(casamentoTitulo[2] ?? ''),
       });
 
       indiceLinha += 1;

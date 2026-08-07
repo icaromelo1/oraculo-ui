@@ -34,7 +34,7 @@ const salva = ref(false);
 const erro = ref('');
 const confirmacao = ref('');
 
-const textoVisivel = computed(() => textoVisivelDaResposta(props.texto, props.fontes));
+const textoVisivel = computed(() => textoVisivelDaResposta(props.texto));
 
 const podeSalvar = computed(() => !salvando.value && textoVisivel.value.length > 0);
 

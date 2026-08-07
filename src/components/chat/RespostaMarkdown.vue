@@ -36,7 +36,7 @@ const props = withDefaults(defineProps<{ texto: string; fontes: Fonte[]; cursor?
   cursor: false,
 });
 
-const blocos = computed(() => interpretarTexto(props.texto, props.fontes));
+const blocos = computed(() => interpretarTexto(props.texto));
 </script>
 
 <style scoped lang="scss">

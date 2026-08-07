@@ -1,7 +1,15 @@
 <template>
   <div class="rodape">
     <span>{{ formatarTokens(tokens) }} · {{ formatarSegundos(duracaoMs) }}</span>
-    <span v-if="fontes.length">fontes: {{ resumoFontes }}</span>
+    <button
+      v-if="fontes.length"
+      class="rodape__fontes"
+      type="button"
+      :title="chat.painelFontesAberto ? 'esconder as fontes' : 'ver as fontes desta resposta'"
+      @click="chat.alternarPainelFontes()"
+    >
+      fontes: {{ resumoFontes }}
+    </button>
     <div class="rodape__espacador" />
     <button type="button" @click="copiar">{{ copiado ? 'copiado!' : 'copiar' }}</button>
     <AcaoSalvarNota :mensagem-id="mensagemId" :texto="texto" :fontes="fontes" />
@@ -14,6 +22,7 @@ import AcaoSalvarNota from '@/components/chat/AcaoSalvarNota.vue';
 import { formatarSegundos, formatarTokens } from '@/composables/useFormato';
 import { rotuloTipoFonte } from '@/composables/useRotuloFonte';
 import type { Fonte, TipoFonte } from '@/types/oraculo';
+import { useChatStore } from '@/stores/chat';
 import { textoVisivelDaResposta } from './notaDaResposta';
 
 const props = defineProps<{
@@ -24,6 +33,7 @@ const props = defineProps<{
   texto: string;
 }>();
 
+const chat = useChatStore();
 const copiado = ref(false);
 
 const resumoFontes = computed(() => {
@@ -40,7 +50,7 @@ const resumoFontes = computed(() => {
 
 async function copiar(): Promise<void> {
   try {
-    await navigator.clipboard.writeText(textoVisivelDaResposta(props.texto, props.fontes));
+    await navigator.clipboard.writeText(textoVisivelDaResposta(props.texto));
     copiado.value = true;
     setTimeout(() => {
       copiado.value = false;

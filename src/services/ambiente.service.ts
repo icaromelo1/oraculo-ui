@@ -229,6 +229,83 @@ export function testarProvedor(id: string): Promise<ResultadoDoTeste> {
   return apiFetch(`/ambiente/provedores/${encodeURIComponent(id)}/testar`, { metodo: 'POST' });
 }
 
+export interface ModuloResumido {
+  id: string;
+  nome: string;
+  descricao: string;
+  especialistaDocumentoId: string | null;
+  documentos: number;
+  criadoEm: string;
+}
+
+export interface ListaDeModulos {
+  modulos: ModuloResumido[];
+  mapa: string;
+}
+
+export interface EdicaoDeModulo {
+  nome?: string;
+  descricao?: string;
+}
+
+export interface MudancaDeModulo {
+  movidos: number;
+  moduloId: string | null;
+}
+
+export function listarModulos(): Promise<ListaDeModulos> {
+  return apiFetch('/ambiente/modulos');
+}
+
+export function criarModulo(nome: string, descricao: string): Promise<ModuloResumido> {
+  return apiFetch('/ambiente/modulos', { metodo: 'POST', corpo: { nome, descricao } });
+}
+
+export function atualizarModulo(id: string, edicao: EdicaoDeModulo): Promise<ModuloResumido> {
+  return apiFetch(`/ambiente/modulos/${encodeURIComponent(id)}`, {
+    metodo: 'PATCH',
+    corpo: edicao,
+  });
+}
+
+export function removerModulo(id: string): Promise<void> {
+  return apiFetch(`/ambiente/modulos/${encodeURIComponent(id)}`, { metodo: 'DELETE' });
+}
+
+export function definirEspecialista(
+  id: string,
+  documentoId: string | null,
+): Promise<ModuloResumido> {
+  return apiFetch(`/ambiente/modulos/${encodeURIComponent(id)}/especialista`, {
+    metodo: 'POST',
+    corpo: { documentoId },
+  });
+}
+
+export function moverDocumentos(
+  documentos: string[],
+  moduloId: string | null,
+): Promise<MudancaDeModulo> {
+  return apiFetch('/ambiente/modulos/mover', {
+    metodo: 'POST',
+    corpo: { documentos, moduloId },
+  });
+}
+
+export interface PersonaDaInstalacao {
+  texto: string | null;
+  teto: number;
+  mascaramentos: number;
+}
+
+export function obterPersona(): Promise<PersonaDaInstalacao> {
+  return apiFetch('/ambiente/persona');
+}
+
+export function definirPersona(texto: string): Promise<PersonaDaInstalacao> {
+  return apiFetch('/ambiente/persona', { metodo: 'PUT', corpo: { texto } });
+}
+
 export interface ArgumentoDoCatalogo {
   nome: string;
   tipo: string;

@@ -5,98 +5,140 @@
         ref="campo"
         class="alvo__campo"
         type="file"
-        accept=".md,.txt,text/markdown,text/plain"
+        multiple
+        accept=".md,.txt,.pdf,text/markdown,text/plain,application/pdf"
         :disabled="enviando"
         @change="aoEscolher"
       />
-      <span class="alvo__nome">{{
-        escolhido ? escolhido.name : 'escolher um arquivo .md ou .txt'
-      }}</span>
-      <span class="alvo__meta">
-        {{ escolhido ? formatarBytes(escolhido.size) : 'até 2 MB · PDF não é suportado' }}
-      </span>
+      <span class="alvo__nome">{{ rotuloEscolha }}</span>
+      <span class="alvo__meta">{{ rotuloMeta }}</span>
     </label>
 
     <div class="envio__rodape">
       <button
         class="o-btn o-btn--primary"
         type="button"
-        :disabled="!escolhido || enviando"
+        :disabled="escolhidos.length === 0 || enviando"
         @click="void enviar()"
       >
-        {{ enviando ? 'enviando…' : 'enviar arquivo' }}
+        {{ enviando ? 'enviando…' : rotuloBotao }}
       </button>
       <span class="envio__dica">o conteúdo é copiado para as notas e indexado na hora</span>
     </div>
 
     <p v-if="erro" class="mensagem mensagem--erro" role="alert">{{ erro }}</p>
-    <p v-else-if="feito" class="mensagem mensagem--ok" role="status">{{ feito }}</p>
+
+    <div v-if="lote" class="resultado" role="status">
+      <p class="resultado__resumo">
+        {{ lote.aceitos }} de {{ lote.total }} entraram<template v-if="lote.recusados > 0">
+          · {{ lote.recusados }} recusado(s)</template
+        >
+      </p>
+
+      <div v-for="item in lote.itens" :key="item.arquivo" class="item">
+        <i class="item__ponto" :class="item.aceito ? 'item__ponto--ok' : 'item__ponto--erro'" />
+        <span class="item__nome">{{ item.arquivo }}</span>
+        <span class="item__detalhe">
+          <template v-if="item.aceito">
+            {{
+              item.trechosIndexados > 0
+                ? `${item.trechosIndexados} trecho(s) indexado(s)`
+                : 'gravado, indexa na próxima varredura'
+            }}
+          </template>
+          <template v-else>{{ item.motivo }}</template>
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, useTemplateRef } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import { formatarBytes } from './formato';
-import { enviarArquivo, recusaDoArquivo } from '@/services/conhecimento.service';
+import { enviarArquivos, recusaDoArquivo, type LoteEnviado } from '@/services/conhecimento.service';
 import { mensagemDoErro } from '@/services/http';
+
+const TETO_DE_ARQUIVOS = 20;
 
 const emit = defineEmits<{ enviado: [] }>();
 
 const campo = useTemplateRef<HTMLInputElement>('campo');
-const escolhido = ref<File | null>(null);
+const escolhidos = ref<File[]>([]);
 const enviando = ref(false);
 const erro = ref('');
-const feito = ref('');
+const lote = ref<LoteEnviado | null>(null);
+
+const rotuloEscolha = computed(() => {
+  if (escolhidos.value.length === 0) return 'escolher arquivos .md, .txt ou .pdf';
+  if (escolhidos.value.length === 1) return escolhidos.value[0]?.name ?? '';
+
+  return `${escolhidos.value.length} arquivos escolhidos`;
+});
+
+const rotuloMeta = computed(() => {
+  if (escolhidos.value.length === 0) {
+    return `até ${TETO_DE_ARQUIVOS} arquivos · 2 MB cada · PDF precisa ter texto`;
+  }
+
+  const total = escolhidos.value.reduce((soma, arquivo) => soma + arquivo.size, 0);
+
+  return formatarBytes(total);
+});
+
+const rotuloBotao = computed(() =>
+  escolhidos.value.length > 1 ? `enviar ${escolhidos.value.length} arquivos` : 'enviar arquivo',
+);
 
 function limparCampo(): void {
-  escolhido.value = null;
+  escolhidos.value = [];
   if (campo.value) campo.value.value = '';
 }
 
 function aoEscolher(evento: Event): void {
   const entrada = evento.target as HTMLInputElement;
-  const arquivo = entrada.files?.[0] ?? null;
+  const arquivos = [...(entrada.files ?? [])];
 
   erro.value = '';
-  feito.value = '';
+  lote.value = null;
 
-  if (!arquivo) {
+  if (arquivos.length === 0) {
     limparCampo();
     return;
   }
 
-  const recusa = recusaDoArquivo(arquivo);
-
-  if (recusa) {
-    erro.value = recusa;
+  if (arquivos.length > TETO_DE_ARQUIVOS) {
+    erro.value = `são ${arquivos.length} arquivos — o teto por envio é ${TETO_DE_ARQUIVOS}`;
     limparCampo();
     return;
   }
 
-  escolhido.value = arquivo;
+  const recusado = arquivos
+    .map((arquivo) => ({ arquivo, recusa: recusaDoArquivo(arquivo) }))
+    .find((item) => item.recusa);
+
+  if (recusado?.recusa) {
+    erro.value = recusado.recusa;
+    limparCampo();
+    return;
+  }
+
+  escolhidos.value = arquivos;
 }
 
 async function enviar(): Promise<void> {
-  const arquivo = escolhido.value;
-
-  if (!arquivo || enviando.value) return;
+  if (escolhidos.value.length === 0 || enviando.value) return;
 
   enviando.value = true;
   erro.value = '';
-  feito.value = '';
+  lote.value = null;
 
   try {
-    const nota = await enviarArquivo(arquivo);
-
-    feito.value =
-      nota.trechosIndexados > 0
-        ? `"${arquivo.name}" virou a nota "${nota.slug}" — ${nota.trechosIndexados} trecho(s) indexado(s)`
-        : `"${arquivo.name}" virou a nota "${nota.slug}", mas nada foi indexado agora — a próxima varredura do corpus recupera`;
-
+    lote.value = await enviarArquivos(escolhidos.value);
     limparCampo();
     emit('enviado');
   } catch (falha) {
-    erro.value = mensagemDoErro(falha, 'não consegui enviar o arquivo');
+    erro.value = mensagemDoErro(falha, 'não consegui enviar os arquivos');
   } finally {
     enviando.value = false;
   }
@@ -109,40 +151,17 @@ async function enviar(): Promise<void> {
 .envio {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-
-  &__rodape {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  &__dica {
-    font-size: 12.5px;
-    color: var(--ink3);
-  }
+  gap: 10px;
 }
 
 .alvo {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 3px;
   border: 1px dashed var(--line2);
   border-radius: 10px;
-  background: var(--panel2);
-  padding: 14px 15px;
+  padding: 12px 14px;
   cursor: pointer;
-
-  &:hover {
-    border-color: var(--sage);
-  }
-
-  &:focus-within {
-    border-color: var(--sage);
-    background: var(--panel);
-  }
 
   &__campo {
     position: absolute;
@@ -153,30 +172,81 @@ async function enviar(): Promise<void> {
   }
 
   &__nome {
-    font-size: 13.5px;
-    color: var(--ink2);
-    flex: 1;
-    word-break: break-all;
+    font-size: 13px;
+    color: var(--ink);
   }
 
   &__meta {
-    font: 400 11.5px/1.5 $mono;
+    font-size: 12px;
     color: var(--ink3);
-    white-space: nowrap;
   }
+}
+
+.envio__rodape {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.envio__dica {
+  font-size: 12px;
+  color: var(--ink3);
 }
 
 .mensagem {
   margin: 0;
   font-size: 12.5px;
-  color: var(--ink3);
 
   &--erro {
     color: var(--clay);
   }
+}
 
-  &--ok {
-    color: var(--sage);
+.resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-top: 1px solid var(--line);
+  padding-top: 9px;
+
+  &__resumo {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--ink2);
+  }
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 0.55rem minmax(0, 12rem) 1fr;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 12.5px;
+
+  &__ponto {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    align-self: center;
+
+    &--ok {
+      background: var(--sage);
+    }
+
+    &--erro {
+      background: var(--clay);
+    }
+  }
+
+  &__nome {
+    font: 400 11.5px/1.6 $mono;
+    color: var(--ink);
+    word-break: break-all;
+  }
+
+  &__detalhe {
+    color: var(--ink3);
   }
 }
 </style>

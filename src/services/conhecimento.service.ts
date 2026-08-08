@@ -44,8 +44,8 @@ export interface DocumentoIndexado {
   trechos: number;
   bytes: number;
   editavel: boolean;
-  moduloId?: string | null;
-  descricao?: string | null;
+  moduloId: string | null;
+  descricao: string | null;
 }
 
 export interface DocumentoAberto extends DocumentoIndexado {

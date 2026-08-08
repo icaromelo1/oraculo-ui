@@ -132,8 +132,10 @@
 
     <ModalDocumento
       :documento="selecionado"
+      :modulos="modulos"
       @fechar="selecionado = null"
       @salvo="void aoSalvar($event)"
+      @classificado="void aoClassificar()"
     />
   </div>
 </template>
@@ -144,6 +146,7 @@ import { colapsar, construirArvore, migalhasDaPasta } from './arvoreDePastas';
 import { AUTORIDADES, tomDaAutoridade } from './autoridade';
 import { formatarBytes, formatarQuando } from './formato';
 import ModalDocumento from './ModalDocumento.vue';
+import type { ModuloResumido } from '@/services/ambiente.service';
 import {
   listarDocumentos,
   listarPastas,
@@ -153,6 +156,8 @@ import {
   type PastaIndexada,
 } from '@/services/conhecimento.service';
 import { mensagemDoErro } from '@/services/http';
+
+defineProps<{ modulos: ModuloResumido[] }>();
 
 const emit = defineEmits<{ atualizado: [] }>();
 
@@ -333,6 +338,11 @@ function irParaPagina(alvo: number): void {
   if (alvo < 1) return;
 
   pagina.value = alvo;
+}
+
+async function aoClassificar(): Promise<void> {
+  await carregar(true);
+  emit('atualizado');
 }
 
 async function aoSalvar(trechos: number): Promise<void> {

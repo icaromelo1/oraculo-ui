@@ -31,6 +31,47 @@
           </button>
         </div>
 
+        <div v-if="detalhe" class="faixa">
+          <div class="faixa__campo faixa__campo--largo">
+            <div class="faixa__rotulo">
+              <label>Descrição</label>
+              <span class="faixa__estado" :class="`faixa__estado--${estadoDaDescricao.tom}`">
+                {{ estadoDaDescricao.texto }}
+              </span>
+            </div>
+            <CampoDeDescricao
+              v-model="descricao"
+              :origem-conteudo="detalhe.conteudo ?? ''"
+              :origem-titulo="detalhe.titulo"
+              placeholder="Para que serve este documento e quando vale abri-lo…"
+              dica-sem-origem="sem o conteúdo em mãos eu não consigo sugerir — escreva à mão"
+              rotulo="Descrição do documento"
+              :linhas="2"
+            />
+          </div>
+
+          <div class="faixa__campo">
+            <div class="faixa__rotulo">
+              <label for="modulo-do-documento">Módulo</label>
+              <span class="faixa__estado" :class="`faixa__estado--${estadoDoModulo.tom}`">
+                {{ estadoDoModulo.texto }}
+              </span>
+            </div>
+            <select
+              id="modulo-do-documento"
+              v-model="moduloId"
+              class="o-field"
+              :disabled="movendo"
+              @change="void mover()"
+            >
+              <option value="">sem módulo</option>
+              <option v-for="modulo in modulos" :key="modulo.id" :value="modulo.id">
+                {{ modulo.nome }}
+              </option>
+            </select>
+          </div>
+        </div>
+
         <div class="modal-corpo">
           <p v-if="carregando" class="mensagem">abrindo…</p>
 
@@ -129,10 +170,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
 import { rotuloDaAutoridade, tomDaAutoridade } from './autoridade';
+import CampoDeDescricao from './CampoDeDescricao.vue';
 import { formatarBytes, formatarQuando } from './formato';
+import { moverDocumentos, type ModuloResumido } from '@/services/ambiente.service';
 import {
+  descreverDocumento,
   obterDocumento,
   salvarNota,
   slugDoCaminho,
@@ -142,9 +186,11 @@ import {
 } from '@/services/conhecimento.service';
 import { mensagemDoErro } from '@/services/http';
 
-const props = defineProps<{ documento: DocumentoIndexado | null }>();
+const ESPERA_ANTES_DE_GRAVAR = 700;
 
-const emit = defineEmits<{ fechar: []; salvo: [trechos: number] }>();
+const props = defineProps<{ documento: DocumentoIndexado | null; modulos: ModuloResumido[] }>();
+
+const emit = defineEmits<{ fechar: []; salvo: [trechos: number]; classificado: [] }>();
 
 const tituloId = 'modal-documento-titulo';
 
@@ -159,8 +205,18 @@ const feito = ref('');
 const caixaRef = ref<HTMLElement | null>(null);
 const fecharRef = ref<HTMLButtonElement | null>(null);
 
+const descricao = ref('');
+const descricaoGravada = ref('');
+const gravandoDescricao = ref(false);
+const erroDescricao = ref('');
+const moduloId = ref('');
+const moduloGravado = ref('');
+const movendo = ref(false);
+const erroModulo = ref('');
+
 let elementoQueAbriu: HTMLElement | null = null;
 let referencia = 0;
+let temporizadorDaDescricao: ReturnType<typeof setTimeout> | undefined;
 
 const tom = computed(() => tomDaAutoridade(props.documento?.autoridade ?? 0));
 
@@ -196,7 +252,25 @@ const motivoSemEdicao = computed(() => {
 
 const mudou = computed(() => rascunho.value !== (detalhe.value?.conteudo ?? ''));
 
+const estadoDaDescricao = computed(() => {
+  if (erroDescricao.value) return { tom: 'erro', texto: erroDescricao.value };
+  if (gravandoDescricao.value) return { tom: 'neutro', texto: 'salvando…' };
+  if (descricao.value !== descricaoGravada.value) {
+    return { tom: 'neutro', texto: 'salva sozinha' };
+  }
+
+  return descricaoGravada.value ? { tom: 'ok', texto: 'salvo ✓' } : { tom: 'neutro', texto: '' };
+});
+
+const estadoDoModulo = computed(() => {
+  if (erroModulo.value) return { tom: 'erro', texto: erroModulo.value };
+  if (movendo.value) return { tom: 'neutro', texto: 'salvando…' };
+
+  return moduloGravado.value ? { tom: 'ok', texto: 'salvo ✓' } : { tom: 'neutro', texto: '' };
+});
+
 function reiniciar(): void {
+  clearTimeout(temporizadorDaDescricao);
   detalhe.value = null;
   carregando.value = false;
   erro.value = '';
@@ -205,6 +279,60 @@ function reiniciar(): void {
   salvando.value = false;
   erroSalvar.value = '';
   feito.value = '';
+  descricao.value = '';
+  descricaoGravada.value = '';
+  gravandoDescricao.value = false;
+  erroDescricao.value = '';
+  moduloId.value = '';
+  moduloGravado.value = '';
+  movendo.value = false;
+  erroModulo.value = '';
+}
+
+async function gravarDescricao(): Promise<void> {
+  const aberto = detalhe.value;
+
+  if (!aberto || gravandoDescricao.value) return;
+
+  const alvo = descricao.value;
+
+  if (alvo === descricaoGravada.value) return;
+
+  gravandoDescricao.value = true;
+  erroDescricao.value = '';
+
+  try {
+    await descreverDocumento(aberto.id, alvo);
+    descricaoGravada.value = alvo;
+  } catch (falha) {
+    erroDescricao.value = mensagemDoErro(falha, 'não consegui salvar a descrição');
+  } finally {
+    gravandoDescricao.value = false;
+  }
+}
+
+async function mover(): Promise<void> {
+  const aberto = detalhe.value;
+
+  if (!aberto || movendo.value) return;
+
+  const alvo = moduloId.value;
+
+  if (alvo === moduloGravado.value) return;
+
+  movendo.value = true;
+  erroModulo.value = '';
+
+  try {
+    await moverDocumentos([aberto.id], alvo || null);
+    moduloGravado.value = alvo;
+    emit('classificado');
+  } catch (falha) {
+    moduloId.value = moduloGravado.value;
+    erroModulo.value = mensagemDoErro(falha, 'não consegui trocar o módulo');
+  } finally {
+    movendo.value = false;
+  }
 }
 
 async function carregar(id: string): Promise<void> {
@@ -219,6 +347,10 @@ async function carregar(id: string): Promise<void> {
     if (atual !== referencia) return;
 
     detalhe.value = aberto;
+    descricao.value = aberto.descricao ?? '';
+    descricaoGravada.value = descricao.value;
+    moduloId.value = aberto.moduloId ?? '';
+    moduloGravado.value = moduloId.value;
   } catch (falha) {
     if (atual !== referencia) return;
 
@@ -326,6 +458,16 @@ async function salvar(): Promise<void> {
     salvando.value = false;
   }
 }
+
+watch(descricao, () => {
+  clearTimeout(temporizadorDaDescricao);
+  erroDescricao.value = '';
+  temporizadorDaDescricao = setTimeout(() => void gravarDescricao(), ESPERA_ANTES_DE_GRAVAR);
+});
+
+onUnmounted(() => {
+  clearTimeout(temporizadorDaDescricao);
+});
 
 watch(
   () => props.documento,
@@ -455,6 +597,55 @@ watch(
 
   &--neutro {
     background: var(--line2);
+  }
+}
+
+.faixa {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 13px 18px;
+  background: var(--panel2);
+  border-bottom: 1px solid var(--line);
+
+  &__campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 190px;
+
+    &--largo {
+      flex: 2;
+      min-width: 260px;
+    }
+  }
+
+  &__rotulo {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+
+    label {
+      font-size: 12.5px;
+      color: var(--ink2);
+    }
+  }
+
+  &__estado {
+    font-size: 12px;
+
+    &--ok {
+      color: var(--sage);
+    }
+
+    &--neutro {
+      color: var(--ink3);
+    }
+
+    &--erro {
+      color: var(--clay);
+    }
   }
 }
 

@@ -59,7 +59,20 @@
             <p v-if="erroFonte" class="aviso aviso--erro" role="alert">{{ erroFonte }}</p>
           </div>
 
-          <BibliotecaConhecimento @atualizado="void aoMudarConhecimento()" />
+          <div class="divisor" />
+
+          <p v-if="erroModulos" class="aviso aviso--erro" role="alert">{{ erroModulos }}</p>
+
+          <ModulosDeConhecimento
+            :modulos="modulos"
+            :total-de-documentos="estado.corpus.total"
+            @mudou="void aoMudarConhecimento()"
+          />
+
+          <BibliotecaConhecimento
+            :modulos="modulos"
+            @atualizado="void aoMudarConhecimento()"
+          />
 
           <div class="anexar">
             <div class="rotulo-secao">anexar conhecimento</div>
@@ -89,6 +102,27 @@
             :erro="erroNotas"
             @removida="void aoMudarConhecimento()"
           />
+        </section>
+
+        <section class="secao">
+          <div class="secao__cabecalho">
+            <h2 class="secao__titulo">Propostas do assistente</h2>
+            <span class="secao__nota">o que ele descobriu e quer registrar</span>
+          </div>
+
+          <FilaDePropostas :modulos="modulos" @mudou="void aoMudarConhecimento()" />
+        </section>
+
+        <section class="secao">
+          <div class="secao__cabecalho">
+            <h2 class="secao__titulo">Persona</h2>
+            <span class="secao__nota">
+              o texto que abre toda conversa — os blocos de proteção são fixos no código e não
+              entram aqui
+            </span>
+          </div>
+
+          <PersonaDaInstalacao />
         </section>
 
         <section class="secao">
@@ -183,15 +217,20 @@ import CadastroDeFonte from '@/components/ambiente/CadastroDeFonte.vue';
 import CatalogoDeDiagnostico from '@/components/ambiente/CatalogoDeDiagnostico.vue';
 import EnvioDeArquivo from '@/components/ambiente/EnvioDeArquivo.vue';
 import EscritorDeNota from '@/components/ambiente/EscritorDeNota.vue';
+import FilaDePropostas from '@/components/ambiente/FilaDePropostas.vue';
+import ModulosDeConhecimento from '@/components/ambiente/ModulosDeConhecimento.vue';
 import NotasAnexadas from '@/components/ambiente/NotasAnexadas.vue';
+import PersonaDaInstalacao from '@/components/ambiente/PersonaDaInstalacao.vue';
 import ProvedoresDeModelo from '@/components/ambiente/ProvedoresDeModelo.vue';
 import ServicosObservaveis from '@/components/ambiente/ServicosObservaveis.vue';
 import {
   definirCapacidade,
+  listarModulos,
   obterAmbiente,
   removerFonte,
   type CapacidadeEfetiva,
   type EstadoDoAmbiente,
+  type ModuloResumido,
   type NomeCapacidade,
 } from '@/services/ambiente.service';
 import { listarNotas, type NotaListada } from '@/services/conhecimento.service';
@@ -217,6 +256,8 @@ const aba = ref<AbaDeAnexo>('nota');
 const notas = ref<NotaListada[]>([]);
 const carregandoNotas = ref(true);
 const erroNotas = ref('');
+const modulos = ref<ModuloResumido[]>([]);
+const erroModulos = ref('');
 
 const ROTULOS: Record<NomeCapacidade, string> = {
   conhecimento: 'Buscar no conhecimento',
@@ -312,8 +353,18 @@ async function carregarNotas(): Promise<void> {
   }
 }
 
+async function carregarModulos(): Promise<void> {
+  erroModulos.value = '';
+
+  try {
+    modulos.value = (await listarModulos()).modulos;
+  } catch (falha) {
+    erroModulos.value = mensagemDoErro(falha, 'não consegui listar os módulos');
+  }
+}
+
 async function aoMudarConhecimento(): Promise<void> {
-  await Promise.all([atualizar(), carregarNotas()]);
+  await Promise.all([atualizar(), carregarNotas(), carregarModulos()]);
 }
 
 async function alternar(capacidade: CapacidadeEfetiva): Promise<void> {
@@ -351,6 +402,7 @@ async function removerFonteCadastrada(id: string): Promise<void> {
 onMounted(() => {
   void carregar();
   void carregarNotas();
+  void carregarModulos();
 });
 </script>
 

@@ -17,8 +17,9 @@
               {{ estado.corpus.total }} documentos · última indexação {{ ultimaIndexacao }}
             </span>
             <span class="secao__espacador" />
-            <button class="o-btn" type="button" disabled>reindexar</button>
-            <span class="secao__nota">roda por cron às 04:30</span>
+            <span class="secao__nota">
+              a indexação não roda sozinha — nada entra aqui sem você mandar
+            </span>
           </div>
 
           <p v-if="avisoAtualizacao" class="aviso aviso--erro">{{ avisoAtualizacao }}</p>

@@ -73,6 +73,7 @@ export interface FiltroDeDocumentos {
   autoridade?: number;
   modulo?: string;
   pasta?: string;
+  ordenar?: 'data' | 'nome';
   recursivo?: boolean;
   pagina?: number;
   porPagina?: number;
@@ -85,6 +86,7 @@ function queryDeDocumentos(filtro: FiltroDeDocumentos): string {
   if (filtro.fonte) parametros.set('fonte', filtro.fonte);
   if (filtro.autoridade) parametros.set('autoridade', String(filtro.autoridade));
   if (filtro.modulo) parametros.set('modulo', filtro.modulo);
+  if (filtro.ordenar && filtro.ordenar !== 'data') parametros.set('ordenar', filtro.ordenar);
   if (filtro.pasta) parametros.set('pasta', filtro.pasta);
   if (filtro.recursivo === false) parametros.set('recursivo', 'false');
   if (filtro.pagina) parametros.set('pagina', String(filtro.pagina));

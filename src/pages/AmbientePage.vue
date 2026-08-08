@@ -69,8 +69,9 @@
             @mudou="void aoMudarConhecimento()"
           />
 
-          <BibliotecaConhecimento
+          <ExploradorDeConhecimento
             :modulos="modulos"
+            :total-de-documentos="estado.corpus.total"
             @atualizado="void aoMudarConhecimento()"
           />
 
@@ -212,10 +213,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import AlvosDeBanco from '@/components/ambiente/AlvosDeBanco.vue';
-import BibliotecaConhecimento from '@/components/ambiente/BibliotecaConhecimento.vue';
 import CadastroDeFonte from '@/components/ambiente/CadastroDeFonte.vue';
 import CatalogoDeDiagnostico from '@/components/ambiente/CatalogoDeDiagnostico.vue';
 import EnvioDeArquivo from '@/components/ambiente/EnvioDeArquivo.vue';
+import ExploradorDeConhecimento from '@/components/ambiente/ExploradorDeConhecimento.vue';
 import EscritorDeNota from '@/components/ambiente/EscritorDeNota.vue';
 import FilaDePropostas from '@/components/ambiente/FilaDePropostas.vue';
 import ModulosDeConhecimento from '@/components/ambiente/ModulosDeConhecimento.vue';

@@ -99,6 +99,12 @@
             <div class="rotulo">
               Documento especialista — a capa do módulo, lida antes dos outros
             </div>
+            <p class="especialista__regra">
+              a capa sai de dentro do próprio módulo: só entram na busca os
+              {{ modulo.documentos }}
+              {{ modulo.documentos === 1 ? 'documento' : 'documentos' }} que já
+              {{ modulo.documentos === 1 ? 'pertence' : 'pertencem' }} a ele.
+            </p>
             <p v-if="modulo.especialistaDocumentoId" class="especialista__atual">
               hoje: {{ nomeDoEspecialista(modulo) }}
               <button
@@ -111,11 +117,18 @@
               </button>
             </p>
             <SeletorDeDocumento
-              placeholder="Procurar documento para ser o especialista…"
+              v-if="modulo.documentos > 0"
+              placeholder="Procurar entre os documentos deste módulo…"
+              vazio="este módulo ainda não tem documento nenhum."
+              :modulo="modulo.id"
               :escolhido-id="modulo.especialistaDocumentoId"
               :desabilitado="definindoId === modulo.id"
               @escolhido="void definir(modulo, $event.id)"
             />
+            <p v-else class="especialista__sem-documento">
+              nenhum documento neste módulo ainda — abra um documento na biblioteca abaixo e
+              escolha este módulo. depois volte aqui para eleger a capa.
+            </p>
           </div>
         </div>
       </div>
@@ -537,6 +550,18 @@ watch(
     margin: 0;
     font-size: 12.5px;
     color: var(--ink2);
+  }
+
+  &__regra {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ink3);
+  }
+
+  &__sem-documento {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--amber);
   }
 }
 

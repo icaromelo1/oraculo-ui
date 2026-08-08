@@ -11,9 +11,7 @@
 
     <p v-if="buscando && resultados.length === 0" class="mensagem">procurando…</p>
     <p v-else-if="erro" class="mensagem mensagem--erro" role="alert">{{ erro }}</p>
-    <p v-else-if="resultados.length === 0" class="mensagem">
-      nenhum documento casa com esse termo.
-    </p>
+    <p v-else-if="resultados.length === 0" class="mensagem">{{ mensagemVazia }}</p>
 
     <div v-else class="seletor__lista">
       <button
@@ -33,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { listarDocumentos, type DocumentoIndexado } from '@/services/conhecimento.service';
 import { mensagemDoErro } from '@/services/http';
 
@@ -43,6 +41,8 @@ const props = defineProps<{
   placeholder: string;
   escolhidoId?: string | null;
   desabilitado?: boolean;
+  modulo?: string;
+  vazio?: string;
 }>();
 
 const emit = defineEmits<{ escolhido: [documento: DocumentoIndexado] }>();
@@ -51,6 +51,12 @@ const termo = ref('');
 const resultados = ref<DocumentoIndexado[]>([]);
 const buscando = ref(false);
 const erro = ref('');
+
+const mensagemVazia = computed(() => {
+  if (termo.value.trim().length > 0) return 'nenhum documento casa com esse termo.';
+
+  return props.vazio ?? 'nenhum documento disponível.';
+});
 
 let referencia = 0;
 let temporizador: ReturnType<typeof setTimeout> | undefined;
@@ -65,6 +71,7 @@ async function carregar(): Promise<void> {
     const pagina = await listarDocumentos({
       porPagina: POR_PAGINA,
       ...(busca ? { busca } : {}),
+      ...(props.modulo ? { modulo: props.modulo } : {}),
     });
 
     if (atual !== referencia) return;
@@ -90,6 +97,13 @@ watch(
   () => props.desabilitado,
   (travado) => {
     if (travado !== true) void carregar();
+  },
+);
+
+watch(
+  () => props.modulo,
+  () => {
+    void carregar();
   },
 );
 

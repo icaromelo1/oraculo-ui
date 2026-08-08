@@ -10,11 +10,17 @@
         <RouterLink
           v-for="item in navegacao"
           :key="item.nome"
-          v-slot="{ isActive, navigate }"
+          v-slot="{ navigate }"
           :to="item.para"
           custom
         >
-          <button class="aba" :class="{ 'aba--ativa': isActive }" type="button" @click="navigate">
+          <button
+            class="aba"
+            :class="{ 'aba--ativa': ativa(item) }"
+            type="button"
+            :aria-current="ativa(item) ? 'page' : undefined"
+            @click="navigate"
+          >
             {{ item.rotulo }}
           </button>
         </RouterLink>
@@ -35,12 +41,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import MarcaOraculo from '@/components/MarcaOraculo.vue';
 import { useSessaoStore } from '@/stores/sessao';
 
 const sessao = useSessaoStore();
 const router = useRouter();
+const rota = useRoute();
 
 onMounted(() => {
   if (sessao.autenticado && !sessao.usuario) {
@@ -55,11 +62,27 @@ function sair(): void {
   void router.push({ name: 'login' });
 }
 
-const navegacao = [
-  { nome: 'chat', rotulo: 'Conversa', para: { name: 'chat' } },
-  { nome: 'auditoria', rotulo: 'Histórico', para: { name: 'auditoria' } },
-  { nome: 'ambiente', rotulo: 'Ambiente', para: { name: 'ambiente' } },
+interface ItemDeNavegacao {
+  nome: string;
+  rotulo: string;
+  para: { name: string };
+  rotas: string[];
+}
+
+const navegacao: ItemDeNavegacao[] = [
+  { nome: 'chat', rotulo: 'Conversa', para: { name: 'chat' }, rotas: ['chat', 'conversa'] },
+  {
+    nome: 'auditoria',
+    rotulo: 'Histórico',
+    para: { name: 'auditoria' },
+    rotas: ['auditoria'],
+  },
+  { nome: 'ambiente', rotulo: 'Ambiente', para: { name: 'ambiente' }, rotas: ['ambiente'] },
 ];
+
+function ativa(item: ItemDeNavegacao): boolean {
+  return item.rotas.includes(String(rota.name ?? ''));
+}
 </script>
 
 <style scoped lang="scss">

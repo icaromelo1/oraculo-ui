@@ -293,7 +293,9 @@ export function moverDocumentos(
 }
 
 export interface PersonaDaInstalacao {
-  texto: string | null;
+  texto: string;
+  padrao: string;
+  personalizada: boolean;
   teto: number;
   mascaramentos: number;
 }

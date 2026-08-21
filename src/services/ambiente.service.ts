@@ -163,6 +163,8 @@ export interface ProvedorResumido {
 }
 
 export interface ListaDeProvedores {
+  travado?: boolean;
+  motivoDaTrava?: string;
   provedores: ProvedorResumido[];
   tiposPermitidos: string[];
 }

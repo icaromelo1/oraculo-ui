@@ -31,7 +31,6 @@ npm install
 npm run dev
 ```
 
-
 ## Deploy na VM
 
 O front é servido em `icaromelodev.com.br/oraculo/`, **não na raiz**. O build precisa do

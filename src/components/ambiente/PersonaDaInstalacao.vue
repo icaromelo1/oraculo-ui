@@ -18,12 +18,12 @@
 
       <p class="persona__estado">
         <template v-if="ehPadrao">
-          esta é a persona padrão — o assistente se apresenta como Oráculo. reescreva para dar
-          outro nome, outro tom ou outro escopo a esta instalação.
+          esta é a persona padrão — o assistente se apresenta como Oráculo. reescreva para dar outro
+          nome, outro tom ou outro escopo a esta instalação.
         </template>
         <template v-else>
-          persona própria desta instalação. as regras de busca, citação e proteção contra
-          injeção não passam por aqui: são fixas no código e continuam valendo.
+          persona própria desta instalação. as regras de busca, citação e proteção contra injeção
+          não passam por aqui: são fixas no código e continuam valendo.
         </template>
       </p>
 

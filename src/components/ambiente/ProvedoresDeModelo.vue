@@ -113,7 +113,13 @@
     <p v-if="erroAtivacao" class="mensagem mensagem--erro" role="alert">{{ erroAtivacao }}</p>
     <p v-if="erroRemocao" class="mensagem mensagem--erro" role="alert">{{ erroRemocao }}</p>
 
+    <p v-if="travado" class="travado" role="status">
+      <i class="travado__ponto" aria-hidden="true" />
+      {{ motivoDaTrava }}
+    </p>
+
     <CadastroDeProvedor
+      v-if="!travado"
       :tipos-permitidos="tiposPermitidos"
       :presets="presets"
       :erro-presets="erroPresets"
@@ -156,6 +162,8 @@ const ROTULOS_DE_TIPO: Record<TipoDeProvedor, string> = {
 
 const provedores = ref<ProvedorResumido[]>([]);
 const tiposPermitidos = ref<string[]>([]);
+const travado = ref(false);
+const motivoDaTrava = ref('');
 const presets = ref<PresetDeProvedor[]>([]);
 const carregando = ref(true);
 const erroLista = ref('');
@@ -219,6 +227,8 @@ async function carregarLista(): Promise<void> {
 
     provedores.value = lista.provedores;
     tiposPermitidos.value = lista.tiposPermitidos;
+    travado.value = lista.travado === true;
+    motivoDaTrava.value = lista.motivoDaTrava ?? '';
   } catch (falha) {
     erroLista.value = mensagemDoErro(falha, 'não consegui listar os provedores');
   }
@@ -305,6 +315,28 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.travado {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink2);
+  background: var(--amber-s);
+  border: 1px solid var(--amber-l);
+  border-radius: 9px;
+  padding: 10px 12px;
+}
+
+.travado__ponto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex: none;
+  margin-top: 6px;
+}
+
 @use '@/css/tokens' as *;
 
 .bloco {

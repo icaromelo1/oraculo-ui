@@ -284,13 +284,15 @@
       <p class="barra__nota">
         mover troca o módulo do documento — nenhum arquivo sai do lugar em disco.
         <template v-if="acimaDoTetoDeSelecao">
-          são {{ total }} no filtro e eu só seleciono {{ TETO_DE_SELECAO }} de uma vez — mova
-          página por página, ou aperte o filtro.
+          são {{ total }} no filtro e eu só seleciono {{ TETO_DE_SELECAO }} de uma vez — mova página
+          por página, ou aperte o filtro.
         </template>
         <template v-if="capasSelecionadas > 0">
           <strong>
             {{ capasSelecionadas }}
-            {{ capasSelecionadas === 1 ? 'é capa de módulo e perde' : 'são capas de módulo e perdem' }}
+            {{
+              capasSelecionadas === 1 ? 'é capa de módulo e perde' : 'são capas de módulo e perdem'
+            }}
             esse posto ao sair.
           </strong>
         </template>

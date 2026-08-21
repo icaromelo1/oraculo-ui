@@ -1,6 +1,8 @@
 <template>
   <div class="propostas">
-    <div class="rotulo-secao">ele propõe, você decide — nada entra no conhecimento sem aprovação</div>
+    <div class="rotulo-secao">
+      ele propõe, você decide — nada entra no conhecimento sem aprovação
+    </div>
 
     <div class="filtros" role="group" aria-label="Filtrar propostas">
       <button

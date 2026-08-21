@@ -126,8 +126,8 @@
               @escolhido="void definir(modulo, $event.id)"
             />
             <p v-else class="especialista__sem-documento">
-              nenhum documento neste módulo ainda — abra um documento na biblioteca abaixo e
-              escolha este módulo. depois volte aqui para eleger a capa.
+              nenhum documento neste módulo ainda — abra um documento na biblioteca abaixo e escolha
+              este módulo. depois volte aqui para eleger a capa.
             </p>
           </div>
         </div>
